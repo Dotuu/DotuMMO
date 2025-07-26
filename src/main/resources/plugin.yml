@@ -1,0 +1,14 @@
+name: DotuMMO
+version: 1.0
+main: me.dotu.MMO.Main
+api-version: 1.13
+description: An MMO plugin for Minecraft, that adds armor, weapons, RPG elements, and more.
+authors:
+    - Dotu
+commands:
+    dotummo:
+        description: Shows main command tree
+        usage: /dotummo
+    test:
+        description: Test command, please ignore
+        usage: /test
