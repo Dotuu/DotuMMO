@@ -24,6 +24,7 @@ public class Fishing extends MasterSkill implements Listener {
 
     public Fishing() {
         super(SkillEnum.Difficulty.NORMAL, SkillEnum.Skill.FISHING, 1, 100, 0);
+        MasterSkill.addToSkillsMap(SkillEnum.Difficulty.NORMAL, SkillEnum.Skill.FISHING, 1, 100, 0);
         this.difficulty = SkillEnum.Difficulty.NORMAL;
     }
 
@@ -44,7 +45,7 @@ public class Fishing extends MasterSkill implements Listener {
             
             for (DropTableEnum.FishingDrop drop : DropTableEnum.FishingDrop.values()) {
                 if (drop.toString().equals(fish)) {
-                    int xpGained = ExpCalculator.calculate(this.difficulty, drop.getXpValue());
+                    int xpGained = ExpCalculator.calculateRewardedExp(this.difficulty, drop.getXpValue());
                      try {
                         PlayerManager manager = PlayerConfig.playerdataMap.get(uuid);
                         manager.setSkills(SkillEnum.Skill.FISHING.toString(), xpGained);

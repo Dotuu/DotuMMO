@@ -79,4 +79,49 @@ public class DropTableEnum {
             return this.xp;
         }
     }
+
+    public static enum AxeDrop{
+        BLAZE(20),
+        BOGGED(20),
+        BREEZE(20),
+        CREAKING(20),
+        CREEPER(20),
+        ELDER_GUARDIAN(20),
+        ENDERMITE(20),
+        ENDER_DRAGON(20),
+        EVOKER(20),
+        GHAST(20),
+        GUARDIAN(20),
+        HOGLIN(20),
+        HUSK(20),
+        MAGMA_CUBE(20),
+        PHANTOM(20),
+        PIGLIN_BRUTE(20),
+        PILLAGER(20),
+        RAVAGER(20),
+        SHULKER(20),
+        SILVERFISH(20),
+        SKELETON(20),
+        SLIME(20),
+        STRAY(20),
+        VEX(20),
+        VINDICATOR(20),
+        WARDEN(20),
+        WITCH(20),
+        WITHER(20),
+        WITHER_SKELETON(20),
+        ZOGLIN(20),
+        ZOMBIE(20),
+        ZOMBIE_VILLAGER(20);
+
+        private final int xp;
+
+        AxeDrop(int xp){
+            this.xp = xp;
+        }
+
+        public int getXpValue(){
+            return this.xp;
+        }
+    }
 }

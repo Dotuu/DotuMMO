@@ -21,6 +21,7 @@ public class Woodcutting extends MasterSkill implements Listener{
 
     public Woodcutting() {
         super(SkillEnum.Difficulty.VERY_SLOW, SkillEnum.Skill.WOODCUTTING, 3, 100, 0);
+        MasterSkill.addToSkillsMap(SkillEnum.Difficulty.VERY_SLOW, SkillEnum.Skill.WOODCUTTING, 3, 100, 0);
         this.difficulty = SkillEnum.Difficulty.VERY_SLOW;
     }
 
@@ -31,7 +32,7 @@ public class Woodcutting extends MasterSkill implements Listener{
                 if (event.getBlock().getType().toString().equals(drop.toString())){
                     Player player = event.getPlayer();
                     UUID uuid = player.getUniqueId();
-                    int xpGained = ExpCalculator.calculate(this.difficulty, drop.getXpValue());
+                    int xpGained = ExpCalculator.calculateRewardedExp(this.difficulty, drop.getXpValue());
                     PlayerManager manager = PlayerConfig.playerdataMap.get(uuid);
                     manager.setSkills(SkillEnum.Skill.WOODCUTTING.toString(), xpGained);
                     player.sendMessage(MessageManager.send(MessageManager.Type.FUN, "Earned " + xpGained + " xp from " + SkillEnum.Skill.WOODCUTTING.toString().toLowerCase()));

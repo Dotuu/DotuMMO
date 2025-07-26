@@ -1,6 +1,9 @@
 package me.dotu.MMO.Configs;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import me.dotu.MMO.Enums.SkillEnum;
 
 public class PlayerManager {
 
@@ -11,11 +14,33 @@ public class PlayerManager {
     }
 
     public JsonObject getSkills(){
-        if (this.config != null && config.has("stats") && config.get("stats").isJsonObject()){
-            return config.getAsJsonObject("stats");
+        if (this.config != null && config.has("Data")){
+            JsonObject data = config.getAsJsonObject("Data");
+            JsonObject skills = data.getAsJsonObject("skills");
+            return skills.getAsJsonObject("xp");
         }
         else{
             return null;
+        }
+    }
+
+    public int getSkillExp(SkillEnum.Skill skillEnum){
+        if (this.config != null && this.config.has("Data")){
+            JsonObject data = config.getAsJsonObject("Data");
+            JsonObject skills = data.getAsJsonObject("skills");
+            JsonObject xp = skills.getAsJsonObject("xp");
+
+            String skillName = skillEnum.toString().replace("_", " ");
+            if (xp.has(skillName)){
+                JsonElement skillJson = xp.get(skillName);
+                return skillJson.getAsInt();
+            }
+            else{
+                return 0;
+            }
+        }
+        else{
+            return 0;
         }
     }
 

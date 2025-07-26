@@ -21,6 +21,7 @@ public class Mining extends MasterSkill implements Listener{
 
     public Mining() {
         super(SkillEnum.Difficulty.VERY_SLOW, SkillEnum.Skill.MINING, 2, 100, 0);
+        MasterSkill.addToSkillsMap(SkillEnum.Difficulty.VERY_SLOW, SkillEnum.Skill.MINING, 2, 100, 0);
         this.difficulty = SkillEnum.Difficulty.VERY_SLOW;
     }
 
@@ -32,7 +33,7 @@ public class Mining extends MasterSkill implements Listener{
                     if (drop.toString().equals(event.getBlock().getType().toString())){
                         Player player = event.getPlayer();
                         UUID uuid = player.getUniqueId();
-                        int xpGained = ExpCalculator.calculate(this.difficulty, drop.getXpValue());
+                        int xpGained = ExpCalculator.calculateRewardedExp(this.difficulty, drop.getXpValue());
                         PlayerManager manager = PlayerConfig.playerdataMap.get(uuid);
                         manager.setSkills(SkillEnum.Skill.MINING.toString(), xpGained);
                         player.sendMessage(MessageManager.send(MessageManager.Type.FUN, "Earned " + xpGained + " xp from " + SkillEnum.Skill.MINING.toString().toLowerCase()));

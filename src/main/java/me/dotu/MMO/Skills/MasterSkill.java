@@ -1,5 +1,7 @@
 package me.dotu.MMO.Skills;
 
+import java.util.HashMap;
+
 import me.dotu.MMO.Enums.SkillEnum;
 
 public class MasterSkill {
@@ -9,12 +11,18 @@ public class MasterSkill {
     private int maxLevel;
     private int startingLevel;
     
-    public MasterSkill(SkillEnum.Difficulty difficulty, SkillEnum.Skill skill, int id, int maxLevel, int startingLevel) {
+    public static HashMap<SkillEnum.Skill, MasterSkill> skillsMap = new HashMap<>();
+
+    protected MasterSkill(SkillEnum.Difficulty difficulty, SkillEnum.Skill skill, int id, int maxLevel, int startingLevel) {
         this.skill = skill;
         this.id = id;
         this.difficulty = difficulty;
         this.maxLevel = maxLevel;
         this.startingLevel = startingLevel;
+    }
+
+    public static void addToSkillsMap(SkillEnum.Difficulty difficulty, SkillEnum.Skill skill, int id, int maxLevel, int startingLevel) {
+        skillsMap.put(skill, new MasterSkill(difficulty, skill, id, maxLevel, startingLevel));
     }
         
     public int getId() {

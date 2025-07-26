@@ -7,6 +7,7 @@ import me.dotu.MMO.Configs.ItemConfig;
 import me.dotu.MMO.Configs.PlayerConfig;
 import me.dotu.MMO.Configs.SettingsConfig;
 import me.dotu.MMO.Data.PlacedBlocksData;
+import me.dotu.MMO.Skills.Axe;
 import me.dotu.MMO.Skills.Fishing;
 import me.dotu.MMO.Skills.Mining;
 import me.dotu.MMO.Skills.Woodcutting;
@@ -32,6 +33,8 @@ public class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new Fishing(), this);
         this.getServer().getPluginManager().registerEvents(new Mining(), this);
         this.getServer().getPluginManager().registerEvents(new Woodcutting(), this);
+        this.getServer().getPluginManager().registerEvents(new Axe(), this);
+        
         // Other
         this.getServer().getPluginManager().registerEvents(new PlayerConfig(this), this);
         this.getServer().getPluginManager().registerEvents(new ExpBar(), this);
