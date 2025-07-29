@@ -2,6 +2,8 @@ package me.dotu.MMO.Enums;
 
 import com.google.gson.JsonObject;
 
+import me.dotu.MMO.Skills.MasterSkill;
+
 public class ConfigEnum {
     public static enum Type {
         TOOLS{
@@ -92,8 +94,9 @@ public class ConfigEnum {
 
                 JsonObject skills = new JsonObject();
                 JsonObject skills_xp = new JsonObject();
-                for (SkillEnum.Skill skill : SkillEnum.Skill.values()){
-                    skills_xp.addProperty(skill.name(), 1);
+                for (SkillEnum.Skill skillName : SkillEnum.Skill.values()){
+                    MasterSkill skill = MasterSkill.skillsMap.get(skillName);
+                    skills_xp.addProperty(skill.getName(), skill.getStartingLevel());
                 }
                 skills.add("xp", skills_xp);
 
@@ -107,6 +110,7 @@ public class ConfigEnum {
         };
         public abstract void populate(JsonObject config);
     }
+    
     public static enum Settings{
         ENABLED_SKILLS,
         WEAPON_SETTINGS,

@@ -19,34 +19,34 @@ public class RewardTableEnum {
     }
 
     public static enum MiningReward{
-        COAL_ORE (10),
-        DEEPSLATE_COAL_ORE (15),
+        COAL_ORE (20),
+        DEEPSLATE_COAL_ORE (20),
         
-        COPPER_ORE (10),
-        DEEPSLATE_COPPER_ORE (15),
+        COPPER_ORE (20),
+        DEEPSLATE_COPPER_ORE (20),
 
-        IRON_ORE (15),
-        DEEPSLATE_IRON_ORE (20),
+        IRON_ORE (35),
+        DEEPSLATE_IRON_ORE (35),
 
-        REDSTONE_ORE (20),
-        DEEPSLATE_REDSTONE_ORE (25),
+        REDSTONE_ORE (50),
+        DEEPSLATE_REDSTONE_ORE (50),
 
-        LAPIS_ORE (20),
-        DEEPSLATE_LAPIS_ORE (25),
+        LAPIS_ORE (75),
+        DEEPSLATE_LAPIS_ORE (75),
         
-        GOLD_ORE (25),
-        DEEPSLATE_GOLD_ORE (30),
+        GOLD_ORE (90),
+        DEEPSLATE_GOLD_ORE (90),
         
-        DIAMOND_ORE (30),
-        DEEPSLATE_DIAMOND_ORE (35),
+        DIAMOND_ORE (100),
+        DEEPSLATE_DIAMOND_ORE (100),
 
-        EMERALD_ORE (50),
-        DEEPSLATE_EMERALD_ORE (55),
+        EMERALD_ORE (200),
+        DEEPSLATE_EMERALD_ORE (200),
 
-        NETHER_QUARTZ_ORE (100),
-        NETHER_GOLD_ORE (105),
+        NETHER_QUARTZ_ORE (90),
+        NETHER_GOLD_ORE (90),
 
-        ANCIENT_DEBRIS (175);
+        ANCIENT_DEBRIS (250);
         private final int xp;
 
         MiningReward(int xp){
@@ -61,7 +61,7 @@ public class RewardTableEnum {
     public static enum WoodcuttingReward{
         OAK_LOG (20),
         SPRUCE_LOG (30),
-        BIRCH_LOG (200),
+        BIRCH_LOG (20),
         JUNGLE_LOG (45),
         ACACIA_LOG(45),
         DARK_OAK_LOG (45),
