@@ -13,12 +13,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import me.dotu.MMO.Enums.ConfigEnum;
+import me.dotu.MMO.Managers.SettingsManager;
 
 public class SettingsConfig {
     private final File configFile;
     private final JavaPlugin plugin;
-    private final String filename = "SettingsConfig.json";
-    public static HashMap<ConfigEnum.Settings, Settings> settingsMap = new HashMap<>();
+    private final String filename = "Settings.json";
+    public static HashMap<ConfigEnum.Settings, SettingsManager> settingsMap = new HashMap<>();
 
     public SettingsConfig(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -55,14 +56,14 @@ public class SettingsConfig {
                 settingsName = name.toString().toLowerCase().replace("_", " ");
                 if (settingsJson.has(settingsName)){
                     JsonObject settings = settingsJson.getAsJsonObject(settingsName);
-                    settingsMap.put(name, new Settings(settings));
+                    settingsMap.put(name, new SettingsManager(settings));
                 }
             }
         }
     }
 
     private void setupDefaults() {
-        System.out.println("DotuMMO - Settings config: Running first time setup");
+        System.out.println("DotuMMO - Settings: Running first time setup");
         File parentDir = this.configFile.getParentFile();
         if (!parentDir.exists()) {
             parentDir.mkdirs();

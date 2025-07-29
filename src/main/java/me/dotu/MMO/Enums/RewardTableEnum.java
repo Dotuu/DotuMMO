@@ -1,7 +1,7 @@
 package me.dotu.MMO.Enums;
 
-public class DropTableEnum {
-    public static enum FishingDrop{
+public class RewardTableEnum {
+    public static enum FishingReward{
         RAW_COD (20),
         RAW_SALMON (30),
         TROPICAL_FISH (200),
@@ -9,7 +9,7 @@ public class DropTableEnum {
 
         private final int xp;
 
-        FishingDrop(int xp){
+        FishingReward(int xp){
             this.xp = xp;
         }
 
@@ -18,7 +18,7 @@ public class DropTableEnum {
         }
     }
 
-    public static enum MiningDrop{
+    public static enum MiningReward{
         COAL_ORE (10),
         DEEPSLATE_COAL_ORE (15),
         
@@ -49,7 +49,7 @@ public class DropTableEnum {
         ANCIENT_DEBRIS (175);
         private final int xp;
 
-        MiningDrop(int xp){
+        MiningReward(int xp){
             this.xp = xp;
         }
 
@@ -58,7 +58,7 @@ public class DropTableEnum {
         }
     }
 
-    public static enum WoodcuttingDrop{
+    public static enum WoodcuttingReward{
         OAK_LOG (20),
         SPRUCE_LOG (30),
         BIRCH_LOG (200),
@@ -71,7 +71,7 @@ public class DropTableEnum {
 
         private final int xp;
 
-        WoodcuttingDrop(int xp){
+        WoodcuttingReward(int xp){
             this.xp = xp;
         }
 
@@ -80,7 +80,7 @@ public class DropTableEnum {
         }
     }
 
-    public static enum AxeDrop{
+    public static enum AxeReward{
         BLAZE(20),
         BOGGED(20),
         BREEZE(20),
@@ -116,7 +116,7 @@ public class DropTableEnum {
 
         private final int xp;
 
-        AxeDrop(int xp){
+        AxeReward(int xp){
             this.xp = xp;
         }
 

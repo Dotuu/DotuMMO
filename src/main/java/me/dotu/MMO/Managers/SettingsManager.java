@@ -1,11 +1,11 @@
-package me.dotu.MMO.Configs;
+package me.dotu.MMO.Managers;
 
 import com.google.gson.JsonObject;
 
-public class Settings {
+public class SettingsManager {
     private JsonObject settings;
 
-    public Settings(JsonObject settings){
+    public SettingsManager(JsonObject settings) {
         this.settings = settings;
     }
 
@@ -17,16 +17,16 @@ public class Settings {
         this.settings = settings;
     }
 
-    public boolean getEnabled(){
+    public boolean getEnabled() {
         // add enabled logic here
         return false;
     }
 
-    public int getMaxLevel(){
+    public int getMaxLevel() {
         return 0;
     }
 
-    public int getStartingLevel(){
+    public int getStartingLevel() {
         return 0;
     }
 }

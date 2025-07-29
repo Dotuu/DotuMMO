@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import me.dotu.MMO.ChunkLoader.ChunkDataManager;
 import me.dotu.MMO.Decorator;
 import me.dotu.MMO.Enums.ItemEnum;
 import me.dotu.MMO.ItemData.Armor;
@@ -25,7 +26,6 @@ public class TestCommand implements CommandExecutor{
                 Player player = (Player) sender;
 
                 Armor dotu = new Armor("Dotu's Helmet of FIRE", 100, (short) 2, 100, "overworld", Material.DIAMOND_HELMET, ItemEnum.Tier.COMMON);
-                // eventually replace with armor/tool object creation and implement functions to getDisplayName, dura, and props
                 ItemStack item = new ItemStack(Material.DIAMOND_HELMET, 1);
 
                 HashMap<String, String> props = new HashMap<>();
@@ -46,6 +46,15 @@ public class TestCommand implements CommandExecutor{
                 sender.sendMessage("This command can only be used by players.");
             }
             return true;
+        }
+        else if (command.getName().equalsIgnoreCase("chunktest")){
+            if (sender instanceof Player){
+                Player player = (Player) sender;
+                player.sendMessage(Integer.toString(ChunkDataManager.loadedChunks.size()));
+            }
+            else{
+                System.out.println(Integer.toString(ChunkDataManager.loadedChunks.size()));
+            }
         }
         return false;
     }

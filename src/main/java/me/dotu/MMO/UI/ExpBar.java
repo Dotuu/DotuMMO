@@ -6,8 +6,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 
 import me.dotu.MMO.Configs.PlayerConfig;
-import me.dotu.MMO.Configs.PlayerManager;
 import me.dotu.MMO.ExpCalculator;
+import me.dotu.MMO.Managers.PlayerManager;
 import me.dotu.MMO.Skills.MasterSkill;
 
 public class ExpBar implements Listener{

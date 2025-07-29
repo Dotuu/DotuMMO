@@ -12,3 +12,6 @@ commands:
     test:
         description: Test command, please ignore
         usage: /test
+    chunktest:
+        description: Test command, please ignore
+        usage: /chunktest

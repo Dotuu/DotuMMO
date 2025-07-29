@@ -1,4 +1,4 @@
-package me.dotu.MMO.Configs;
+package me.dotu.MMO.Managers;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

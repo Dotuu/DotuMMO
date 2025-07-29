@@ -1,0 +1,224 @@
+package me.dotu.MMO.ChunkLoader;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
+import me.dotu.MMO.Enums.RewardTableEnum;
+
+public class ChunkDataManager implements Listener{
+    private final JavaPlugin plugin;
+    public static HashMap<String, ChunkData> loadedChunks = new HashMap<>();
+
+    public ChunkDataManager(JavaPlugin plugin){
+        this.plugin = plugin;
+        /*
+         * todo
+         * on block break compare it to the placed blocks and remove the block from the coresponding list
+         * DONT FORGET TO SET UPDATED BOOLEAN TO TRUE AFTER
+         * 
+         * fix log blocks not working for whever reason (could be case issue)
+         * 
+         * maybe add blockname in location data as well when saving to json file
+         * 
+         * also maybe add header to json file such as Places blocks or something
+         */
+    }
+
+    public void saveChunkDataToJson(String chunkId){
+        ChunkData chunkData = loadedChunks.get(chunkId);
+        if (chunkData.isUpdated()){
+            File chunkDataFolder = new File(this.plugin.getDataFolder(), "ChunkData");
+            if(!chunkDataFolder.exists()){
+                chunkDataFolder.mkdirs();
+            }
+
+            File chunkFile = new File(new File(this.plugin.getDataFolder(), "ChunkData"), chunkId + ".json");
+            ArrayList<String> locations = this.serialize(chunkData.getBlockLocations());
+
+            if (locations.isEmpty()){
+                if (chunkFile.exists()){
+                    chunkFile.delete();
+                }
+            }
+            else{
+                try (FileWriter writer = new FileWriter(chunkFile)){
+                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                    gson.toJson(locations, writer);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        loadedChunks.remove(chunkId);
+    }
+
+    public ArrayList<Location> loadChunkDataFromJson(String identifier){
+        String filename = identifier + ".json";
+        File chunkFile = new File(new File(this.plugin.getDataFolder(), "ChunkData"), filename);
+
+        try (FileReader reader = new FileReader(chunkFile)){
+            JsonArray locationsArray = JsonParser.parseReader(reader).getAsJsonArray();
+            ArrayList<String> locationStrings = new ArrayList<>();
+
+            for (JsonElement elem : locationsArray){
+                locationStrings.add(elem.getAsString());
+            }
+            
+            return this.deSerialize(locationStrings);
+        } catch (Exception e) {
+            return new ArrayList<Location>();
+        }
+    }
+
+    @EventHandler
+    public void onChunkLoad(ChunkLoadEvent event){
+        String chunkId = this.getChunkIdentifier(event.getChunk());
+
+        if (!loadedChunks.containsKey(chunkId)){
+            ArrayList<Location> blockLocations = this.loadChunkDataFromJson(chunkId);
+            loadedChunks.put(chunkId, new ChunkData(blockLocations, chunkId, false));
+        }
+    }
+
+    @EventHandler
+    public void onChunkUnload(ChunkUnloadEvent event){
+        String chunkId = this.getChunkIdentifier(event.getChunk());
+
+        if (loadedChunks.containsKey(chunkId)){
+            this.saveChunkDataToJson(chunkId);
+        }
+    }
+
+    @EventHandler
+    public void blockPlace(BlockPlaceEvent event){
+        ArrayList<String> blocks = this.getBlocksList();
+
+        String placedName = event.getBlock().getType().toString();
+        if (blocks.contains(placedName)){
+            Block placedBlock = event.getBlock();
+            String chunkId = getChunkIdentifier(placedBlock.getChunk());
+
+            if (loadedChunks.containsKey(chunkId)){
+                ChunkData chunkData = loadedChunks.get(chunkId);
+                chunkData.setUpdated(true);
+
+                Location placedLoc = placedBlock.getLocation();
+                chunkData.addBlockLocations(placedLoc);
+            }
+        }
+    }
+    
+    @EventHandler
+    public void blockBreak(BlockBreakEvent event){
+        ArrayList<String> blocks = this.getBlocksList();
+        String brokenName = event.getBlock().getType().toString();
+
+        if (blocks.contains(brokenName)){
+            Block brokenBlock = event.getBlock();
+            String chunkId = getChunkIdentifier(brokenBlock.getChunk());
+
+            if (loadedChunks.containsKey(chunkId)){
+                ChunkData chunkData = loadedChunks.get(chunkId);
+
+                Location brokenLoc = brokenBlock.getLocation();
+                chunkData.removeBlockLocations(brokenLoc);
+                chunkData.setUpdated(true);
+            }
+        }
+    }
+
+    public boolean wasBlockBroken(Block block){
+        ArrayList<String> blocks = this.getBlocksList();
+        String blockName = block.getType().toString();
+
+        if(blocks.contains(blockName)){
+            String chunkId = this.getChunkIdentifier(block.getChunk());
+            
+            if (loadedChunks.containsKey(chunkId)){
+                Location blockLoc = block.getLocation();
+                ChunkData chunkData = loadedChunks.get(chunkId);
+
+                return chunkData.getBlockLocations().contains(blockLoc);
+            }
+        }
+        return false;
+    }
+
+
+    public ArrayList<String> getBlocksList(){
+        ArrayList<String> returnArray = new ArrayList<>();
+        for (RewardTableEnum.MiningReward drop : RewardTableEnum.MiningReward.values()){
+            returnArray.add(drop.name());
+        }  
+
+        for (RewardTableEnum.WoodcuttingReward drop : RewardTableEnum.WoodcuttingReward.values()){
+            returnArray.add(drop.name());
+        }
+
+        return returnArray;
+    }
+
+    private String getChunkIdentifier(Chunk chunk){
+        String x = Integer.toString(chunk.getX());
+        String z = Integer.toString(chunk.getZ());
+        String world = chunk.getWorld().getName();
+        return world + "." + x + "." + z;
+    }
+
+    private ArrayList<String> serialize(ArrayList<Location> locations){
+        ArrayList<String> returnList = new ArrayList<>();
+
+        for (int i = 0; i < locations.size(); i++){
+            Location loc = locations.get(i);
+
+            String world = loc.getWorld().getName();
+            String x = Integer.toString(loc.getBlockX());
+            String y = Integer.toString(loc.getBlockY());
+            String z = Integer.toString(loc.getBlockZ());
+
+            returnList.add(world + "," + x + "," + y + "," + z);
+        }
+
+        return returnList;
+    }
+
+    private ArrayList<Location> deSerialize(ArrayList<String> locationStrings){
+        ArrayList<Location> returnList = new ArrayList<>();
+
+        for (String value : locationStrings){
+                
+            String[] locationData = value.split(",");
+            World world = Bukkit.getServer().getWorld(locationData[0]);
+            double x = Double.parseDouble(locationData[1]);
+            double y = Double.parseDouble(locationData[2]);
+            double z = Double.parseDouble(locationData[3]);
+            Location listLoc = new Location(world, x, y, z);
+
+            returnList.add(listLoc);
+        }
+        return returnList;
+    }
+}

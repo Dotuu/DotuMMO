@@ -19,6 +19,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import me.dotu.MMO.Enums.ConfigEnum;
+import me.dotu.MMO.Managers.PlayerManager;
 
 public class PlayerConfig implements Listener{
     private File configFile;
@@ -38,7 +39,7 @@ public class PlayerConfig implements Listener{
             
             try(FileWriter writer = new FileWriter(file)){
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                gson.toJson(manager.config, writer);
+                gson.toJson(manager.getConfig(), writer);
             }catch(Exception e){
             }
         }
