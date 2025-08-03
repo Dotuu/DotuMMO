@@ -15,9 +15,12 @@ public class Woodcutting extends MasterSkill implements Listener{
     private final JavaPlugin plugin;
 
     public Woodcutting(JavaPlugin plugin) {
-        super("Woodcutting", SkillEnum.Difficulty.SLOW, SkillEnum.Skill.WOODCUTTING, 3, 100, 0);
-        MasterSkill.addToSkillsMap(this.getName(), this.getDifficulty(), this.getSkill(), this.getId(), this.getMaxLevel(), this.getStartingLevel());
+        super("Woodcutting", SkillEnum.Difficulty.SLOW, SkillEnum.Skill.WOODCUTTING, 100, 0);
         this.plugin = plugin;
+    }
+
+    public void registerSkill(){
+        addToSkillsMap(this);
     }
 
     @EventHandler
@@ -25,7 +28,7 @@ public class Woodcutting extends MasterSkill implements Listener{
         ChunkDataManager cdm = new ChunkDataManager(this.plugin);
         if (cdm.wasBlockBroken(event.getBlock()) == false){
             for (RewardTableEnum.WoodcuttingReward drop : RewardTableEnum.WoodcuttingReward.values()){
-                if (event.getBlock().getType().toString().equals(drop.toString())){
+                if (event.getBlock().getType() == drop.getMaterial()){
                     Player player = event.getPlayer();
                     int xpGained = ExpCalculator.calculateRewardedExp(this.getDifficulty(), drop.getXpValue());
 

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -27,66 +28,56 @@ import com.google.gson.JsonParser;
 
 import me.dotu.MMO.Enums.RewardTableEnum;
 
-public class ChunkDataManager implements Listener{
+public class ChunkDataManager implements Listener {
     private final JavaPlugin plugin;
     public static HashMap<String, ChunkData> loadedChunks = new HashMap<>();
 
-    public ChunkDataManager(JavaPlugin plugin){
+    public ChunkDataManager(JavaPlugin plugin) {
         this.plugin = plugin;
-        /*
-         * todo
-         * on block break compare it to the placed blocks and remove the block from the coresponding list
-         * DONT FORGET TO SET UPDATED BOOLEAN TO TRUE AFTER
-         * 
-         * fix log blocks not working for whever reason (could be case issue)
-         * 
-         * maybe add blockname in location data as well when saving to json file
-         * 
-         * also maybe add header to json file such as Places blocks or something
-         */
     }
 
-    public void saveChunkDataToJson(String chunkId){
+    public void saveChunkDataToJson(String chunkId) {
         ChunkData chunkData = loadedChunks.get(chunkId);
-        if (chunkData.isUpdated()){
+        if (chunkData.isUpdated()) {
             File chunkDataFolder = new File(this.plugin.getDataFolder(), "ChunkData");
-            if(!chunkDataFolder.exists()){
+            if (!chunkDataFolder.exists()) {
                 chunkDataFolder.mkdirs();
             }
 
             File chunkFile = new File(new File(this.plugin.getDataFolder(), "ChunkData"), chunkId + ".json");
             ArrayList<String> locations = this.serialize(chunkData.getBlockLocations());
 
-            if (locations.isEmpty()){
-                if (chunkFile.exists()){
+            if (locations.isEmpty()) {
+                if (chunkFile.exists()) {
                     chunkFile.delete();
+                    System.out.println("No Data");
                 }
-            }
-            else{
-                try (FileWriter writer = new FileWriter(chunkFile)){
+            } else {
+                try (FileWriter writer = new FileWriter(chunkFile)) {
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
                     gson.toJson(locations, writer);
+                    System.out.println("Writing to disk");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
-        
+
         loadedChunks.remove(chunkId);
     }
 
-    public ArrayList<Location> loadChunkDataFromJson(String identifier){
+    public ArrayList<Location> loadChunkDataFromJson(String identifier) {
         String filename = identifier + ".json";
         File chunkFile = new File(new File(this.plugin.getDataFolder(), "ChunkData"), filename);
 
-        try (FileReader reader = new FileReader(chunkFile)){
+        try (FileReader reader = new FileReader(chunkFile)) {
             JsonArray locationsArray = JsonParser.parseReader(reader).getAsJsonArray();
             ArrayList<String> locationStrings = new ArrayList<>();
 
-            for (JsonElement elem : locationsArray){
+            for (JsonElement elem : locationsArray) {
                 locationStrings.add(elem.getAsString());
             }
-            
+
             return this.deSerialize(locationStrings);
         } catch (Exception e) {
             return new ArrayList<Location>();
@@ -94,34 +85,34 @@ public class ChunkDataManager implements Listener{
     }
 
     @EventHandler
-    public void onChunkLoad(ChunkLoadEvent event){
+    public void onChunkLoad(ChunkLoadEvent event) {
         String chunkId = this.getChunkIdentifier(event.getChunk());
 
-        if (!loadedChunks.containsKey(chunkId)){
+        if (!loadedChunks.containsKey(chunkId)) {
             ArrayList<Location> blockLocations = this.loadChunkDataFromJson(chunkId);
             loadedChunks.put(chunkId, new ChunkData(blockLocations, chunkId, false));
         }
     }
 
     @EventHandler
-    public void onChunkUnload(ChunkUnloadEvent event){
+    public void onChunkUnload(ChunkUnloadEvent event) {
         String chunkId = this.getChunkIdentifier(event.getChunk());
 
-        if (loadedChunks.containsKey(chunkId)){
+        if (loadedChunks.containsKey(chunkId)) {
             this.saveChunkDataToJson(chunkId);
         }
     }
 
     @EventHandler
-    public void blockPlace(BlockPlaceEvent event){
-        ArrayList<String> blocks = this.getBlocksList();
+    public void blockPlace(BlockPlaceEvent event) {
+        ArrayList<Material> blocks = this.getBlocksList();
 
         String placedName = event.getBlock().getType().toString();
-        if (blocks.contains(placedName)){
+        if (blocks.contains(placedName)) {
             Block placedBlock = event.getBlock();
             String chunkId = getChunkIdentifier(placedBlock.getChunk());
 
-            if (loadedChunks.containsKey(chunkId)){
+            if (loadedChunks.containsKey(chunkId)) {
                 ChunkData chunkData = loadedChunks.get(chunkId);
                 chunkData.setUpdated(true);
 
@@ -129,18 +120,19 @@ public class ChunkDataManager implements Listener{
                 chunkData.addBlockLocations(placedLoc);
             }
         }
+        System.out.println("NOPE");
     }
-    
+
     @EventHandler
-    public void blockBreak(BlockBreakEvent event){
+    public void blockBreak(BlockBreakEvent event) {
         ArrayList<String> blocks = this.getBlocksList();
         String brokenName = event.getBlock().getType().toString();
 
-        if (blocks.contains(brokenName)){
+        if (blocks.contains(brokenName)) {
             Block brokenBlock = event.getBlock();
             String chunkId = getChunkIdentifier(brokenBlock.getChunk());
 
-            if (loadedChunks.containsKey(chunkId)){
+            if (loadedChunks.containsKey(chunkId)) {
                 ChunkData chunkData = loadedChunks.get(chunkId);
 
                 Location brokenLoc = brokenBlock.getLocation();
@@ -150,14 +142,14 @@ public class ChunkDataManager implements Listener{
         }
     }
 
-    public boolean wasBlockBroken(Block block){
+    public boolean wasBlockBroken(Block block) {
         ArrayList<String> blocks = this.getBlocksList();
         String blockName = block.getType().toString();
 
-        if(blocks.contains(blockName)){
+        if (blocks.contains(blockName)) {
             String chunkId = this.getChunkIdentifier(block.getChunk());
-            
-            if (loadedChunks.containsKey(chunkId)){
+
+            if (loadedChunks.containsKey(chunkId)) {
                 Location blockLoc = block.getLocation();
                 ChunkData chunkData = loadedChunks.get(chunkId);
 
@@ -167,31 +159,30 @@ public class ChunkDataManager implements Listener{
         return false;
     }
 
+    public ArrayList<Material> getBlocksList() {
+        ArrayList<Material> returnArray = new ArrayList<>();
+        for (RewardTableEnum.MiningReward drop : RewardTableEnum.MiningReward.values()) {
+            returnArray.add(drop.getMaterial());
+        }
 
-    public ArrayList<String> getBlocksList(){
-        ArrayList<String> returnArray = new ArrayList<>();
-        for (RewardTableEnum.MiningReward drop : RewardTableEnum.MiningReward.values()){
-            returnArray.add(drop.name());
-        }  
-
-        for (RewardTableEnum.WoodcuttingReward drop : RewardTableEnum.WoodcuttingReward.values()){
-            returnArray.add(drop.name());
+        for (RewardTableEnum.WoodcuttingReward drop : RewardTableEnum.WoodcuttingReward.values()) {
+            returnArray.add(drop.getMaterial());
         }
 
         return returnArray;
     }
 
-    private String getChunkIdentifier(Chunk chunk){
+    private String getChunkIdentifier(Chunk chunk) {
         String x = Integer.toString(chunk.getX());
         String z = Integer.toString(chunk.getZ());
         String world = chunk.getWorld().getName();
         return world + "." + x + "." + z;
     }
 
-    private ArrayList<String> serialize(ArrayList<Location> locations){
+    private ArrayList<String> serialize(ArrayList<Location> locations) {
         ArrayList<String> returnList = new ArrayList<>();
 
-        for (int i = 0; i < locations.size(); i++){
+        for (int i = 0; i < locations.size(); i++) {
             Location loc = locations.get(i);
 
             String world = loc.getWorld().getName();
@@ -205,11 +196,11 @@ public class ChunkDataManager implements Listener{
         return returnList;
     }
 
-    private ArrayList<Location> deSerialize(ArrayList<String> locationStrings){
+    private ArrayList<Location> deSerialize(ArrayList<String> locationStrings) {
         ArrayList<Location> returnList = new ArrayList<>();
 
-        for (String value : locationStrings){
-                
+        for (String value : locationStrings) {
+
             String[] locationData = value.split(",");
             World world = Bukkit.getServer().getWorld(locationData[0]);
             double x = Double.parseDouble(locationData[1]);

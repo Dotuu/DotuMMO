@@ -18,9 +18,12 @@ public class Fishing extends MasterSkill implements Listener {
     private final JavaPlugin plugin;
 
     public Fishing(JavaPlugin plugin) {
-        super("Fishing", SkillEnum.Difficulty.NORMAL, SkillEnum.Skill.FISHING, 1, 100, 0);
-        MasterSkill.addToSkillsMap(this.getName(), this.getDifficulty(), this.getSkill(), this.getId(), this.getMaxLevel(), this.getStartingLevel());
+        super("Fishing", SkillEnum.Difficulty.NORMAL, SkillEnum.Skill.FISHING, 100, 0);
         this.plugin = plugin;
+    }
+
+    public void registerSkill(){
+        addToSkillsMap(this);
     }
 
     @EventHandler
@@ -34,10 +37,8 @@ public class Fishing extends MasterSkill implements Listener {
         } catch (Exception e) {
         }
         if (skillEnabled){
-            String fish = event.getCaught().getName().replace(" ", "_");
-            
             for (RewardTableEnum.FishingReward drop : RewardTableEnum.FishingReward.values()) {
-                if (drop.toString().equalsIgnoreCase(fish)) {
+                if (event.getCaught().getType() == drop.getEntityType()) {
                     Player player = event.getPlayer();
                     int xpGained = ExpCalculator.calculateRewardedExp(this.getDifficulty(), drop.getXpValue());
 

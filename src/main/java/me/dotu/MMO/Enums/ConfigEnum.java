@@ -12,9 +12,9 @@ public class ConfigEnum {
                 JsonObject tools = new JsonObject();
                 JsonObject exampleTool = new JsonObject();
 
-                exampleTool.addProperty("DisplayName", "example tool");
+                exampleTool.addProperty("DisplayName", "example_tool");
                 exampleTool.addProperty("tier", "COMMON");
-                tools.add("example tool", exampleTool);
+                tools.add("example_tool", exampleTool);
 
                 defaultConfig.add("Tools", tools);
             }
@@ -26,9 +26,9 @@ public class ConfigEnum {
                 JsonObject armors = new JsonObject();
                 JsonObject exampleArmor = new JsonObject();
 
-                exampleArmor.addProperty("DisplayName", "example armor");
+                exampleArmor.addProperty("DisplayName", "example_armor");
                 exampleArmor.addProperty("tier", "COMMON");
-                armors.add("example armor", exampleArmor);
+                armors.add("example_armor", exampleArmor);
 
                 defaultConfig.add("Armors", armors);
             }
@@ -40,9 +40,9 @@ public class ConfigEnum {
                 JsonObject weapons = new JsonObject();
                 JsonObject exampleWeapon = new JsonObject();
 
-                exampleWeapon.addProperty("DisplayName", "example weapon");
+                exampleWeapon.addProperty("DisplayName", "example_weapon");
                 exampleWeapon.addProperty("tier", "COMMON");
-                weapons.add("example weapon", exampleWeapon);
+                weapons.add("example_weapon", exampleWeapon);
 
                 defaultConfig.add("Weapons", weapons);
             }
@@ -61,16 +61,20 @@ public class ConfigEnum {
 
                 JsonObject armorSettings = new JsonObject();
                 armorSettings.addProperty("enabled", true);
+
+                JsonObject pvpSettings = new JsonObject();
+                pvpSettings.addProperty("season_timer", System.currentTimeMillis());
                 
                 JsonObject skillSettings = new JsonObject();
                 for (SkillEnum.Skill skill : SkillEnum.Skill.values()){
                     skillSettings.addProperty(skill.toString().toLowerCase(), true);
                 }
 
-                settings.add("enabled skills", skillSettings);
-                settings.add("weapon settings", weaponSettings);
-                settings.add("tool settings", toolSettings);
-                settings.add("armor settings", armorSettings);
+                settings.add("enabled_skills", skillSettings);
+                settings.add("weapon", weaponSettings);
+                settings.add("tool", toolSettings);
+                settings.add("armor", armorSettings);
+                settings.add("pvp", pvpSettings);
 
 
                 defaultConfig.add("Settings", settings);
@@ -92,18 +96,26 @@ public class ConfigEnum {
                 JsonObject party = new JsonObject();
                 party.addProperty("active", false);
 
+                JsonObject pvp = new JsonObject();
+                pvp.addProperty("kills", 0);
+                pvp.addProperty("deaths", 0);
+                pvp.addProperty("season_timer", System.currentTimeMillis());
+
                 JsonObject skills = new JsonObject();
-                JsonObject skills_xp = new JsonObject();
+                JsonObject skillsExp = new JsonObject();
                 for (SkillEnum.Skill skillName : SkillEnum.Skill.values()){
                     MasterSkill skill = MasterSkill.skillsMap.get(skillName);
-                    skills_xp.addProperty(skill.getName(), skill.getStartingLevel());
+                    if (skill != null){
+                        skillsExp.addProperty(skill.getName(), skill.getStartingLevel());
+                    }
                 }
-                skills.add("xp", skills_xp);
+                skills.add("xp", skillsExp);
 
                 data.add("skills", skills);
                 data.add("guild", guild);
                 data.add("titles", titles);
                 data.add("party", party);
+                data.add("pvp", pvp);
 
                 defaultConfig.add("Data", data);
             }
@@ -113,8 +125,17 @@ public class ConfigEnum {
     
     public static enum Settings{
         ENABLED_SKILLS,
-        WEAPON_SETTINGS,
-        TOOL_SETTINGS,
-        ARMOR_SETTINGS,
+        WEAPON,
+        TOOL,
+        ARMOR,
+        PVP
+    }
+
+    public static enum PlayerSettings{
+        SKILLS,
+        GUILD,
+        TITLES,
+        PARTY,
+        PVP
     }
 }

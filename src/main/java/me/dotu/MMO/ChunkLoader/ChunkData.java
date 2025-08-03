@@ -52,7 +52,7 @@ public class ChunkData {
     }
 
     public boolean isFileWasEmpty() {
-        return fileWasEmpty;
+        return this.fileWasEmpty;
     }
 
     public void setFileWasEmpty(boolean fileWasEmpty) {

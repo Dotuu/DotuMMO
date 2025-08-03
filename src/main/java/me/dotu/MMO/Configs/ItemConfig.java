@@ -15,7 +15,7 @@ public class ItemConfig {
 
     private final File configFile;
     private final JavaPlugin plugin;
-    private final String filename = "ItemConfig.json";
+    private final String filename = "item.json";
 
     public ItemConfig(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -31,7 +31,6 @@ public class ItemConfig {
     }
 
     private void setupDefaults() {
-        System.out.println("DotuMMO - Item config: Running first time setup");
         File parentDir = this.configFile.getParentFile();
         if (!parentDir.exists()) {
             parentDir.mkdirs();

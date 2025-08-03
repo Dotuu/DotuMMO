@@ -15,9 +15,12 @@ public class Mining extends MasterSkill implements Listener{
     private final JavaPlugin plugin;
 
     public Mining(JavaPlugin plugin) {
-        super("Mining", SkillEnum.Difficulty.SLOW, SkillEnum.Skill.MINING, 2, 100, 0);
-        MasterSkill.addToSkillsMap(this.getName(), this.getDifficulty(), this.getSkill(), this.getId(), this.getMaxLevel(), this.getStartingLevel());
+        super("Mining", SkillEnum.Difficulty.SLOW, SkillEnum.Skill.MINING, 100, 0);
         this.plugin = plugin;
+    }
+    
+    public void registerSkill(){
+        addToSkillsMap(this);
     }
 
     @EventHandler
@@ -25,7 +28,7 @@ public class Mining extends MasterSkill implements Listener{
         ChunkDataManager cdm = new ChunkDataManager(this.plugin);
         if (cdm.wasBlockBroken(event.getBlock()) == false){
             for (RewardTableEnum.MiningReward drop : RewardTableEnum.MiningReward.values()){
-                if (drop.toString().equals(event.getBlock().getType().toString())){
+                if (event.getBlock().getType() == drop.getMaterial()){
                     Player player = event.getPlayer();
                     int xpGained = ExpCalculator.calculateRewardedExp(this.getDifficulty(), drop.getXpValue());
 

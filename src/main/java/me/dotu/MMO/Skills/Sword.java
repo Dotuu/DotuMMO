@@ -10,16 +10,16 @@ import me.dotu.MMO.Enums.RewardTableEnum;
 import me.dotu.MMO.Enums.SkillEnum;
 import me.dotu.MMO.ExpCalculator;
 
-public class Axe extends MasterSkill implements Listener{
-    
-    private final JavaPlugin plugin;
+public class Sword extends MasterSkill implements Listener {
 
-    public Axe(JavaPlugin plugin) {
-        super("Axe", SkillEnum.Difficulty.NORMAL, SkillEnum.Skill.AXE, 100, 0);
+    private JavaPlugin plugin;
+
+    public Sword(JavaPlugin plugin) {
+        super("Axes", SkillEnum.Difficulty.NORMAL, SkillEnum.Skill.AXE, 100, 0);
         this.plugin = plugin;
     }
 
-    public void registerSkill(){
+    public void registerSkill() {
         addToSkillsMap(this);
     }
 
@@ -28,9 +28,9 @@ public class Axe extends MasterSkill implements Listener{
         // PVE
         if (event.getEntity().getKiller() instanceof Player && !(event.getEntity() instanceof Player)){
             Player player = (Player) event.getEntity().getKiller();
-            if (holdingAxe(player)){
+            if (holdingSword(player)){
 
-                for (RewardTableEnum.AxeReward drop : RewardTableEnum.AxeReward.values()){
+                for (RewardTableEnum.SwordReward drop : RewardTableEnum.SwordReward.values()){
                     if (event.getEntity().getType() == drop.getEntityType()){
                         int xpGained = ExpCalculator.calculateRewardedExp(this.getDifficulty(), drop.getXpValue());
 
@@ -46,7 +46,7 @@ public class Axe extends MasterSkill implements Listener{
         }
     }
 
-    private boolean holdingAxe(Player player){
+    private boolean holdingSword(Player player){
         return player.getInventory().getItemInMainHand().getType().toString().endsWith("_AXE");
     }
 }

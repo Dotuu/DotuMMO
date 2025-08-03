@@ -1,22 +1,28 @@
 package me.dotu.MMO.Commands;
 
-import java.util.HashMap;
-
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import me.dotu.MMO.ChunkLoader.ChunkDataManager;
-import me.dotu.MMO.Decorator;
+import me.dotu.MMO.Enums.AugmentEnum;
 import me.dotu.MMO.Enums.ItemEnum;
 import me.dotu.MMO.ItemData.Armor;
 
 public class TestCommand implements CommandExecutor{
+
+    private JavaPlugin plugin;
+
+    public TestCommand(JavaPlugin plugin){
+        this.plugin = plugin;
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -25,20 +31,21 @@ public class TestCommand implements CommandExecutor{
 
                 Player player = (Player) sender;
 
-                Armor dotu = new Armor("Dotu's Helmet of FIRE", 100, (short) 2, 100, "overworld", Material.DIAMOND_HELMET, ItemEnum.Tier.COMMON);
-                ItemStack item = new ItemStack(Material.DIAMOND_HELMET, 1);
+                Armor dotu = new Armor("Dotu's Helmet of FIRE", 100, (short) 2, Material.DIAMOND_HELMET, ItemEnum.Tier.COMMON);
+                ItemStack item = new ItemStack(dotu);
 
-                HashMap<String, String> props = new HashMap<>();
-                props.put("Fire resistance", "1");
-                props.put("Food regen", "3");
+                ItemMeta meta = item.getItemMeta();
+                NamespacedKey slowEat = new NamespacedKey(this.plugin, AugmentEnum.Augment.SLOW_EAT.getName());
+                meta.getPersistentDataContainer().set(slowEat, PersistentDataType.INTEGER, 1);
 
-                ItemMeta decorate = Decorator.decorate(item, props);
-                item.setItemMeta(decorate);
+                item.setItemMeta(meta);
+                // ItemMeta decorate = Decorator.decorate(item, props);
+                // item.setItemMeta(decorate);
                 
-                Damageable damageable = (Damageable) decorate;
-                damageable.setDamage(100);
+                // Damageable damageable = (Damageable) decorate;
+                // damageable.setDamage(100);
 
-                decorate.setDisplayName("Dotu's helm of fireeee");
+                // decorate.setDisplayName("Dotu's helm of fireeee");
                 
 
                 player.getInventory().addItem(item);

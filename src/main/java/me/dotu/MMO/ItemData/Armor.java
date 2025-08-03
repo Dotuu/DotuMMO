@@ -8,27 +8,25 @@ public class Armor extends MasterItem{
 
     private Material type;
     private ItemEnum.Tier tier;
-    private int dropChance;
-    private String dropTable;
     private short sockets;
     private int durability;
     private String name;
 
-    public Armor(String name, int durability, short sockets, int dropChance, String dropTable, Material type, ItemEnum.Tier tier) {
-        super(name, durability, sockets, dropChance, type, tier);
+    public Armor(String name, int durability, short sockets, Material type, ItemEnum.Tier tier) {
+        super(name, sockets, sockets, type, tier);
         this.type = type;
         this.tier = tier;
-        this.dropChance = dropChance;
-        this.dropTable = dropTable;
         this.sockets = sockets;
         this.durability = durability;
         this.name = name;
     }
 
+    @Override
     public Material getType() {
         return this.type;
     }
 
+    @Override
     public void setType(Material type) {
         this.type = type;
     }
@@ -41,22 +39,6 @@ public class Armor extends MasterItem{
         this.tier = tier;
     }
 
-    public int getDropChance() {
-        return this.dropChance;
-    }
-
-    public void setDropChance(int dropChance) {
-        this.dropChance = dropChance;
-    }
-    
-    public String getDropTable() {
-        return dropTable;
-    }
-
-    public void setDropTable(String dropTable) {
-        this.dropTable = dropTable;
-    }
-
     public short getSockets() {
         return this.sockets;
     }
@@ -65,11 +47,11 @@ public class Armor extends MasterItem{
         this.sockets = sockets;
     }
 
-    public int getDurability() {
+    public int getArmorDurability() {
         return this.durability;
     }
 
-    public void setDurability(int durability) {
+    public void setArmorDurability(int durability) {
         this.durability = durability;
     }
 

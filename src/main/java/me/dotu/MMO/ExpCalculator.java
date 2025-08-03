@@ -1,6 +1,9 @@
 package me.dotu.MMO;
 
+import java.util.UUID;
+
 import me.dotu.MMO.Enums.SkillEnum;
+import me.dotu.MMO.Managers.PvpManager;
 
 public class ExpCalculator {
 
@@ -27,5 +30,13 @@ public class ExpCalculator {
             level++;
         }
         return level;
+    }
+
+    public static int calculatePvpExp(UUID uuid){
+        PvpManager pvpManager = new PvpManager();
+        double kdr = pvpManager.getKdr(uuid);
+
+        double xp = baseXp * Math.log10(kdr + 1);
+        return (int) Math.max(xp, baseXp);
     }
 }

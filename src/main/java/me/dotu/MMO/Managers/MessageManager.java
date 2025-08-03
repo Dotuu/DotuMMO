@@ -1,4 +1,4 @@
-package me.dotu.MMO.Messages;
+package me.dotu.MMO.Managers;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -6,7 +6,9 @@ public class MessageManager {
     public static enum Type{
         ACHIEVMENT,
         LEVEL_UP,
-        FUN
+        FUN,
+        SUCCESS,
+        ERROR
     }
 
     private static String prefix = ChatColor.AQUA + "DotuMMO - ";
@@ -19,6 +21,10 @@ public class MessageManager {
                 return prefix + ChatColor.YELLOW + message + ".";
             case FUN:
                 return prefix + ChatColor.LIGHT_PURPLE + message + ".";
+            case SUCCESS:
+                return prefix + ChatColor.YELLOW + message + ".";
+            case ERROR:
+                return prefix + ChatColor.RED + message + ".";
             default:
                 return message;
         }

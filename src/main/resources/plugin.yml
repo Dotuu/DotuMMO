@@ -15,3 +15,6 @@ commands:
     chunktest:
         description: Test command, please ignore
         usage: /chunktest
+    dotummo:
+        description: Main Command for DotuMMO
+        usage: /dotummo

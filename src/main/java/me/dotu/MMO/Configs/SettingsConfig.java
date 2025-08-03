@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,7 +19,7 @@ import me.dotu.MMO.Managers.SettingsManager;
 public class SettingsConfig {
     private final File configFile;
     private final JavaPlugin plugin;
-    private final String filename = "Settings.json";
+    private final String filename = "settings.json";
     public static HashMap<ConfigEnum.Settings, SettingsManager> settingsMap = new HashMap<>();
 
     public SettingsConfig(JavaPlugin plugin) {
@@ -28,7 +29,7 @@ public class SettingsConfig {
             this.setupDefaults();
         }
         else{
-            this.populateSettingsMap();
+            this.loadSettingsFromFile();
         }
     }
 
@@ -37,11 +38,11 @@ public class SettingsConfig {
     }
 
     public void reloadConfig(){
-        this.settingsMap.clear();
-        this.populateSettingsMap();
+        settingsMap.clear();
+        this.loadSettingsFromFile();
     }
 
-    private void populateSettingsMap(){
+    private void loadSettingsFromFile(){
         JsonObject read = null;
         try (FileReader reader = new FileReader(this.configFile)){
             read = JsonParser.parseReader(reader).getAsJsonObject();
@@ -53,7 +54,7 @@ public class SettingsConfig {
             JsonObject settingsJson = read.getAsJsonObject("Settings");
             String settingsName;
             for (ConfigEnum.Settings name : ConfigEnum.Settings.values()){
-                settingsName = name.toString().toLowerCase().replace("_", " ");
+                settingsName = name.toString().toLowerCase();
                 if (settingsJson.has(settingsName)){
                     JsonObject settings = settingsJson.getAsJsonObject(settingsName);
                     settingsMap.put(name, new SettingsManager(settings));
@@ -63,7 +64,6 @@ public class SettingsConfig {
     }
 
     private void setupDefaults() {
-        System.out.println("DotuMMO - Settings: Running first time setup");
         File parentDir = this.configFile.getParentFile();
         if (!parentDir.exists()) {
             parentDir.mkdirs();
@@ -76,9 +76,31 @@ public class SettingsConfig {
         try (FileWriter writer = new FileWriter(this.configFile)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(defaultConfig, writer);
-            this.populateSettingsMap();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        this.loadSettingsFromFile();
+    }
+
+    public void saveSettingsToFile(){
+        JsonObject settings = new JsonObject();
+
+        for (Map.Entry<ConfigEnum.Settings, SettingsManager> entry : settingsMap.entrySet()) {
+            ConfigEnum.Settings key = entry.getKey();
+            SettingsManager manager = entry.getValue();
+            settings.add(key.toString().toLowerCase(), manager.getSettings());
+
+        }
+
+        JsonObject root = new JsonObject();
+        root.add("Settings", settings);
+
+        try(FileWriter writer = new FileWriter(this.configFile)){
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(root, writer);
+        }
+        catch(Exception e){
+
         }
     }
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -25,27 +26,46 @@ public class PlayerConfig implements Listener{
     private File configFile;
     private final JavaPlugin plugin;
     private String filename;
-    public static HashMap<UUID, PlayerManager> playerdataMap = new HashMap<>();
+    public static HashMap<UUID, PlayerManager> playerSettings = new HashMap<>();
 
     public PlayerConfig(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
     
-    public void updatePlayerConfig(UUID uuid){
-        PlayerManager manager = playerdataMap.get(uuid);
+    public void saveSettingsToFile(UUID uuid){
+        PlayerManager manager = playerSettings.get(uuid);
         if (manager != null){
-            File file = this.getPlayerConfig(uuid);
+            File file = this.getPlayerFile(uuid);
             
             try(FileWriter writer = new FileWriter(file)){
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                gson.toJson(manager.getConfig(), writer);
+                gson.toJson(manager.getSettings(), writer);
+                playerSettings.remove(uuid);
             }catch(Exception e){
             }
         }
     }
 
-    public void mapPlayerConfig(UUID uuid){
+    public void saveAllPlayerSettingsToFile(){
+        for (Map.Entry<UUID, PlayerManager> entry : playerSettings.entrySet()){
+            UUID uuid = entry.getKey();
+            PlayerManager manager = entry.getValue();
+
+            if (manager != null){
+            File file = this.getPlayerFile(uuid);
+            
+            try(FileWriter writer = new FileWriter(file)){
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                gson.toJson(manager.getSettings(), writer);
+                playerSettings.remove(uuid);
+            }catch(Exception e){
+            }
+        }
+        }
+    }
+
+    public void loadSettingsFromFile(UUID uuid){
         this.filename = uuid.toString() + ".json";
         if (!this.filename.isEmpty()){
             this.configFile = new File(new File(this.plugin.getDataFolder(), "playerdata"), this.filename);
@@ -53,18 +73,18 @@ public class PlayerConfig implements Listener{
                 this.setupDefaults(uuid);
             }
             else{
-                playerdataMap.put(uuid, new PlayerManager(getPlayerData(uuid)));
+                playerSettings.put(uuid, new PlayerManager(getPlayerFileData(uuid)));
             }
         }
     }
 
-    private File getPlayerConfig(UUID uuid){
+    private File getPlayerFile(UUID uuid){
         String playerFile = uuid.toString() + ".json";
         return new File(new File(this.plugin.getDataFolder(), "playerdata"), playerFile);
     }
 
-    private JsonObject getPlayerData(UUID uuid){
-        File file = getPlayerConfig(uuid);
+    private JsonObject getPlayerFileData(UUID uuid){
+        File file = getPlayerFile(uuid);
         if (!file.exists()){
             return null;
         }
@@ -77,7 +97,6 @@ public class PlayerConfig implements Listener{
     }
     
     private void setupDefaults(UUID uuid) {
-        System.out.println("DotuMMO - Creating player file for: " + uuid);
         File parentDir = this.configFile.getParentFile();
         if (!parentDir.exists()) {
             parentDir.mkdirs();
@@ -99,13 +118,13 @@ public class PlayerConfig implements Listener{
     public void playerJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
-        this.mapPlayerConfig(uuid);
+        this.loadSettingsFromFile(uuid);
     }
     
     @EventHandler
     public void playerQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
-        this.updatePlayerConfig(uuid);
+        this.saveSettingsToFile(uuid);
     }
 }
