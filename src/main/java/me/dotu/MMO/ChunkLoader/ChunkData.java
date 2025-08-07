@@ -9,14 +9,11 @@ public class ChunkData {
     private ArrayList<Location> blockLocations;
     private String chunkId;
     private boolean updated;
-    private boolean fileWasEmpty;
 
-    public ChunkData(ArrayList<Location> blockLocations , String chunkId, boolean updated){
+    public ChunkData(ArrayList<Location> blockLocations, String chunkId, boolean updated) {
         this.blockLocations = blockLocations;
         this.chunkId = chunkId;
-        this.blockLocations = blockLocations;
         this.updated = updated;
-        // this.fileWasEmpty = fileWasEmpty;
     }
 
     public String getChunkId() {
@@ -35,27 +32,19 @@ public class ChunkData {
         this.blockLocations = blockLocations;
     }
 
-    public void addBlockLocations(Location loc){
+    public void addBlockLocations(Location loc) {
         this.blockLocations.add(loc);
     }
 
-    public void removeBlockLocations(Location loc){
+    public void removeBlockLocations(Location loc) {
         this.blockLocations.remove(loc);
     }
 
-    public void setUpdated(boolean updated){
+    public void setUpdated(boolean updated) {
         this.updated = updated;
     }
 
-    public boolean isUpdated(){
+    public boolean isUpdated() {
         return this.updated;
-    }
-
-    public boolean isFileWasEmpty() {
-        return this.fileWasEmpty;
-    }
-
-    public void setFileWasEmpty(boolean fileWasEmpty) {
-        this.fileWasEmpty = fileWasEmpty;
     }
 }

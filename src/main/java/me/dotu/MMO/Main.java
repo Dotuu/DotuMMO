@@ -9,6 +9,7 @@ import me.dotu.MMO.Commands.TestCommand;
 import me.dotu.MMO.Configs.ItemConfig;
 import me.dotu.MMO.Configs.PlayerConfig;
 import me.dotu.MMO.Configs.SettingsConfig;
+import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Managers.PvpManager;
 import me.dotu.MMO.Skills.Axe;
 import me.dotu.MMO.Skills.Fishing;
@@ -27,6 +28,7 @@ public class Main extends JavaPlugin {
         // setup config files
         new ItemConfig(this);
         new SettingsConfig(this);
+        new SpawnerConfig(this);
 
         // setup data files
         
@@ -83,6 +85,12 @@ public class Main extends JavaPlugin {
 
         SettingsConfig settingsConfig = new SettingsConfig(this);
         settingsConfig.saveSettingsToFile();
+
+        ChunkDataManager cdm = new ChunkDataManager(this);
+        cdm.saveAllChunkDataToJson();
+
+        SpawnerConfig spawnerConfig = new SpawnerConfig(this);
+        spawnerConfig.saveAllSpawnerSettingsToFile();
     }
 
     public static void main(String[] args) {

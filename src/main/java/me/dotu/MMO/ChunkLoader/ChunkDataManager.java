@@ -16,7 +16,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -36,6 +35,12 @@ public class ChunkDataManager implements Listener {
         this.plugin = plugin;
     }
 
+    public void saveAllChunkDataToJson(){
+        for (String chunkId : loadedChunks.keySet()){
+            saveChunkDataToJson(chunkId);
+        }
+    }
+
     public void saveChunkDataToJson(String chunkId) {
         ChunkData chunkData = loadedChunks.get(chunkId);
         if (chunkData.isUpdated()) {
@@ -50,13 +55,11 @@ public class ChunkDataManager implements Listener {
             if (locations.isEmpty()) {
                 if (chunkFile.exists()) {
                     chunkFile.delete();
-                    System.out.println("No Data");
                 }
             } else {
                 try (FileWriter writer = new FileWriter(chunkFile)) {
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
                     gson.toJson(locations, writer);
-                    System.out.println("Writing to disk");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -77,20 +80,9 @@ public class ChunkDataManager implements Listener {
             for (JsonElement elem : locationsArray) {
                 locationStrings.add(elem.getAsString());
             }
-
             return this.deSerialize(locationStrings);
         } catch (Exception e) {
             return new ArrayList<Location>();
-        }
-    }
-
-    @EventHandler
-    public void onChunkLoad(ChunkLoadEvent event) {
-        String chunkId = this.getChunkIdentifier(event.getChunk());
-
-        if (!loadedChunks.containsKey(chunkId)) {
-            ArrayList<Location> blockLocations = this.loadChunkDataFromJson(chunkId);
-            loadedChunks.put(chunkId, new ChunkData(blockLocations, chunkId, false));
         }
     }
 
@@ -107,12 +99,16 @@ public class ChunkDataManager implements Listener {
     public void blockPlace(BlockPlaceEvent event) {
         ArrayList<Material> blocks = this.getBlocksList();
 
-        String placedName = event.getBlock().getType().toString();
-        if (blocks.contains(placedName)) {
+        Material placed = event.getBlock().getType();
+        if (blocks.contains(placed)) {
             Block placedBlock = event.getBlock();
             String chunkId = getChunkIdentifier(placedBlock.getChunk());
 
-            if (loadedChunks.containsKey(chunkId)) {
+            if (!loadedChunks.containsKey(chunkId)){
+                ArrayList<Location> blockLocations = this.loadChunkDataFromJson(chunkId);
+                loadedChunks.put(chunkId, new ChunkData(blockLocations, chunkId, false));
+            }
+            else{
                 ChunkData chunkData = loadedChunks.get(chunkId);
                 chunkData.setUpdated(true);
 
@@ -120,41 +116,45 @@ public class ChunkDataManager implements Listener {
                 chunkData.addBlockLocations(placedLoc);
             }
         }
-        System.out.println("NOPE");
     }
 
     @EventHandler
     public void blockBreak(BlockBreakEvent event) {
-        ArrayList<String> blocks = this.getBlocksList();
-        String brokenName = event.getBlock().getType().toString();
+        ArrayList<Material> blocks = this.getBlocksList();
+        Material broken = event.getBlock().getType();
 
-        if (blocks.contains(brokenName)) {
-            Block brokenBlock = event.getBlock();
-            String chunkId = getChunkIdentifier(brokenBlock.getChunk());
+        Block brokenBlock = event.getBlock();
+        String chunkId = getChunkIdentifier(brokenBlock.getChunk());
 
-            if (loadedChunks.containsKey(chunkId)) {
-                ChunkData chunkData = loadedChunks.get(chunkId);
+        if (!loadedChunks.containsKey(chunkId)){
+            ArrayList<Location> blockLocations = this.loadChunkDataFromJson(chunkId);
+            loadedChunks.put(chunkId, new ChunkData(blockLocations, chunkId, false));
+        }
 
-                Location brokenLoc = brokenBlock.getLocation();
-                chunkData.removeBlockLocations(brokenLoc);
-                chunkData.setUpdated(true);
-            }
+        if (blocks.contains(broken)) {
+            ChunkData chunkData = loadedChunks.get(chunkId);
+            Location brokenLoc = brokenBlock.getLocation();
+            chunkData.removeBlockLocations(brokenLoc);
+            chunkData.setUpdated(true);
         }
     }
 
     public boolean wasBlockBroken(Block block) {
-        ArrayList<String> blocks = this.getBlocksList();
-        String blockName = block.getType().toString();
+        ArrayList<Material> blocks = this.getBlocksList();
+        Material blockMat = block.getType();
 
-        if (blocks.contains(blockName)) {
+        if (blocks.contains(blockMat)) {
             String chunkId = this.getChunkIdentifier(block.getChunk());
 
-            if (loadedChunks.containsKey(chunkId)) {
-                Location blockLoc = block.getLocation();
-                ChunkData chunkData = loadedChunks.get(chunkId);
-
-                return chunkData.getBlockLocations().contains(blockLoc);
+            if (!loadedChunks.containsKey(chunkId)){
+                ArrayList<Location> blockLocations = this.loadChunkDataFromJson(chunkId);
+                loadedChunks.put(chunkId, new ChunkData(blockLocations, chunkId, false));
             }
+
+            Location blockLoc = block.getLocation();
+            ChunkData chunkData = loadedChunks.get(chunkId);
+
+            return chunkData.getBlockLocations().contains(blockLoc);
         }
         return false;
     }
