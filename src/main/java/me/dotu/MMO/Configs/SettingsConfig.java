@@ -1,7 +1,9 @@
 package me.dotu.MMO.Configs;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,11 +22,13 @@ public class SettingsConfig extends JsonFileManager{
     public static HashMap<ConfigEnum.Settings, SettingsManager> settingsMap = new HashMap<>();
 
     public SettingsConfig(JavaPlugin plugin) {
-        super(plugin, "settings.json");
+        super(plugin, new File(plugin.getDataFolder(), "settings.json"), "configs");
 
         this.createFileIfNotExists("settings.json");
 
-        this.setupDefaults(ConfigEnum.Type.SETTINGS);
+        this.setupDefaults(Arrays.asList(
+            ConfigEnum.Type.SETTINGS
+        ));
     }
     
     public void reloadConfig(){
@@ -35,7 +39,7 @@ public class SettingsConfig extends JsonFileManager{
     @Override
     protected void loadFromFile(){
         JsonObject read = null;
-        try (FileReader reader = new FileReader(this.getFile())){
+        try (FileReader reader = new FileReader(this.file)){
             read = JsonParser.parseReader(reader).getAsJsonObject();
         } catch (Exception e) {
         }
@@ -67,7 +71,7 @@ public class SettingsConfig extends JsonFileManager{
         JsonObject root = new JsonObject();
         root.add("Settings", settings);
 
-        try(FileWriter writer = new FileWriter(this.getFile())){
+        try(FileWriter writer = new FileWriter(this.file)){
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(root, writer);
         }

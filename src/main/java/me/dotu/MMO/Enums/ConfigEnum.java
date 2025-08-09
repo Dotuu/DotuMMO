@@ -84,7 +84,7 @@ public class ConfigEnum {
         PLAYERDATA{
             @Override
             public void populate(JsonObject defaultConfig){
-                JsonObject data = new JsonObject();
+                JsonObject playerData = new JsonObject();
 
                 JsonObject guild = new JsonObject();
                 guild.addProperty("active", false);
@@ -111,15 +111,74 @@ public class ConfigEnum {
                 }
                 skills.add("xp", skillsExp);
 
-                data.add("skills", skills);
-                data.add("guild", guild);
-                data.add("titles", titles);
-                data.add("party", party);
-                data.add("pvp", pvp);
+                playerData.add("skills", skills);
+                playerData.add("guild", guild);
+                playerData.add("titles", titles);
+                playerData.add("party", party);
+                playerData.add("pvp", pvp);
 
-                defaultConfig.add("Data", data);
+                defaultConfig.add("Data", playerData);
+            }
+        },
+
+        MOB_TABLE{
+            @Override
+            public void populate(JsonObject defaultConfig){
+                JsonObject mobTable = new JsonObject();
+
+                // Easy Table
+                JsonObject easy = new JsonObject();
+                JsonObject easyItem = new JsonObject();
+                easyItem.addProperty("WEIGHT", 10);
+
+                easy.add("LEATHER_HELMET", easyItem);
+
+                // Medium Table
+                JsonObject medium = new JsonObject();
+                JsonObject mediumItem = new JsonObject();
+                mediumItem.addProperty("weight", 10);
+
+                medium.add("GOLDEN_HELMET", mediumItem);
+
+                // Hard Table
+                JsonObject hard = new JsonObject();
+                JsonObject hardItem = new JsonObject();
+                hardItem.addProperty("weight", 10);
+
+                hard.add("CHAINMAIL_HELMET", hardItem);
+
+                // Very Hard Table
+                JsonObject veryHard = new JsonObject();
+                JsonObject veryHardItem = new JsonObject();
+                veryHardItem.addProperty("weight", 10);
+
+                veryHard.add("IRON_HELMET", veryHardItem);
+
+                // Brutal Table
+                JsonObject brutal = new JsonObject();
+                JsonObject brutalItem = new JsonObject();
+                brutalItem.addProperty("weight", 10);
+
+                brutal.add("DIAMOND_HELMET", brutalItem);
+
+                // Impossible Table
+                JsonObject impossible = new JsonObject();
+                JsonObject impossibleItem = new JsonObject();
+                impossibleItem.addProperty("weight", 10);
+
+                impossible.add("NETHERITE_HELMET", impossibleItem);
+
+                mobTable.add("EASY", easy);
+                mobTable.add("MEDIUM", medium);
+                mobTable.add("HARD", hard);
+                mobTable.add("VERY_HARD", veryHard);
+                mobTable.add("BRUTAL", brutal);
+                mobTable.add("IMPOSSIBLE", impossible);  
+                
+                defaultConfig.add("Tables", mobTable);
             }
         };
+
         public abstract void populate(JsonObject config);
     }
     

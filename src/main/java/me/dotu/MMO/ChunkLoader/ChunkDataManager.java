@@ -44,12 +44,12 @@ public class ChunkDataManager implements Listener {
     public void saveChunkDataToJson(String chunkId) {
         ChunkData chunkData = loadedChunks.get(chunkId);
         if (chunkData.isUpdated()) {
-            File chunkDataFolder = new File(this.plugin.getDataFolder(), "ChunkData");
+            File chunkDataFolder = new File(this.plugin.getDataFolder(), "chunkdata");
             if (!chunkDataFolder.exists()) {
                 chunkDataFolder.mkdirs();
             }
 
-            File chunkFile = new File(new File(this.plugin.getDataFolder(), "ChunkData"), chunkId + ".json");
+            File chunkFile = new File(new File(this.plugin.getDataFolder(), "chunkdata"), chunkId + ".json");
             ArrayList<String> locations = this.serialize(chunkData.getBlockLocations());
 
             if (locations.isEmpty()) {
@@ -71,7 +71,7 @@ public class ChunkDataManager implements Listener {
 
     public ArrayList<Location> loadChunkDataFromJson(String identifier) {
         String filename = identifier + ".json";
-        File chunkFile = new File(new File(this.plugin.getDataFolder(), "ChunkData"), filename);
+        File chunkFile = new File(new File(this.plugin.getDataFolder(), "chunkdata"), filename);
 
         try (FileReader reader = new FileReader(chunkFile)) {
             JsonArray locationsArray = JsonParser.parseReader(reader).getAsJsonArray();

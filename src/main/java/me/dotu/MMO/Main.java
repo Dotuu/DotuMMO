@@ -7,6 +7,7 @@ import me.dotu.MMO.ChunkLoader.ChunkDataManager;
 import me.dotu.MMO.Commands.DotuMmoCommand;
 import me.dotu.MMO.Commands.TestCommand;
 import me.dotu.MMO.Configs.ItemConfig;
+import me.dotu.MMO.Configs.MobTableConfig;
 import me.dotu.MMO.Configs.PlayerConfig;
 import me.dotu.MMO.Configs.SettingsConfig;
 import me.dotu.MMO.Configs.SpawnerConfig;
@@ -29,6 +30,7 @@ public class Main extends JavaPlugin {
         new ItemConfig(this);
         new SettingsConfig(this);
         new SpawnerConfig(this);
+        new MobTableConfig(this);
 
         // setup data files
         

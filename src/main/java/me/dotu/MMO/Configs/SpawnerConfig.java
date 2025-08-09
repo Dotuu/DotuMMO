@@ -18,18 +18,20 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class SpawnerConfig {
-    private final JavaPlugin plugin;
-    private final String filename = "spawners.json";
+import me.dotu.MMO.Managers.JsonFileManager;
+
+public class SpawnerConfig extends JsonFileManager{
     public static HashMap<Location, HashMap<Location, Boolean>> spawners = new HashMap<>();
 
     public SpawnerConfig(JavaPlugin plugin) {
-        this.plugin = plugin;
+        super(plugin, new File(plugin.getDataFolder(), "spawners.json"), "data");
+
+        this.createFileIfNotExists("spawners.json");
+
         this.populateSpawnersMap();
     }
 
     public void saveAllSpawnerSettingsToFile() {
-        File file = new File(this.plugin.getDataFolder(), this.filename);
         JsonObject root = new JsonObject();
         JsonObject spawnersObj = new JsonObject();
 
@@ -47,20 +49,18 @@ public class SpawnerConfig {
 
         root.add("spawners", spawnersObj);
 
-        try (FileWriter writer = new FileWriter(file)) {
+        try (FileWriter writer = new FileWriter(this.file)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(root, writer);
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
     private void populateSpawnersMap() {
-        File file = new File(this.plugin.getDataFolder(), this.filename);
         if (!file.exists()) {
             return;
         }
-        try (FileReader reader = new FileReader(file)) {
+        try (FileReader reader = new FileReader(this.file)) {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonObject spawnersObj = root.getAsJsonObject("spawners");
 
@@ -82,7 +82,6 @@ public class SpawnerConfig {
                 spawners.put(spawnerLoc, spawnLocList);
             }
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

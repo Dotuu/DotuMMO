@@ -67,7 +67,7 @@ public class PlayerConfig extends JsonFileManager implements Listener{
         this.filename = uuid.toString() + ".json";
         if (!this.filename.isEmpty()){
             this.file = new File(new File(this.plugin.getDataFolder(), "playerdata"), this.filename);
-            if (!this.getFile().exists()){
+            if (!this.getPlayerFile(uuid).exists()){
                 this.setupPlayerDefaults(uuid);
             }
             playerSettings.put(uuid, new PlayerManager(getPlayerFileData(uuid)));
@@ -92,7 +92,7 @@ public class PlayerConfig extends JsonFileManager implements Listener{
     }
     
     private void setupPlayerDefaults(UUID uuid) {
-        File parentDir = this.getFile().getParentFile();
+        File parentDir = this.getPlayerFile(uuid).getParentFile();
         if (!parentDir.exists()) {
             parentDir.mkdirs();
         }
@@ -101,7 +101,7 @@ public class PlayerConfig extends JsonFileManager implements Listener{
         
         ConfigEnum.Type.PLAYERDATA.populate(defaultConfig);
         
-        try (FileWriter writer = new FileWriter(this.getFile())) {
+        try (FileWriter writer = new FileWriter(this.getPlayerFile(uuid))) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(defaultConfig, writer);
         } catch (Exception e) {

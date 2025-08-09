@@ -2,12 +2,12 @@ package me.dotu.MMO.ItemData;
 
 import org.bukkit.inventory.ItemStack;
 
-public class LootEntry {
+public class MobGear {
 
     private ItemStack item;
     private int weight;
 
-    public LootEntry(ItemStack item, int weight){
+    public MobGear(ItemStack item, int weight){
         this.item = item;
         this.weight = weight;
     }

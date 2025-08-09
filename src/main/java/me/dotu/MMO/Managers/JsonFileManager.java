@@ -2,6 +2,7 @@ package me.dotu.MMO.Managers;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.List;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,10 +22,11 @@ public abstract class JsonFileManager {
         this.plugin = plugin;
         this.path = path;
     }
-
-    protected JsonFileManager(JavaPlugin plugin){
+    
+    protected JsonFileManager(JavaPlugin plugin, File file, String path){
         this.plugin = plugin;
-        this.path = "";
+        this.file = file;
+        this.path = path;
     }
 
     protected void createFileIfNotExists(String fileName){
@@ -34,24 +36,31 @@ public abstract class JsonFileManager {
             dir.mkdirs();
         }
         this.file = new File(dir, fileName);
-    }
 
-    protected File getFile(){
-        return this.file;
-    }    
+        try{
+            if (!this.file.exists()){
+                this.file.createNewFile();
+            }
+        }
+        catch(Exception e){
+
+        }
+    }
 
     protected void reloadFile(File file){
         // reload logic here later
     }
 
-    protected void setupDefaults(ConfigEnum.Type fileDefaults){
+    protected void setupDefaults(List<ConfigEnum.Type> fileDefaults){
         if (!this.file.exists()){
             return;
         }
 
         JsonObject root = new JsonObject();
 
-        fileDefaults.populate(root);
+        for (ConfigEnum.Type setting : fileDefaults){
+            setting.populate(root);
+        }
 
         try (FileWriter writer = new FileWriter(this.file)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();

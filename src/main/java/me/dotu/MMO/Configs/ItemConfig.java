@@ -1,5 +1,8 @@
 package me.dotu.MMO.Configs;
 
+import java.io.File;
+import java.util.Arrays;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.dotu.MMO.Enums.ConfigEnum;
@@ -7,22 +10,14 @@ import me.dotu.MMO.Managers.JsonFileManager;
 
 public class ItemConfig extends JsonFileManager{
     public ItemConfig(JavaPlugin plugin) {
-        super(plugin);
+        super(plugin, new File(plugin.getDataFolder(), "items.json"), "configs");
 
-        this.createFileIfNotExists("itemdata.json");
+        this.createFileIfNotExists("items.json");
 
-        this.setupDefaults(ConfigEnum.Type.TOOLS);
-        this.setupDefaults(ConfigEnum.Type.ARMORS);
-        this.setupDefaults(ConfigEnum.Type.WEAPONS);
-    }
-
-    @Override
-    protected void loadFromFile() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    protected void saveToFile() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.setupDefaults(Arrays.asList(
+            ConfigEnum.Type.TOOLS,
+            ConfigEnum.Type.ARMORS,
+            ConfigEnum.Type.WEAPONS
+        ));
     }
 }
