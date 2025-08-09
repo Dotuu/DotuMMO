@@ -9,11 +9,11 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -55,16 +55,28 @@ public abstract class CustomSpawnerHandler implements Listener{
         living.setHealth(calculateHealth(props.getLevel()));
 
         // set entity armor
-        if(props.isArmored()){
-            for (int x = 0; x < 4; x++){
-                if (armorRollChance(props.getDifficulty().getDifficultyValue())){
-                    
+        if (this.hasEquipmentSlots(living)){
+            if(props.isArmored()){
+                for (int x = 0; x < 4; x++){
+                    if (rollChance(props.getDifficulty().getDifficultyValue())){
+                        // equip armor piece
+                    }
+                }
+            }
+            // set entity weapon
+            if (props.isWeaponed()){
+                if (rollChance(props.getDifficulty().getDifficultyValue())){
+                    // equip weapon
                 }
             }
         }
     }
 
-    private boolean armorRollChance(double chance){
+    private boolean hasEquipmentSlots(LivingEntity entity) {
+        return (entity instanceof Mob) && entity.getEquipment() != null;
+    }
+
+    private boolean rollChance(double chance){
         return Math.random() < (chance / 100.0);
     }
 

@@ -1,6 +1,5 @@
 package me.dotu.MMO.Configs;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
@@ -14,40 +13,31 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import me.dotu.MMO.Enums.ConfigEnum;
+import me.dotu.MMO.Managers.JsonFileManager;
 import me.dotu.MMO.Managers.SettingsManager;
 
-public class SettingsConfig {
-    private final File configFile;
-    private final JavaPlugin plugin;
-    private final String filename = "settings.json";
+public class SettingsConfig extends JsonFileManager{
     public static HashMap<ConfigEnum.Settings, SettingsManager> settingsMap = new HashMap<>();
 
     public SettingsConfig(JavaPlugin plugin) {
-        this.plugin = plugin;
-        this.configFile = new File(this.plugin.getDataFolder(), this.filename);
-        if (!this.configFile.exists()) {
-            this.setupDefaults();
-        }
-        else{
-            this.loadSettingsFromFile();
-        }
-    }
+        super(plugin, "settings.json");
 
-    public File getConfig() {
-        return this.configFile;
-    }
+        this.createFileIfNotExists("settings.json");
 
+        this.setupDefaults(ConfigEnum.Type.SETTINGS);
+    }
+    
     public void reloadConfig(){
         settingsMap.clear();
-        this.loadSettingsFromFile();
+        this.loadFromFile();
     }
 
-    private void loadSettingsFromFile(){
+    @Override
+    protected void loadFromFile(){
         JsonObject read = null;
-        try (FileReader reader = new FileReader(this.configFile)){
+        try (FileReader reader = new FileReader(this.getFile())){
             read = JsonParser.parseReader(reader).getAsJsonObject();
         } catch (Exception e) {
-            e.printStackTrace();
         }
 
         if (read != null){
@@ -63,26 +53,8 @@ public class SettingsConfig {
         }
     }
 
-    private void setupDefaults() {
-        File parentDir = this.configFile.getParentFile();
-        if (!parentDir.exists()) {
-            parentDir.mkdirs();
-        }
-
-        JsonObject defaultConfig = new JsonObject();
-
-        ConfigEnum.Type.SETTINGS.populate(defaultConfig);
-
-        try (FileWriter writer = new FileWriter(this.configFile)) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            gson.toJson(defaultConfig, writer);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        this.loadSettingsFromFile();
-    }
-
-    public void saveSettingsToFile(){
+    @Override
+    public void saveToFile(){
         JsonObject settings = new JsonObject();
 
         for (Map.Entry<ConfigEnum.Settings, SettingsManager> entry : settingsMap.entrySet()) {
@@ -95,7 +67,7 @@ public class SettingsConfig {
         JsonObject root = new JsonObject();
         root.add("Settings", settings);
 
-        try(FileWriter writer = new FileWriter(this.configFile)){
+        try(FileWriter writer = new FileWriter(this.getFile())){
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(root, writer);
         }

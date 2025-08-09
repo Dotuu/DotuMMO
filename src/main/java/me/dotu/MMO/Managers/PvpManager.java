@@ -34,7 +34,6 @@ public class PvpManager implements Listener{
             }
         }
         catch(Exception e){
-            e.printStackTrace();
         }
     }
 

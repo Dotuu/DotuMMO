@@ -20,20 +20,18 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import me.dotu.MMO.Enums.ConfigEnum;
+import me.dotu.MMO.Managers.JsonFileManager;
 import me.dotu.MMO.Managers.PlayerManager;
 
-public class PlayerConfig implements Listener{
-    private File configFile;
-    private final JavaPlugin plugin;
+public class PlayerConfig extends JsonFileManager implements Listener{
     private String filename;
     public static HashMap<UUID, PlayerManager> playerSettings = new HashMap<>();
 
     public PlayerConfig(JavaPlugin plugin) {
-        this.plugin = plugin;
+        super(plugin, "playerdata");
     }
 
-    
-    public void saveSettingsToFile(UUID uuid){
+    public void saveToFile(UUID uuid){
         PlayerManager manager = playerSettings.get(uuid);
         if (manager != null){
             File file = this.getPlayerFile(uuid);
@@ -65,16 +63,14 @@ public class PlayerConfig implements Listener{
         }
     }
 
-    public void loadSettingsFromFile(UUID uuid){
+    public void loadFromFile(UUID uuid){
         this.filename = uuid.toString() + ".json";
         if (!this.filename.isEmpty()){
-            this.configFile = new File(new File(this.plugin.getDataFolder(), "playerdata"), this.filename);
-            if (!this.configFile.exists()){
-                this.setupDefaults(uuid);
+            this.file = new File(new File(this.plugin.getDataFolder(), "playerdata"), this.filename);
+            if (!this.getFile().exists()){
+                this.setupPlayerDefaults(uuid);
             }
-            else{
-                playerSettings.put(uuid, new PlayerManager(getPlayerFileData(uuid)));
-            }
+            playerSettings.put(uuid, new PlayerManager(getPlayerFileData(uuid)));
         }
     }
 
@@ -84,20 +80,19 @@ public class PlayerConfig implements Listener{
     }
 
     private JsonObject getPlayerFileData(UUID uuid){
-        File file = getPlayerFile(uuid);
-        if (!file.exists()){
+        File playerFile = getPlayerFile(uuid);
+        if (!playerFile.exists()){
             return null;
         }
-        try(FileReader reader = new FileReader(file)){
+        try(FileReader reader = new FileReader(playerFile)){
             return JsonParser.parseReader(reader).getAsJsonObject();
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
     
-    private void setupDefaults(UUID uuid) {
-        File parentDir = this.configFile.getParentFile();
+    private void setupPlayerDefaults(UUID uuid) {
+        File parentDir = this.getFile().getParentFile();
         if (!parentDir.exists()) {
             parentDir.mkdirs();
         }
@@ -106,11 +101,10 @@ public class PlayerConfig implements Listener{
         
         ConfigEnum.Type.PLAYERDATA.populate(defaultConfig);
         
-        try (FileWriter writer = new FileWriter(this.configFile)) {
+        try (FileWriter writer = new FileWriter(this.getFile())) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(defaultConfig, writer);
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -118,13 +112,13 @@ public class PlayerConfig implements Listener{
     public void playerJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
-        this.loadSettingsFromFile(uuid);
+        this.loadFromFile(uuid);
     }
     
     @EventHandler
     public void playerQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
-        this.saveSettingsToFile(uuid);
+        this.saveToFile(uuid);
     }
 }

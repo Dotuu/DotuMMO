@@ -84,7 +84,7 @@ public class Main extends JavaPlugin {
         playerConfig.saveAllPlayerSettingsToFile();
 
         SettingsConfig settingsConfig = new SettingsConfig(this);
-        settingsConfig.saveSettingsToFile();
+        settingsConfig.saveToFile();
 
         ChunkDataManager cdm = new ChunkDataManager(this);
         cdm.saveAllChunkDataToJson();

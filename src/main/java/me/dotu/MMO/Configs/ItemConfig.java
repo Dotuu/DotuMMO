@@ -1,52 +1,28 @@
 package me.dotu.MMO.Configs;
 
-import java.io.File;
-import java.io.FileWriter;
-
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-
 import me.dotu.MMO.Enums.ConfigEnum;
+import me.dotu.MMO.Managers.JsonFileManager;
 
-public class ItemConfig {
-
-    private final File configFile;
-    private final JavaPlugin plugin;
-    private final String filename = "item.json";
-
+public class ItemConfig extends JsonFileManager{
     public ItemConfig(JavaPlugin plugin) {
-        this.plugin = plugin;
-        this.configFile = new File(this.plugin.getDataFolder(), this.filename);
+        super(plugin);
 
-        if (!this.configFile.exists()) {
-            this.setupDefaults();
-        }
+        this.createFileIfNotExists("itemdata.json");
+
+        this.setupDefaults(ConfigEnum.Type.TOOLS);
+        this.setupDefaults(ConfigEnum.Type.ARMORS);
+        this.setupDefaults(ConfigEnum.Type.WEAPONS);
     }
 
-    public File getConfig() {
-        return this.configFile;
+    @Override
+    protected void loadFromFile() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    private void setupDefaults() {
-        File parentDir = this.configFile.getParentFile();
-        if (!parentDir.exists()) {
-            parentDir.mkdirs();
-        }
-
-        JsonObject defaultConfig = new JsonObject();
-
-        ConfigEnum.Type.TOOLS.populate(defaultConfig);
-        ConfigEnum.Type.ARMORS.populate(defaultConfig);
-        ConfigEnum.Type.WEAPONS.populate(defaultConfig);
-
-        try (FileWriter writer = new FileWriter(this.configFile)) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            gson.toJson(defaultConfig, writer);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @Override
+    protected void saveToFile() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
