@@ -3,7 +3,8 @@ package me.dotu.MMO.Enums;
 public class PermissionEnum {
     public static enum Permissions{
         ADMIN("admin"),
-        STARTSEASON("startseason");
+        PVP("pvp"),
+        SPAWNER("spawner");
 
         private final String permission;
 
