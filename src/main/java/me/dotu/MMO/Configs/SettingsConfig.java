@@ -7,22 +7,21 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import me.dotu.MMO.Enums.ConfigEnum;
+import me.dotu.MMO.Main;
 import me.dotu.MMO.Managers.JsonFileManager;
 import me.dotu.MMO.Managers.SettingsManager;
 
 public class SettingsConfig extends JsonFileManager{
     public static HashMap<ConfigEnum.Settings, SettingsManager> settingsMap = new HashMap<>();
 
-    public SettingsConfig(JavaPlugin plugin) {
-        super(plugin, new File(plugin.getDataFolder(), "settings.json"), "configs");
+    public SettingsConfig() {
+        super( new File(Main.plugin.getDataFolder(), "settings.json"), "configs");
 
         this.createFileIfNotExists("settings.json");
 

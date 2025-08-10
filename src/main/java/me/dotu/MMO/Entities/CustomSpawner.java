@@ -1,18 +1,17 @@
 package me.dotu.MMO.Entities;
 
-import me.dotu.MMO.Enums.SpawnerEnum;
-
 public class CustomSpawner {
 
     private int level;
-    SpawnerEnum.Difficulty difficulty;
+    double difficulty;
     private boolean armored;
     private boolean weaponed;
     private boolean nameVisible;
     private boolean spawnRandomly;
     private String name;
+    private String table;
 
-    public CustomSpawner(int level,SpawnerEnum.Difficulty difficulty, boolean armored, boolean weaponed, boolean nameVisible, boolean spawnRandomly, String name){
+    public CustomSpawner(int level, double difficulty, boolean armored, boolean weaponed, boolean nameVisible, boolean spawnRandomly, String name, String table){
         this.level = level;
         this.difficulty = difficulty;
         this.armored = armored;
@@ -20,6 +19,7 @@ public class CustomSpawner {
         this.nameVisible = nameVisible;
         this.spawnRandomly = spawnRandomly;
         this.name = name;
+        this.table = table;
     }
 
     public int getLevel() {
@@ -30,11 +30,11 @@ public class CustomSpawner {
         this.level = level;
     }
 
-    public SpawnerEnum.Difficulty getDifficulty() {
+    public double getDifficulty() {
         return this.difficulty;
     }
 
-    public void setDifficulty(SpawnerEnum.Difficulty difficulty) {
+    public void setDifficulty(double difficulty) {
         this.difficulty = difficulty;
     }
 
@@ -76,5 +76,13 @@ public class CustomSpawner {
 
     public void setSpawnRandomly(boolean spawnRandomly) {
         this.spawnRandomly = spawnRandomly;
+    }
+
+    public String getTable() {
+        return this.table;
+    }
+
+    public void setTable(String table) {
+        this.table = table;
     }
 }

@@ -1,36 +1,65 @@
 package me.dotu.MMO.Managers;
 
-import java.util.Arrays;
-import java.util.EnumMap;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import me.dotu.MMO.Enums.SpawnerEnum;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import me.dotu.MMO.ItemData.MobGear;
+import me.dotu.MMO.Main;
 
 public class MobGearManager {
-    private static Map<SpawnerEnum.Difficulty, List<MobGear>> lootTables;
-    private Random random;
+    public static Map<String, List<MobGear>> lootTables;
     
     public MobGearManager(){
-        this.lootTables = new EnumMap<>(SpawnerEnum.Difficulty.class);
-        this.random = new Random();
         initLootTables();
     }
 
     private void initLootTables(){
-        List<MobGear> easyLoot = Arrays.asList(new MobGear(new ItemStack(Material.LEATHER_HELMET), 50),
-            new MobGear(new ItemStack(Material.LEATHER_CHESTPLATE), 10),
-            new MobGear(new ItemStack(Material.LEATHER_LEGGINGS), 10),
-            new MobGear(new ItemStack(Material.LEATHER_BOOTS), 10),
-            new MobGear(new ItemStack(Material.GOLDEN_HELMET), 10),
-            new MobGear(new ItemStack(Material.GOLDEN_CHESTPLATE), 10)
-        );
+        try (FileReader reader = new FileReader(new File(Main.plugin.getDataFolder(), "configs/mobtable.json"))){
+            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+            JsonObject lootTablesJson = root.getAsJsonObject("Tables");
 
-        lootTables.put(SpawnerEnum.Difficulty.EASY, easyLoot);
+            for (Map.Entry<String, JsonElement> tableEntry : lootTablesJson.entrySet()){
+                String difficultyName = tableEntry.getKey();
+                JsonObject itemJson = tableEntry.getValue().getAsJsonObject();
+                
+                List<MobGear> gearList = new ArrayList<>();
+
+                for (Map.Entry<String, JsonElement> itemEntry : itemJson.entrySet()){
+                    Material material = this.getMaterial(itemEntry.getKey());
+                    int weight = this.getWeight(itemEntry.getValue().getAsString());
+
+                    gearList.add(new MobGear(new ItemStack(material), weight));
+                }
+
+                lootTables.put(difficultyName, gearList);
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    private int getWeight(String weight){
+        try {
+            return Integer.parseInt(weight);
+        } catch (NumberFormatException nfe) {
+            return 0;
+        }
+    }
+
+    private Material getMaterial(String materialName){
+        try {
+            return Material.valueOf(materialName);
+        } catch (Exception e) {
+            return Material.AIR;
+        }
     }
 }

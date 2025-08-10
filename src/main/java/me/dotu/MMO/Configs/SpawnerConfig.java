@@ -9,7 +9,6 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,13 +17,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import me.dotu.MMO.Main;
 import me.dotu.MMO.Managers.JsonFileManager;
 
 public class SpawnerConfig extends JsonFileManager{
     public static HashMap<Location, HashMap<Location, Boolean>> spawners = new HashMap<>();
 
-    public SpawnerConfig(JavaPlugin plugin) {
-        super(plugin, new File(plugin.getDataFolder(), "spawners.json"), "data");
+    public SpawnerConfig() {
+        super(new File(Main.plugin.getDataFolder(), "spawners.json"), "data");
 
         this.createFileIfNotExists("spawners.json");
 

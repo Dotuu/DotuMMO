@@ -10,13 +10,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import me.dotu.MMO.Enums.ItemEnum;
 
 public abstract class MasterAugment {
 
-    protected JavaPlugin plugin;
     private String name;
     private Integer minLevel;
     private ItemEnum.Tier[] tiers;
@@ -32,8 +30,7 @@ public abstract class MasterAugment {
         Material.TORCH
     );
 
-    public MasterAugment(JavaPlugin plugin, String name, int level, ItemEnum.Tier[] tiers){
-        this.plugin = plugin;
+    public MasterAugment(String name, int level, ItemEnum.Tier[] tiers){
         this.name = name;
         this.minLevel = level;
         this.tiers = tiers;

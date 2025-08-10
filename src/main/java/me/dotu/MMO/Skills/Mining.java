@@ -4,7 +4,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import me.dotu.MMO.ChunkLoader.ChunkDataManager;
 import me.dotu.MMO.Enums.RewardTableEnum;
@@ -12,11 +11,9 @@ import me.dotu.MMO.Enums.SkillEnum;
 import me.dotu.MMO.ExpCalculator;
 
 public class Mining extends MasterSkill implements Listener{
-    private final JavaPlugin plugin;
 
-    public Mining(JavaPlugin plugin) {
+    public Mining() {
         super("Mining", SkillEnum.Difficulty.SLOW, SkillEnum.Skill.MINING, 100, 0);
-        this.plugin = plugin;
     }
     
     public void registerSkill(){
@@ -25,7 +22,7 @@ public class Mining extends MasterSkill implements Listener{
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
-        ChunkDataManager cdm = new ChunkDataManager(this.plugin);
+        ChunkDataManager cdm = new ChunkDataManager();
         if (cdm.wasBlockBroken(event.getBlock()) == false){
             for (RewardTableEnum.MiningReward drop : RewardTableEnum.MiningReward.values()){
                 if (event.getBlock().getType() == drop.getMaterial()){

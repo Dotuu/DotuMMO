@@ -3,14 +3,13 @@ package me.dotu.MMO.Configs;
 import java.io.File;
 import java.util.Arrays;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 import me.dotu.MMO.Enums.ConfigEnum;
+import me.dotu.MMO.Main;
 import me.dotu.MMO.Managers.JsonFileManager;
 
 public class ItemConfig extends JsonFileManager{
-    public ItemConfig(JavaPlugin plugin) {
-        super(plugin, new File(plugin.getDataFolder(), "items.json"), "configs");
+    public ItemConfig() {
+        super(new File(Main.plugin.getDataFolder(), "items.json"), "configs");
 
         this.createFileIfNotExists("items.json");
 

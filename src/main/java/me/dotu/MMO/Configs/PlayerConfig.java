@@ -12,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,6 +19,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import me.dotu.MMO.Enums.ConfigEnum;
+import me.dotu.MMO.Main;
 import me.dotu.MMO.Managers.JsonFileManager;
 import me.dotu.MMO.Managers.PlayerManager;
 
@@ -27,8 +27,8 @@ public class PlayerConfig extends JsonFileManager implements Listener{
     private String filename;
     public static HashMap<UUID, PlayerManager> playerSettings = new HashMap<>();
 
-    public PlayerConfig(JavaPlugin plugin) {
-        super(plugin, "playerdata");
+    public PlayerConfig() {
+        super("playerdata");
     }
 
     public void saveToFile(UUID uuid){
@@ -66,7 +66,7 @@ public class PlayerConfig extends JsonFileManager implements Listener{
     public void loadFromFile(UUID uuid){
         this.filename = uuid.toString() + ".json";
         if (!this.filename.isEmpty()){
-            this.file = new File(new File(this.plugin.getDataFolder(), "playerdata"), this.filename);
+            this.file = new File(new File(Main.plugin.getDataFolder(), "playerdata"), this.filename);
             if (!this.getPlayerFile(uuid).exists()){
                 this.setupPlayerDefaults(uuid);
             }
@@ -76,7 +76,7 @@ public class PlayerConfig extends JsonFileManager implements Listener{
 
     private File getPlayerFile(UUID uuid){
         String playerFile = uuid.toString() + ".json";
-        return new File(new File(this.plugin.getDataFolder(), "playerdata"), playerFile);
+        return new File(new File(Main.plugin.getDataFolder(), "playerdata"), playerFile);
     }
 
     private JsonObject getPlayerFileData(UUID uuid){

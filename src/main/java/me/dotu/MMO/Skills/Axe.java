@@ -4,19 +4,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import me.dotu.MMO.Enums.RewardTableEnum;
 import me.dotu.MMO.Enums.SkillEnum;
 import me.dotu.MMO.ExpCalculator;
 
 public class Axe extends MasterSkill implements Listener{
-    
-    private final JavaPlugin plugin;
 
-    public Axe(JavaPlugin plugin) {
+    public Axe() {
         super("Axe", SkillEnum.Difficulty.NORMAL, SkillEnum.Skill.AXE, 100, 0);
-        this.plugin = plugin;
     }
 
     public void registerSkill(){

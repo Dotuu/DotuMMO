@@ -4,7 +4,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import me.dotu.MMO.Enums.RewardTableEnum;
 import me.dotu.MMO.Enums.SkillEnum;
@@ -12,11 +11,8 @@ import me.dotu.MMO.ExpCalculator;
 
 public class Sword extends MasterSkill implements Listener {
 
-    private JavaPlugin plugin;
-
-    public Sword(JavaPlugin plugin) {
+    public Sword() {
         super("Axes", SkillEnum.Difficulty.NORMAL, SkillEnum.Skill.AXE, 100, 0);
-        this.plugin = plugin;
     }
 
     public void registerSkill() {

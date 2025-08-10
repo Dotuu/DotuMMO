@@ -13,7 +13,7 @@ public class MobGear {
     }
 
     public ItemStack getItem() {
-        return item;
+        return this.item;
     }
 
     public void setItem(ItemStack item) {
@@ -21,7 +21,7 @@ public class MobGear {
     }
 
     public int getWeight() {
-        return weight;
+        return this.weight;
     }
 
     public void setWeight(int weight) {

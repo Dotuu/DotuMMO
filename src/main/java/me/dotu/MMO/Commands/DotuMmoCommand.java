@@ -1,5 +1,7 @@
 package me.dotu.MMO.Commands;
 
+import java.util.HashMap;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,11 +17,33 @@ import me.dotu.MMO.Managers.SettingsManager;
 public class DotuMmoCommand implements CommandExecutor{
 
     private final String prefix = "dotummo.";
+    private final HashMap<String, SubCommand> subCommands = new HashMap<>();
+
+    public DotuMmoCommand(){
+        this.subCommands.put("spawner", new SpawnerSubCommand());
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("dotummo")){
-            if (this.isPlayer(sender)){
+            if (!this.isPlayer(sender)){
+                if (args[0].equalsIgnoreCase("pvp")){
+                    switch (args[1].toLowerCase()){
+                        default:
+                            this.sendHelpListConsole();
+                            break;
+                    }
+                }
+                
+                else if (args[0].equalsIgnoreCase("reload")){
+                    
+                }
+                
+                else{
+                    this.sendHelpListConsole();
+                }
+            }
+            else{
                 Player player = (Player) sender;
                 if (player.hasPermission(this.prefix + PermissionEnum.Permissions.STARTSEASON.getPermission()) || this.hasAdminPermissions(player)){
                     if (args[0].equalsIgnoreCase("pvp")){
@@ -44,23 +68,6 @@ public class DotuMmoCommand implements CommandExecutor{
                     else{
                         this.sendHelpListPlayer();
                     }
-                }
-            }
-            else{
-                if (args[0].equalsIgnoreCase("pvp")){
-                    switch (args[1].toLowerCase()){
-                        default:
-                            this.sendHelpListConsole();
-                            break;
-                    }
-                }
-
-                else if (args[0].equalsIgnoreCase("reload")){
-                        
-                }
-
-                else{
-                    this.sendHelpListConsole();
                 }
             }
         }

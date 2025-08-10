@@ -9,19 +9,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import me.dotu.MMO.ChunkLoader.ChunkDataManager;
 import me.dotu.MMO.Enums.AugmentEnum;
 import me.dotu.MMO.Enums.ItemEnum;
 import me.dotu.MMO.ItemData.Armor;
+import me.dotu.MMO.Main;
 
 public class TestCommand implements CommandExecutor{
 
-    private JavaPlugin plugin;
-
-    public TestCommand(JavaPlugin plugin){
-        this.plugin = plugin;
+    public TestCommand(){
     }
 
     @Override
@@ -35,7 +32,7 @@ public class TestCommand implements CommandExecutor{
                 ItemStack item = new ItemStack(dotu);
 
                 ItemMeta meta = item.getItemMeta();
-                NamespacedKey slowEat = new NamespacedKey(this.plugin, AugmentEnum.Augment.SLOW_EAT.getName());
+                NamespacedKey slowEat = new NamespacedKey(Main.plugin, AugmentEnum.Augment.SLOW_EAT.getName());
                 meta.getPersistentDataContainer().set(slowEat, PersistentDataType.INTEGER, 1);
 
                 item.setItemMeta(meta);

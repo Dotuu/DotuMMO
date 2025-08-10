@@ -4,33 +4,29 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import me.dotu.MMO.Enums.ConfigEnum;
+import me.dotu.MMO.Main;
 
 public abstract class JsonFileManager {
 
-    protected final JavaPlugin plugin;
     protected final String path;
     protected File file;
 
-    protected JsonFileManager(JavaPlugin plugin, String path){
-        this.plugin = plugin;
+    protected JsonFileManager(String path){
         this.path = path;
     }
     
-    protected JsonFileManager(JavaPlugin plugin, File file, String path){
-        this.plugin = plugin;
+    protected JsonFileManager(File file, String path){
         this.file = file;
         this.path = path;
     }
 
     protected void createFileIfNotExists(String fileName){
-        File dir = new File(this.plugin.getDataFolder(), this.path);
+        File dir = new File(Main.plugin.getDataFolder(), this.path);
         
         if (!dir.exists()){
             dir.mkdirs();
@@ -68,7 +64,7 @@ public abstract class JsonFileManager {
         } catch (Exception e) {
         }
     }
-
+    
     protected void loadFromFile(){
         
     }

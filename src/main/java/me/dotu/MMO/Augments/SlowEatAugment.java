@@ -7,17 +7,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import me.dotu.MMO.Enums.AugmentEnum;
 import me.dotu.MMO.Enums.ItemEnum;
+import me.dotu.MMO.Main;
 
 public class SlowEatAugment extends MasterAugment implements Listener{
     
-    private final NamespacedKey namedKey = new NamespacedKey(this.plugin, AugmentEnum.Augment.SLOW_EAT.getName());
+    private final NamespacedKey namedKey = new NamespacedKey(Main.plugin, AugmentEnum.Augment.SLOW_EAT.getName());
 
-    public SlowEatAugment(JavaPlugin plugin) {
-        super(plugin, "Slow Eat", 1, new ItemEnum.Tier[]{
+    public SlowEatAugment() {
+        super("Slow Eat", 1, new ItemEnum.Tier[]{
             ItemEnum.Tier.COMMON,
             ItemEnum.Tier.EPIC
         });

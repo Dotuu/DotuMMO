@@ -25,15 +25,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import me.dotu.MMO.Main;
 import me.dotu.MMO.Enums.RewardTableEnum;
 
 public class ChunkDataManager implements Listener {
-    private final JavaPlugin plugin;
     public static HashMap<String, ChunkData> loadedChunks = new HashMap<>();
-
-    public ChunkDataManager(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
 
     public void saveAllChunkDataToJson(){
         for (String chunkId : loadedChunks.keySet()){
@@ -44,12 +40,12 @@ public class ChunkDataManager implements Listener {
     public void saveChunkDataToJson(String chunkId) {
         ChunkData chunkData = loadedChunks.get(chunkId);
         if (chunkData.isUpdated()) {
-            File chunkDataFolder = new File(this.plugin.getDataFolder(), "chunkdata");
+            File chunkDataFolder = new File(Main.plugin.getDataFolder(), "chunkdata");
             if (!chunkDataFolder.exists()) {
                 chunkDataFolder.mkdirs();
             }
 
-            File chunkFile = new File(new File(this.plugin.getDataFolder(), "chunkdata"), chunkId + ".json");
+            File chunkFile = new File(new File(Main.plugin.getDataFolder(), "chunkdata"), chunkId + ".json");
             ArrayList<String> locations = this.serialize(chunkData.getBlockLocations());
 
             if (locations.isEmpty()) {
@@ -71,7 +67,7 @@ public class ChunkDataManager implements Listener {
 
     public ArrayList<Location> loadChunkDataFromJson(String identifier) {
         String filename = identifier + ".json";
-        File chunkFile = new File(new File(this.plugin.getDataFolder(), "chunkdata"), filename);
+        File chunkFile = new File(new File(Main.plugin.getDataFolder(), "chunkdata"), filename);
 
         try (FileReader reader = new FileReader(chunkFile)) {
             JsonArray locationsArray = JsonParser.parseReader(reader).getAsJsonArray();

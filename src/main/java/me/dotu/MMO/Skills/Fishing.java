@@ -4,7 +4,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.gson.JsonObject;
 
@@ -15,11 +14,9 @@ import me.dotu.MMO.Enums.SkillEnum;
 import me.dotu.MMO.ExpCalculator;
 
 public class Fishing extends MasterSkill implements Listener {
-    private final JavaPlugin plugin;
 
-    public Fishing(JavaPlugin plugin) {
+    public Fishing() {
         super("Fishing", SkillEnum.Difficulty.NORMAL, SkillEnum.Skill.FISHING, 100, 0);
-        this.plugin = plugin;
     }
 
     public void registerSkill(){

@@ -6,15 +6,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class Augment implements Listener{
 
-    private final JavaPlugin plugin;
     private final Material station = Material.SMITHING_TABLE;
 
-    public Augment(JavaPlugin plugin){
-        this.plugin = plugin;
+    public Augment(){
+        
     }
 
     @EventHandler
