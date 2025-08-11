@@ -7,16 +7,18 @@ import me.dotu.MMO.Main;
 public class SpawnerEnum{
     public static enum SpawnerKey{
         ROOT("DotuMMO_Spawner"),
-        MAX_HEALTH("maxHealth"),
-        MIN_HEALTH("minHealth"),
         ARMORED("armored"),
         WEAPONED("weaponed"),
-        LEVEL("level"),
+        MIN_LEVEL("minLevel"),
+        MAX_LEVEL("maxLevel"),
         DIFFICULTY("difficulty"),
         NAME_VISIBLE("nameVisible"),
         SPAWN_RANDOMLY("spawnRandomly"),
         NAME("name"),
-        TABLE("table");
+        TABLE("table"),
+        MIN_SPAWN_DELAY("minSpawnDelay"),
+        MAX_SPAWN_DELAY("maxSpawnDelay"),
+        SPAWN_RANGE("spawnRange");
 
         private final String key;
 

@@ -3,6 +3,7 @@ package me.dotu.MMO.Configs;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,13 +22,11 @@ import me.dotu.MMO.Main;
 import me.dotu.MMO.Managers.JsonFileManager;
 
 public class SpawnerConfig extends JsonFileManager{
-    public static HashMap<Location, HashMap<Location, Boolean>> spawners = new HashMap<>();
+    public static HashMap<Location, ArrayList<Location>> spawners = new HashMap<>();
 
     public SpawnerConfig() {
         super(new File(Main.plugin.getDataFolder(), "spawners.json"), "data");
-
         this.createFileIfNotExists("spawners.json");
-
         this.populateSpawnersMap();
     }
 
@@ -35,13 +34,13 @@ public class SpawnerConfig extends JsonFileManager{
         JsonObject root = new JsonObject();
         JsonObject spawnersObj = new JsonObject();
 
-        for (Map.Entry<Location, HashMap<Location, Boolean>> entry : spawners.entrySet()) {
+        for (Map.Entry<Location, ArrayList<Location>> entry : spawners.entrySet()) {
             String spawnerLocStr = serializeLocation(entry.getKey());
-            HashMap<Location, Boolean> spawnLocList = entry.getValue();
+            ArrayList<Location> spawnLocList = entry.getValue();
 
             JsonArray locArray = new JsonArray();
-            for (Map.Entry<Location, Boolean> locEntry : spawnLocList.entrySet()) {
-                String locStr = serializeLocation(locEntry.getKey()) + ":" + locEntry.getValue();
+            for (Location loc : spawnLocList) {
+                String locStr = serializeLocation(loc);
                 locArray.add(locStr);
             }
             spawnersObj.add(spawnerLocStr, locArray);
@@ -70,14 +69,12 @@ public class SpawnerConfig extends JsonFileManager{
 
             for (String spawnerLocStr : spawnersObj.keySet()) {
                 Location spawnerLoc = deSerializeLocation(spawnerLocStr);
-                HashMap<Location, Boolean> spawnLocList = new HashMap<>();
+                ArrayList<Location> spawnLocList = new ArrayList<>();
 
                 JsonArray locArray = spawnersObj.getAsJsonArray(spawnerLocStr);
                 for (JsonElement spawnLocElem : locArray) {
-                    String[] parts = spawnLocElem.getAsString().split(":");
-                    Location loc = deSerializeLocation(parts[0]);
-                    boolean canSpawn = Boolean.parseBoolean(parts[1]);
-                    spawnLocList.put(loc, canSpawn);
+                    Location loc = deSerializeLocation(spawnLocElem.getAsString());
+                    spawnLocList.add(loc);
                 }
                 spawners.put(spawnerLoc, spawnLocList);
             }

@@ -1,9 +1,8 @@
 package me.dotu.MMO.Entities;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,14 +35,12 @@ public abstract class CustomSpawnerHandler implements Listener{
         event.setCancelled(true);
         if (spawner.getPersistentDataContainer().has(SpawnerEnum.SpawnerKey.ROOT.getKey())){
             if (SpawnerConfig.spawners.containsKey(spawner.getLocation())){
-                HashMap<Location, Boolean> spawnLocations = SpawnerConfig.spawners.get(spawner.getLocation());
-
-                for (Map.Entry<Location, Boolean> entry : spawnLocations.entrySet()){
-                    if (entry.getValue()){
-                        if (event.getEntity() instanceof LivingEntity){
-                            this.spawnCustomEntity(this.loadSpawnerData(spawner), living, entry.getKey());
-                            break;
-                        }
+                ArrayList<Location> spawnLocations = SpawnerConfig.spawners.get(spawner.getLocation());
+                
+                for (Location loc : spawnLocations){
+                    if (event.getEntity() instanceof LivingEntity){
+                        this.spawnCustomEntity(this.loadSpawnerData(spawner), living, loc);
+                        break;
                     }
                 }
             }
@@ -53,7 +50,7 @@ public abstract class CustomSpawnerHandler implements Listener{
     private void spawnCustomEntity(CustomSpawner props, LivingEntity living, Location loc){
         World world = loc.getWorld();
         // set entity health
-        living.setHealth(calculateHealth(props.getLevel()));
+        living.setHealth(calculateHealth(this.getRandomLevel(props.getMinLevel(), props.getMaxLevel())));
 
         // set entity armor
         if (this.hasEquipmentSlots(living)){
@@ -71,6 +68,10 @@ public abstract class CustomSpawnerHandler implements Listener{
                 }
             }
         }
+    }
+
+    private int getRandomLevel(int min, int max){
+        return min + (int)(Math.random() * (max - min) + 1);
     }
 
     private void equipToMob(CustomSpawner props, LivingEntity living, int slot){
@@ -181,7 +182,8 @@ public abstract class CustomSpawnerHandler implements Listener{
     }
 
     private void setSpawnerProps(CreatureSpawner spawner, CustomSpawner props){
-        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.LEVEL.getKey(), PersistentDataType.INTEGER, props.getLevel());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.MIN_LEVEL.getKey(), PersistentDataType.INTEGER, props.getMinLevel());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.MAX_LEVEL.getKey(), PersistentDataType.INTEGER, props.getMaxLevel());
         spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.DIFFICULTY.getKey(), PersistentDataType.DOUBLE, props.getDifficulty());
         spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.ARMORED.getKey(), PersistentDataType.BOOLEAN, props.isArmored());
         spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.WEAPONED.getKey(), PersistentDataType.BOOLEAN, props.isWeaponed());
@@ -189,19 +191,26 @@ public abstract class CustomSpawnerHandler implements Listener{
         spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.SPAWN_RANDOMLY.getKey(), PersistentDataType.BOOLEAN, props.isSpawnRandomly());
         spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.NAME.getKey(), PersistentDataType.STRING, props.getName());
         spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.TABLE.getKey(), PersistentDataType.STRING, props.getTable());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.MIN_SPAWN_DELAY.getKey(), PersistentDataType.INTEGER, props.getMinSpawnDelay());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.MAX_SPAWN_DELAY.getKey(), PersistentDataType.INTEGER, props.getMaxSpawnDelay());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.SPAWN_RANGE.getKey(), PersistentDataType.INTEGER, props.getMaxSpawnDelay());
         spawner.update();
     }
 
     private CustomSpawner loadSpawnerData(CreatureSpawner spawner){
         return new CustomSpawner(
-            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.LEVEL.getKey(), PersistentDataType.INTEGER, 1),
+            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.MIN_LEVEL.getKey(), PersistentDataType.INTEGER, 1),
+            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.MAX_LEVEL.getKey(), PersistentDataType.INTEGER, 1),
             spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.DIFFICULTY.getKey(), PersistentDataType.DOUBLE, 50D),
             spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.ARMORED.getKey(), PersistentDataType.BOOLEAN, false),
             spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.WEAPONED.getKey(), PersistentDataType.BOOLEAN, true),
             spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.NAME_VISIBLE.getKey(), PersistentDataType.BOOLEAN, true),
             spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.SPAWN_RANDOMLY.getKey(), PersistentDataType.BOOLEAN, true),
             spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.NAME.getKey(), PersistentDataType.STRING, spawner.getSpawnedType().name()),
-            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.TABLE.getKey(), PersistentDataType.STRING, "")
+            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.TABLE.getKey(), PersistentDataType.STRING, ""),
+            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.MIN_SPAWN_DELAY.getKey(), PersistentDataType.INTEGER, 200),
+            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.MAX_SPAWN_DELAY.getKey(), PersistentDataType.INTEGER, 800),
+            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.SPAWN_RANGE.getKey(), PersistentDataType.INTEGER, 4)
         );
     }
 }
