@@ -10,7 +10,7 @@ import me.dotu.MMO.Managers.MessageManager;
 import me.dotu.MMO.Managers.PvpManager;
 import me.dotu.MMO.Managers.SettingsManager;
 
-public class PvpSubCommand extends DotuMmoCommand implements SubCommand{
+public class PvpSubCommand implements SubCommand{
 
     @Override
     public String getName() {
@@ -31,7 +31,7 @@ public class PvpSubCommand extends DotuMmoCommand implements SubCommand{
     public boolean execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
 
-        if (player.hasPermission(this.getPermission()) || this.hasAdminPermissions(player)){
+        if (player.hasPermission(this.getPermission()) || player.hasPermission(PermissionEnum.Permissions.ADMIN.getPermission())){
             switch(args[1].toLowerCase()){
                 case "startseason":
                     if (this.handleStartSeasonCommand()){
@@ -41,7 +41,7 @@ public class PvpSubCommand extends DotuMmoCommand implements SubCommand{
                     player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Something went wrong, please check console for logs"));
                     break;
                 default:
-                    this.sendHelpListPlayer();
+                    // send help list
                     break;
             }
         }

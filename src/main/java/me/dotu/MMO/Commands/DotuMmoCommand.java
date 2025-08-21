@@ -7,7 +7,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.dotu.MMO.Enums.PermissionEnum;
 import me.dotu.MMO.Managers.MessageManager;
 
 public class DotuMmoCommand implements CommandExecutor{
@@ -24,7 +23,7 @@ public class DotuMmoCommand implements CommandExecutor{
         if (command.getName().equalsIgnoreCase("dotummo")){
             if (sender instanceof Player){
                 if (args.length == 0){
-                    this.sendHelpListPlayer();
+                    // send player help list
                     return true;
                 }
 
@@ -33,12 +32,12 @@ public class DotuMmoCommand implements CommandExecutor{
                     sub.execute(sender, args);
                 }
                 else{
-                    this.sendHelpListPlayer();
+                    // send player help list
                 }
             }
             else{
                 if (args.length == 0){
-                    this.sendHelpListConsole();
+                    // send console help list
                     return true;
                 }
 
@@ -52,22 +51,10 @@ public class DotuMmoCommand implements CommandExecutor{
                     }
                 }
                 else{
-                    this.sendHelpListConsole();
+                    // send console help list
                 }
             }
         }
         return false;
-    }
-
-    public boolean hasAdminPermissions(Player player){
-        return player.hasPermission(PermissionEnum.Permissions.ADMIN.getPermission());
-    }
-
-    public void sendHelpListPlayer(){
-
-    }
-
-    public void sendHelpListConsole(){
-        
     }
 }

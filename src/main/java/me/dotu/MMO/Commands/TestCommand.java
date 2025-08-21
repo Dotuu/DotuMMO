@@ -1,20 +1,11 @@
 package me.dotu.MMO.Commands;
 
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 
 import me.dotu.MMO.ChunkLoader.ChunkDataManager;
-import me.dotu.MMO.Enums.AugmentEnum;
-import me.dotu.MMO.Enums.ItemEnum;
-import me.dotu.MMO.ItemData.Armor;
-import me.dotu.MMO.Main;
 
 public class TestCommand implements CommandExecutor{
 
@@ -28,14 +19,14 @@ public class TestCommand implements CommandExecutor{
 
                 Player player = (Player) sender;
 
-                Armor dotu = new Armor("Dotu's Helmet of FIRE", 100, (short) 2, Material.DIAMOND_HELMET, ItemEnum.Tier.COMMON);
-                ItemStack item = new ItemStack(dotu);
+                // CustomItem customItem = new CustomItem("Dotu's Helmet of FIRE", 100, (short) 2, Material.DIAMOND_HELMET, ItemEnum.Tier.COMMON);
+                // ItemStack item = new ItemStack(customItem);
 
-                ItemMeta meta = item.getItemMeta();
-                NamespacedKey slowEat = new NamespacedKey(Main.plugin, AugmentEnum.Augment.SLOW_EAT.getName());
-                meta.getPersistentDataContainer().set(slowEat, PersistentDataType.INTEGER, 1);
+                // ItemMeta meta = item.getItemMeta();
+                // NamespacedKey slowEat = new NamespacedKey(Main.plugin, AugmentEnum.Augment.SLOW_EAT.getName());
+                // meta.getPersistentDataContainer().set(slowEat, PersistentDataType.INTEGER, 1);
 
-                item.setItemMeta(meta);
+                // item.setItemMeta(meta);
                 // ItemMeta decorate = Decorator.decorate(item, props);
                 // item.setItemMeta(decorate);
                 
@@ -45,7 +36,7 @@ public class TestCommand implements CommandExecutor{
                 // decorate.setDisplayName("Dotu's helm of fireeee");
                 
 
-                player.getInventory().addItem(item);
+                // player.getInventory().addItem(item);
             }else {
                 sender.sendMessage("This command can only be used by players.");
             }

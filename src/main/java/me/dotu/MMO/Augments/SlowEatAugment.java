@@ -12,7 +12,7 @@ import me.dotu.MMO.Enums.AugmentEnum;
 import me.dotu.MMO.Enums.ItemEnum;
 import me.dotu.MMO.Main;
 
-public class SlowEatAugment extends MasterAugment implements Listener{
+public class SlowEatAugment extends Augment implements Listener{
     
     private final NamespacedKey namedKey = new NamespacedKey(Main.plugin, AugmentEnum.Augment.SLOW_EAT.getName());
 

@@ -1,5 +1,8 @@
 package me.dotu.MMO.Inventories;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -19,10 +22,21 @@ public abstract class CustomInventory {
         this.inventory = Bukkit.createInventory(holder, size, name);
     }
 
-    protected abstract void setupContents();
+    protected abstract void setupInventoryContents();
+
+    protected abstract void createInventoryItems();
 
     public void openInventory(Player player){
         player.openInventory(this.inventory);
+    }
+
+    public <T extends CustomInventory> void openInventory(Player player, HashMap<UUID, T> map){
+        if (map.containsKey(player.getUniqueId())){
+            map.get(player.getUniqueId()).openInventory(player);
+        }
+        else{
+            player.openInventory(this.inventory);
+        }
     }
 
     public Inventory getInventory(){
@@ -38,7 +52,7 @@ public abstract class CustomInventory {
     }
 
     public int getSize() {
-        return size;
+        return this.size;
     }
 
     public void setSize(int size) {
@@ -46,7 +60,7 @@ public abstract class CustomInventory {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {

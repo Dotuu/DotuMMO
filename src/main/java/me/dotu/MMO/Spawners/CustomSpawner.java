@@ -1,4 +1,4 @@
-package me.dotu.MMO.Entities;
+package me.dotu.MMO.Spawners;
 
 public class CustomSpawner {
 
@@ -87,7 +87,7 @@ public class CustomSpawner {
     }
 
     public boolean isSpawnRandomly() {
-        return spawnRandomly;
+        return this.spawnRandomly;
     }
 
     public void setSpawnRandomly(boolean spawnRandomly) {
@@ -103,7 +103,7 @@ public class CustomSpawner {
     }
 
     public int getMinSpawnDelay() {
-        return minSpawnDelay;
+        return this.minSpawnDelay;
     }
 
     public void setMinSpawnDelay(int minSpawnDelay) {
@@ -111,7 +111,7 @@ public class CustomSpawner {
     }
 
     public int getMaxSpawnDelay() {
-        return maxSpawnDelay;
+        return this.maxSpawnDelay;
     }
 
     public void setMaxSpawnDelay(int maxSpawnDelay) {
@@ -119,7 +119,7 @@ public class CustomSpawner {
     }
 
     public int getSpawnRange() {
-        return spawnRange;
+        return this.spawnRange;
     }
 
     public void setSpawnRange(int spawnRange) {

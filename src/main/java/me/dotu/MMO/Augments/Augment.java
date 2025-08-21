@@ -1,6 +1,7 @@
 package me.dotu.MMO.Augments;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Material;
@@ -13,10 +14,10 @@ import org.bukkit.persistence.PersistentDataType;
 
 import me.dotu.MMO.Enums.ItemEnum;
 
-public abstract class MasterAugment {
+public abstract class Augment {
 
     private String name;
-    private Integer minLevel;
+    private int minLevelToUse;
     private ItemEnum.Tier[] tiers;
 
     private final Set<String> suffixes = Set.of(
@@ -30,9 +31,9 @@ public abstract class MasterAugment {
         Material.TORCH
     );
 
-    public MasterAugment(String name, int level, ItemEnum.Tier[] tiers){
+    public Augment(String name, int level, ItemEnum.Tier[] tiers){
         this.name = name;
-        this.minLevel = level;
+        this.minLevelToUse = level;
         this.tiers = tiers;
     }
 
@@ -87,6 +88,15 @@ public abstract class MasterAugment {
         }
     }
 
+    protected ItemStack applyAugments(ItemStack item, String displayName, List<String> lores){
+        ItemMeta meta = item.getItemMeta();
+        meta.setLore(lores);
+        meta.setDisplayName(displayName);
+
+        item.setItemMeta(meta);
+        return item;
+    }
+
     public String getName() {
         return this.name;
     }
@@ -96,11 +106,11 @@ public abstract class MasterAugment {
     }
 
     public Integer getMinLevel() {
-        return this.minLevel;
+        return this.minLevelToUse;
     }
 
     public void setMinLevel(Integer minLevel) {
-        this.minLevel = minLevel;
+        this.minLevelToUse = minLevel;
     }
 
     public ItemEnum.Tier[] getTiers() {

@@ -7,10 +7,10 @@ import me.dotu.MMO.ChunkLoader.ChunkDataManager;
 import me.dotu.MMO.Commands.DotuMmoCommand;
 import me.dotu.MMO.Commands.TestCommand;
 import me.dotu.MMO.Configs.ItemConfig;
-import me.dotu.MMO.Configs.MobGearConfig;
 import me.dotu.MMO.Configs.PlayerConfig;
 import me.dotu.MMO.Configs.SettingsConfig;
 import me.dotu.MMO.Configs.SpawnerConfig;
+import me.dotu.MMO.Inventories.SpawnerSettingsInventory;
 import me.dotu.MMO.Managers.PvpManager;
 import me.dotu.MMO.Skills.Axe;
 import me.dotu.MMO.Skills.Fishing;
@@ -34,7 +34,6 @@ public class Main extends JavaPlugin {
         new ItemConfig();
         new SettingsConfig();
         new SpawnerConfig();
-        new MobGearConfig();
 
         // setup data files
         
@@ -50,6 +49,9 @@ public class Main extends JavaPlugin {
 
         // Event Listeners (Augments)
         this.getServer().getPluginManager().registerEvents(new SlowEatAugment(), this);
+
+        // Event Listeners (Inventory)
+        this.getServer().getPluginManager().registerEvents(new SpawnerSettingsInventory(), this);
 
         // Command executors
         this.getCommand("test").setExecutor(new TestCommand());

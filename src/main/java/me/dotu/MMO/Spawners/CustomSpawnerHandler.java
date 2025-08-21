@@ -1,4 +1,4 @@
-package me.dotu.MMO.Entities;
+package me.dotu.MMO.Spawners;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,12 +20,11 @@ import org.bukkit.persistence.PersistentDataType;
 
 import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Enums.SpawnerEnum;
-import me.dotu.MMO.ItemData.MobGear;
-import me.dotu.MMO.Managers.MobGearManager;
 
 public abstract class CustomSpawnerHandler implements Listener{
 
     public CustomSpawnerHandler(){
+        // edit this class to use the newly added LootTable & LootItem classes
     }
 
     @EventHandler
