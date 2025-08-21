@@ -23,7 +23,10 @@ import me.dotu.MMO.UI.ExpBar;
 public class Main extends JavaPlugin {
 
     public static Main plugin;
-
+    /*
+     * move augment code to seperate file to manage augmenting an item
+     * do the same for gems
+     */
     @Override
     public void onEnable() {
         System.out.println("DotuMMO has been enabled!");
@@ -36,10 +39,10 @@ public class Main extends JavaPlugin {
         new SpawnerConfig();
 
         // setup data files
-        
+
         // Event Listeners
         this.registerSkills();
-        
+
         // Other
         this.getServer().getPluginManager().registerEvents(new ChunkDataManager(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerConfig(), this);
@@ -58,11 +61,10 @@ public class Main extends JavaPlugin {
         this.getCommand("chunktest").setExecutor(new TestCommand());
         this.getCommand("dotummo").setExecutor(new DotuMmoCommand());
 
-
         // Load essentials
     }
 
-    public void registerSkills(){
+    public void registerSkills() {
         Fishing fishing = new Fishing();
         this.getServer().getPluginManager().registerEvents(fishing, this);
         fishing.addToSkillsMap(fishing);
@@ -102,6 +104,6 @@ public class Main extends JavaPlugin {
     }
 
     public static void main(String[] args) {
-        
+
     }
 }

@@ -1,12 +1,12 @@
 package me.dotu.MMO.Enums;
 
-public class AugmentEnum {
-    public static enum Augment {
-        SLOW_EAT("slow_eat");
+public class GemEnum {
+    public static enum Gem {
+        FIRE_IMMUNE("fire_immune");
 
         private final String name;
 
-        Augment(String name){
+        Gem(String name){
             this.name = name;
         }
 
@@ -15,7 +15,8 @@ public class AugmentEnum {
         }
     }
 
-    public static enum Category{
-        SOME_TIER
+    public static enum Category {
+        FIRE,
+        POISON
     }
 }

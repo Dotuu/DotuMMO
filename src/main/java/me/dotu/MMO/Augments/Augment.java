@@ -12,13 +12,16 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import me.dotu.MMO.Enums.AugmentEnum;
 import me.dotu.MMO.Enums.ItemEnum;
 
-public abstract class Augment {
+public class Augment {
 
-    private String name;
-    private int minLevelToUse;
     private ItemEnum.Tier[] tiers;
+    private int minLevelToUse;
+    private String name;
+    private String description;
+    private AugmentEnum.Category category;
 
     private final Set<String> suffixes = Set.of(
         "_PICKAXE", "_AXE", "_SHOVEL", "_HOE", "_SWORD", "_HELMET", "_CHESTPLATE", "_LEGGINGS", "_BOOTS"
@@ -31,10 +34,12 @@ public abstract class Augment {
         Material.TORCH
     );
 
-    public Augment(String name, int level, ItemEnum.Tier[] tiers){
-        this.name = name;
-        this.minLevelToUse = level;
+    public Augment(ItemEnum.Tier tiers[], int minLevelToUse, String name, String desciption, AugmentEnum.Category category) {
         this.tiers = tiers;
+        this.minLevelToUse = minLevelToUse;
+        this.name = name;
+        this.description = desciption;
+        this.category = category;
     }
 
     public boolean hasAugment(ArrayList<ItemStack> items, NamespacedKey key){
@@ -119,5 +124,21 @@ public abstract class Augment {
 
     public void setTiers(ItemEnum.Tier[] tiers) {
         this.tiers = tiers;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public AugmentEnum.Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(AugmentEnum.Category category) {
+        this.category = category;
     }
 }
