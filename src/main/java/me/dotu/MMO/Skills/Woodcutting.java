@@ -10,7 +10,7 @@ import me.dotu.MMO.Enums.RewardTableEnum;
 import me.dotu.MMO.Enums.SkillEnum;
 import me.dotu.MMO.ExpCalculator;
 
-public class Woodcutting extends MasterSkill implements Listener{
+public class Woodcutting extends Skill implements Listener{
 
     public Woodcutting() {
         super("Woodcutting", SkillEnum.Difficulty.SLOW, SkillEnum.Skill.WOODCUTTING, 100, 0);

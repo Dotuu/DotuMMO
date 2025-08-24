@@ -9,7 +9,7 @@ import me.dotu.MMO.Enums.RewardTableEnum;
 import me.dotu.MMO.Enums.SkillEnum;
 import me.dotu.MMO.ExpCalculator;
 
-public class Sword extends MasterSkill implements Listener {
+public class Sword extends Skill implements Listener {
 
     public Sword() {
         super("Axes", SkillEnum.Difficulty.NORMAL, SkillEnum.Skill.AXE, 100, 0);

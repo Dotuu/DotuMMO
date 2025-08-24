@@ -15,6 +15,11 @@ public class SpawnerInventoryClicked implements Listener{
         if (event.getInventory().getHolder() instanceof SpawnerHolder){
             Player player = (Player) event.getWhoClicked();
             event.setCancelled(true);
+            
+            if (event.getClickedInventory() != event.getInventory()){
+                return;
+            }
+
             if (CustomInventory.isItem(event.getClickedInventory(), event.getSlot())){
                 ItemStack item = event.getClickedInventory().getItem(event.getSlot());
                 if (player.getInventory().addItem(item).isEmpty()){

@@ -9,7 +9,7 @@ import me.dotu.MMO.Configs.PlayerConfig;
 import me.dotu.MMO.ExpCalculator;
 import me.dotu.MMO.Managers.PlayerManager;
 import me.dotu.MMO.Managers.SkillsManager;
-import me.dotu.MMO.Skills.MasterSkill;
+import me.dotu.MMO.Skills.Skill;
 
 public class ExpBar implements Listener{
     @EventHandler
@@ -17,7 +17,7 @@ public class ExpBar implements Listener{
         event.setAmount(0);
     }
 
-    public static void setExpBarToSkill(Player player, MasterSkill masterSkill){
+    public static void setExpBarToSkill(Player player, Skill masterSkill){
         PlayerManager manager = PlayerConfig.playerSettings.get(player.getUniqueId());
         SkillsManager skillsManager = new SkillsManager();
         int currentXp = skillsManager.getSkillExp(player.getUniqueId(), masterSkill.getSkill());

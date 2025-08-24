@@ -3,7 +3,7 @@ package me.dotu.MMO.Enums;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import me.dotu.MMO.Skills.MasterSkill;
+import me.dotu.MMO.Skills.Skill;
 
 public class ConfigEnum {
     public static enum Type {
@@ -100,7 +100,7 @@ public class ConfigEnum {
                 JsonObject skills = new JsonObject();
                 JsonObject skillsExp = new JsonObject();
                 for (SkillEnum.Skill skillName : SkillEnum.Skill.values()){
-                    MasterSkill skill = MasterSkill.skillsMap.get(skillName);
+                    Skill skill = Skill.skillsMap.get(skillName);
                     if (skill != null){
                         skillsExp.addProperty(skill.getName(), skill.getStartingLevel());
                     }

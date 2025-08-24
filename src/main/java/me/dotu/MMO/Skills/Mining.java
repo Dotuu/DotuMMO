@@ -10,7 +10,7 @@ import me.dotu.MMO.Enums.RewardTableEnum;
 import me.dotu.MMO.Enums.SkillEnum;
 import me.dotu.MMO.ExpCalculator;
 
-public class Mining extends MasterSkill implements Listener{
+public class Mining extends Skill implements Listener{
 
     public Mining() {
         super("Mining", SkillEnum.Difficulty.SLOW, SkillEnum.Skill.MINING, 100, 0);

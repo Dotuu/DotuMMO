@@ -13,16 +13,16 @@ import me.dotu.MMO.UI.ExpBar;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 
-public class MasterSkill {
+public class Skill {
     private String name;
     private SkillEnum.Skill skill;
     private SkillEnum.Difficulty difficulty;
     private int maxLevel;
     private int startingLevel;
     
-    public static HashMap<SkillEnum.Skill, MasterSkill> skillsMap = new HashMap<>();
+    public static HashMap<SkillEnum.Skill, Skill> skillsMap = new HashMap<>();
 
-    protected MasterSkill(String name, SkillEnum.Difficulty difficulty, SkillEnum.Skill skill, int maxLevel, int startingLevel) {
+    protected Skill(String name, SkillEnum.Difficulty difficulty, SkillEnum.Skill skill, int maxLevel, int startingLevel) {
         this.skill = skill;
         this.difficulty = difficulty;
         this.maxLevel = maxLevel;
@@ -30,7 +30,7 @@ public class MasterSkill {
         this.name = name;
     }
     
-    public void addToSkillsMap(MasterSkill skill) {
+    public void addToSkillsMap(Skill skill) {
         skillsMap.put(skill.getSkill(), skill);
     }
     
@@ -74,7 +74,7 @@ public class MasterSkill {
         this.skill = skill;
     }
 
-    public void processExpReward(Player player, MasterSkill skill, int xpReward){
+    public void processExpReward(Player player, Skill skill, int xpReward){
         UUID uuid = player.getUniqueId();
 
         int xpGained = ExpCalculator.calculateRewardedExp(skill.getDifficulty(), xpReward);
