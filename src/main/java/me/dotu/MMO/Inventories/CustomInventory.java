@@ -2,7 +2,6 @@ package me.dotu.MMO.Inventories;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -44,15 +43,6 @@ public abstract class CustomInventory {
                 this.inventory.setItem(slot, item.getItem());
             }
         }
-    }
-
-    protected ItemStack getDecoratedItemStack(Material material, String displayName, List<String> lores){
-        ItemStack stack = new ItemStack(material);
-        ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(displayName);
-        meta.setLore(lores);
-        stack.setItemMeta(meta);
-        return stack;
     }
 
     protected ItemStack getDecoratedItemStack(Material material, String displayName){

@@ -104,8 +104,21 @@ public class SpawnerConfig extends JsonFileManager {
                     spawnLocations.add(listLoc);
                 }
 
-                CustomSpawner customSpawner = new CustomSpawner(minLevel, maxLevel, difficulty, armored, weaponed,
-                        nameVisible, spawnRandomly, name, table, minSpawnDelay, maxSpawnDelay, spawnRange);
+                CustomSpawner customSpawner = new CustomSpawner(
+                    minLevel, 
+                    maxLevel, 
+                    difficulty, 
+                    armored, 
+                    weaponed, 
+                    nameVisible, 
+                    spawnRandomly, 
+                    name, 
+                    table, 
+                    minSpawnDelay, 
+                    maxSpawnDelay, 
+                    spawnRange, 
+                    spawnLocations
+                );
 
                 customSpawner.setSpawnLocations(spawnLocations);
 

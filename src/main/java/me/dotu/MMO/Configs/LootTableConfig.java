@@ -28,7 +28,7 @@ public class LootTableConfig extends JsonFileManager {
     public static ArrayList<LootItem> lootItems = new ArrayList<>();
 
     public LootTableConfig() {
-        super("tables", "");
+        super("tables/loot", "");
 
         this.setupDefaults(Arrays.asList(
             ConfigEnum.Type.SETTINGS

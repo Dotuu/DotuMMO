@@ -203,4 +203,25 @@ public class RewardTableEnum {
             return this.entityType;
         }
     }
+
+    public static enum CookingReward {
+        PORKCHOP(Material.PORKCHOP, 20),
+        MUTTON(Material.MUTTON, 20);
+
+        private Material material;
+        private final int xp;
+
+        CookingReward(Material material, int xp) {
+            this.xp = xp;
+            this.material = material;
+        }
+
+        public int getXpValue() {
+            return this.xp;
+        }
+
+        public Material getFood(){
+            return this.material;
+        }
+    }
 }

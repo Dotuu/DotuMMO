@@ -2,9 +2,15 @@ package me.dotu.MMO.Commands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
+import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Enums.PermissionEnum;
 import me.dotu.MMO.Inventories.SpawnerInventory;
+import me.dotu.MMO.Managers.MessageManager;
+import me.dotu.MMO.Spawners.CustomSpawner;
+import me.dotu.MMO.Spawners.CustomSpawnerHandler;
+import net.md_5.bungee.api.ChatColor;
 
 public class SpawnerSubCommand implements SubCommand{
     @Override
@@ -37,6 +43,7 @@ public class SpawnerSubCommand implements SubCommand{
                     this.handleAddSpawnerCommand(player, args);
                     break;
                 case "edit":
+                    this.handleEditSpawnerCommand(player, args);
                     break;
             }
         }
@@ -50,7 +57,22 @@ public class SpawnerSubCommand implements SubCommand{
             spawnerInv.openInventory(player);
         }
         else{
+            String spawnerName = args[2];
+            if (SpawnerConfig.spawners.containsKey(spawnerName)){
+                CustomSpawner customSpawner = SpawnerConfig.spawners.get(spawnerName);
+                ItemStack item = CustomSpawnerHandler.decorateSpawnerStack(customSpawner);
 
+                player.getInventory().addItem(item).isEmpty();
+
+                player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Spawner " + ChatColor.stripColor(item.getItemMeta().getDisplayName()) + " added to inventory"));
+            }
+            else{
+                player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Swawner not found, name is case sensitive"));
+            }
         }
+    }
+
+    private void handleEditSpawnerCommand(Player player, String[] args){
+
     }
 }

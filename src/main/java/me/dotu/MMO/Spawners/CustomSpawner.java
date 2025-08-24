@@ -35,22 +35,6 @@ public class CustomSpawner {
         this.spawnRange = spawnRange;
         this.spawnLocations = spawnLocations;
     }
-    
-    public CustomSpawner(int minLevel, int maxLevel, double difficulty, boolean armored, boolean weaponed, boolean nameVisible, boolean spawnRandomly, String name, String table, int minSpawnDelay, int maxSpawnDelay, int spawnRange){
-        this.minLevel = minLevel;
-        this.maxLevel = maxLevel;
-        this.difficulty = difficulty;
-        this.armored = armored;
-        this.weaponed = weaponed;
-        this.nameVisible = nameVisible;
-        this.spawnRandomly = spawnRandomly;
-        this.name = name;
-        this.table = table;
-        this.minSpawnDelay = minSpawnDelay;
-        this.maxSpawnDelay = maxSpawnDelay;
-        this.spawnRange = spawnRange;
-        this.spawnLocations = new ArrayList<Location>();
-    }
 
     public int getMinLevel() {
         return this.minLevel;

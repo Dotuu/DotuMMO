@@ -6,7 +6,9 @@ import me.dotu.MMO.Augments.BowPowerAugment;
 import me.dotu.MMO.ChunkLoader.ChunkDataManager;
 import me.dotu.MMO.Commands.DotuMmoCommand;
 import me.dotu.MMO.Commands.TestCommand;
+import me.dotu.MMO.Configs.ExpTableConfig;
 import me.dotu.MMO.Configs.ItemConfig;
+import me.dotu.MMO.Configs.LootTableConfig;
 import me.dotu.MMO.Configs.PlayerConfig;
 import me.dotu.MMO.Configs.SettingsConfig;
 import me.dotu.MMO.Configs.SpawnerConfig;
@@ -17,6 +19,7 @@ import me.dotu.MMO.Skills.Fishing;
 import me.dotu.MMO.Skills.Mining;
 import me.dotu.MMO.Skills.Sword;
 import me.dotu.MMO.Skills.Woodcutting;
+import me.dotu.MMO.Spawners.CustomSpawnerHandler;
 import me.dotu.MMO.Stations.Augment;
 import me.dotu.MMO.UI.ExpBar;
 
@@ -37,6 +40,8 @@ public class Main extends JavaPlugin {
         new ItemConfig();
         new SettingsConfig();
         new SpawnerConfig();
+        new LootTableConfig();
+        new ExpTableConfig();
 
         // setup data files
 
@@ -49,6 +54,7 @@ public class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new ExpBar(), this);
         this.getServer().getPluginManager().registerEvents(new PvpManager(), this);
         this.getServer().getPluginManager().registerEvents(new Augment(), this);
+        this.getServer().getPluginManager().registerEvents(new CustomSpawnerHandler(), this);
 
         // Event Listeners (Augments)
         this.getServer().getPluginManager().registerEvents(new BowPowerAugment(), this);

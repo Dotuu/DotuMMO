@@ -6,7 +6,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Managers.MessageManager;
+import me.dotu.MMO.Spawners.CustomSpawner;
+import me.dotu.MMO.Spawners.CustomSpawnerHandler;
 import net.md_5.bungee.api.ChatColor;
 
 public class SpawnerInventoryClicked implements Listener{
@@ -22,7 +25,16 @@ public class SpawnerInventoryClicked implements Listener{
 
             if (CustomInventory.isItem(event.getClickedInventory(), event.getSlot())){
                 ItemStack item = event.getClickedInventory().getItem(event.getSlot());
-                if (player.getInventory().addItem(item).isEmpty()){
+                String spawnerName = ChatColor.stripColor(item.getItemMeta().getDisplayName());
+
+                if (!SpawnerConfig.spawners.containsKey(spawnerName)){
+                    return;
+                }
+
+                CustomSpawner customSpawner = SpawnerConfig.spawners.get(spawnerName);
+                ItemStack spawnerStack = CustomSpawnerHandler.decorateSpawnerStack(customSpawner);
+
+                if (player.getInventory().addItem(spawnerStack).isEmpty()){
                     player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Spawner " + ChatColor.stripColor(item.getItemMeta().getDisplayName()) + " added to inventory."));
                 }
                 else{

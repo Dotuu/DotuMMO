@@ -16,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import me.dotu.MMO.Configs.LootTableConfig;
@@ -23,8 +24,9 @@ import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Enums.SpawnerEnum;
 import me.dotu.MMO.LootTables.LootItem;
 import me.dotu.MMO.LootTables.LootTable;
+import net.md_5.bungee.api.ChatColor;
 
-public abstract class CustomSpawnerHandler implements Listener{
+public class CustomSpawnerHandler implements Listener{
 
     public CustomSpawnerHandler(){}
 
@@ -40,7 +42,7 @@ public abstract class CustomSpawnerHandler implements Listener{
                 
             for (Location loc : spawnLocations){
                 if (event.getEntity() instanceof LivingEntity){
-                    this.spawnCustomEntity(this.loadSpawnerData(spawner), living, loc);
+                    this.spawnCustomEntity(customSpawner, living, loc);
                     break;
                 }
             }
@@ -167,52 +169,69 @@ public abstract class CustomSpawnerHandler implements Listener{
         Block block = event.getBlock();
 
         if (block.getType() == Material.SPAWNER){
-            CreatureSpawner spawner = (CreatureSpawner) block.getState();
-            if (spawner.getPersistentDataContainer().has(SpawnerEnum.SpawnerKey.ROOT.getKey(), PersistentDataType.BOOLEAN)){
-                CustomSpawner props = this.loadSpawnerData(spawner);
-                this.setSpawnerProps(spawner, props);
+            ItemStack handItem = event.getItemInHand();
+            ItemMeta handMeta = handItem.getItemMeta();
+            if (handMeta.getPersistentDataContainer().has(SpawnerEnum.SpawnerKey.ROOT.getKey(), PersistentDataType.BOOLEAN)){
+                String name = handMeta.getPersistentDataContainer().get(SpawnerEnum.SpawnerKey.NAME.getKey(), PersistentDataType.STRING);
+                CreatureSpawner spawner = (CreatureSpawner) block.getState();
+                CustomSpawner customSpawner = SpawnerConfig.spawners.get(name);
+                this.setSpawnerProps(spawner, customSpawner);
             }
         }
     }
-    
+
+    public static ItemStack decorateSpawnerStack(CustomSpawner spawner){
+        String spawnerName = spawner.getName();
+
+        List<String> lores = Arrays.asList(
+                ChatColor.AQUA + "Loot Table: " + ChatColor.YELLOW + spawner.getTable(),
+                ChatColor.AQUA + "Min Level: " + ChatColor.YELLOW + String.valueOf(spawner.getMinLevel()),
+                ChatColor.AQUA + "Max Level: " + ChatColor.YELLOW + String.valueOf(spawner.getMaxLevel()),
+                ChatColor.AQUA + "Min Spawn Delay: " + ChatColor.YELLOW + String.valueOf(spawner.getMinSpawnDelay()),
+                ChatColor.AQUA + "Max Spawn Delay: " + ChatColor.YELLOW + String.valueOf(spawner.getMaxSpawnDelay()),
+                ChatColor.AQUA + "Spawn Range: " + ChatColor.YELLOW + String.valueOf(spawner.getSpawnRange()),
+                ChatColor.AQUA + "Difficulty: " + ChatColor.YELLOW + Double.toString(spawner.getDifficulty()),
+                ChatColor.AQUA + "Armored: " + ChatColor.YELLOW + Boolean.toString(spawner.isArmored()),
+                ChatColor.AQUA + "Weaponed: " + ChatColor.YELLOW + Boolean.toString(spawner.isWeaponed()),
+                ChatColor.AQUA + "Name Visible: " + ChatColor.YELLOW + Boolean.toString(spawner.isNameVisible()),
+                ChatColor.AQUA + "Spawn Randomly: " + ChatColor.YELLOW + Boolean.toString(spawner.isSpawnRandomly())
+        );
+
+        ItemStack item = new ItemStack(Material.SPAWNER);
+        ItemMeta meta = item.getItemMeta();
+
+        meta.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.ROOT.getKey(), PersistentDataType.BOOLEAN, true);
+        meta.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.NAME.getKey(), PersistentDataType.STRING, spawnerName);
+
+        meta.setDisplayName(ChatColor.BLUE + spawnerName);
+        meta.setLore(lores);
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
+    public void setSpawnerProps(CreatureSpawner spawner, CustomSpawner customSpawner){
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.ROOT.getKey(), PersistentDataType.BOOLEAN, true);
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.MIN_LEVEL.getKey(), PersistentDataType.INTEGER, customSpawner.getMinLevel());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.MAX_LEVEL.getKey(), PersistentDataType.INTEGER, customSpawner.getMaxLevel());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.DIFFICULTY.getKey(), PersistentDataType.DOUBLE, customSpawner.getDifficulty());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.ARMORED.getKey(), PersistentDataType.BOOLEAN, customSpawner.isArmored());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.WEAPONED.getKey(), PersistentDataType.BOOLEAN, customSpawner.isWeaponed());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.NAME_VISIBLE.getKey(), PersistentDataType.BOOLEAN, customSpawner.isNameVisible());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.SPAWN_RANDOMLY.getKey(), PersistentDataType.BOOLEAN, customSpawner.isSpawnRandomly());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.NAME.getKey(), PersistentDataType.STRING, customSpawner.getName());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.TABLE.getKey(), PersistentDataType.STRING, customSpawner.getTable());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.MIN_SPAWN_DELAY.getKey(), PersistentDataType.INTEGER, customSpawner.getMinSpawnDelay());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.MAX_SPAWN_DELAY.getKey(), PersistentDataType.INTEGER, customSpawner.getMaxSpawnDelay());
+        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.SPAWN_RANGE.getKey(), PersistentDataType.INTEGER, customSpawner.getMaxSpawnDelay());
+        spawner.update();
+    }
+
     public int getSpawnLevel(int min, int max){
         return min + (int)(Math.random() * ((max - min) +1));
     }
 
     private boolean lootTableExists(String lootTable){
         return LootTableConfig.lootTables.containsKey(lootTable);
-    }
-
-    private void setSpawnerProps(CreatureSpawner spawner, CustomSpawner props){
-        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.MIN_LEVEL.getKey(), PersistentDataType.INTEGER, props.getMinLevel());
-        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.MAX_LEVEL.getKey(), PersistentDataType.INTEGER, props.getMaxLevel());
-        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.DIFFICULTY.getKey(), PersistentDataType.DOUBLE, props.getDifficulty());
-        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.ARMORED.getKey(), PersistentDataType.BOOLEAN, props.isArmored());
-        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.WEAPONED.getKey(), PersistentDataType.BOOLEAN, props.isWeaponed());
-        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.NAME_VISIBLE.getKey(), PersistentDataType.BOOLEAN, props.isNameVisible());
-        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.SPAWN_RANDOMLY.getKey(), PersistentDataType.BOOLEAN, props.isSpawnRandomly());
-        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.NAME.getKey(), PersistentDataType.STRING, props.getName());
-        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.TABLE.getKey(), PersistentDataType.STRING, props.getTable());
-        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.MIN_SPAWN_DELAY.getKey(), PersistentDataType.INTEGER, props.getMinSpawnDelay());
-        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.MAX_SPAWN_DELAY.getKey(), PersistentDataType.INTEGER, props.getMaxSpawnDelay());
-        spawner.getPersistentDataContainer().set(SpawnerEnum.SpawnerKey.SPAWN_RANGE.getKey(), PersistentDataType.INTEGER, props.getMaxSpawnDelay());
-        spawner.update();
-    }
-
-    private CustomSpawner loadSpawnerData(CreatureSpawner spawner){
-        return new CustomSpawner(
-            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.MIN_LEVEL.getKey(), PersistentDataType.INTEGER, 1),
-            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.MAX_LEVEL.getKey(), PersistentDataType.INTEGER, 1),
-            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.DIFFICULTY.getKey(), PersistentDataType.DOUBLE, 50D),
-            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.ARMORED.getKey(), PersistentDataType.BOOLEAN, false),
-            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.WEAPONED.getKey(), PersistentDataType.BOOLEAN, true),
-            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.NAME_VISIBLE.getKey(), PersistentDataType.BOOLEAN, true),
-            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.SPAWN_RANDOMLY.getKey(), PersistentDataType.BOOLEAN, true),
-            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.NAME.getKey(), PersistentDataType.STRING, spawner.getSpawnedType().name()),
-            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.TABLE.getKey(), PersistentDataType.STRING, ""),
-            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.MIN_SPAWN_DELAY.getKey(), PersistentDataType.INTEGER, 200),
-            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.MAX_SPAWN_DELAY.getKey(), PersistentDataType.INTEGER, 800),
-            spawner.getPersistentDataContainer().getOrDefault(SpawnerEnum.SpawnerKey.SPAWN_RANGE.getKey(), PersistentDataType.INTEGER, 4)
-        );
     }
 }
