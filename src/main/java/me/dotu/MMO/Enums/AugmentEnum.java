@@ -2,7 +2,7 @@ package me.dotu.MMO.Enums;
 
 public class AugmentEnum {
     public static enum Augment {
-        SLOW_EAT("slow_eat");
+        BOW_POWER("Bow_Power");
 
         private final String name;
 
@@ -16,6 +16,6 @@ public class AugmentEnum {
     }
 
     public static enum Category{
-        SOME_TIER
+        BOW
     }
 }

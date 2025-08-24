@@ -28,7 +28,7 @@ public class PlayerConfig extends JsonFileManager implements Listener{
     public static HashMap<UUID, PlayerManager> playerSettings = new HashMap<>();
 
     public PlayerConfig() {
-        super("playerdata");
+        super("playerdata", "");
     }
 
     public void saveToFile(UUID uuid){

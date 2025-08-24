@@ -18,14 +18,15 @@ import org.bukkit.event.entity.SpawnerSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
+import me.dotu.MMO.Configs.LootTableConfig;
 import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Enums.SpawnerEnum;
+import me.dotu.MMO.LootTables.LootItem;
+import me.dotu.MMO.LootTables.LootTable;
 
 public abstract class CustomSpawnerHandler implements Listener{
 
-    public CustomSpawnerHandler(){
-        // edit this class to use the newly added LootTable & LootItem classes
-    }
+    public CustomSpawnerHandler(){}
 
     @EventHandler
     public void onMobSpawn(SpawnerSpawnEvent event){
@@ -33,14 +34,14 @@ public abstract class CustomSpawnerHandler implements Listener{
         LivingEntity living = (LivingEntity) event.getEntity();
         event.setCancelled(true);
         if (spawner.getPersistentDataContainer().has(SpawnerEnum.SpawnerKey.ROOT.getKey())){
-            if (SpawnerConfig.spawners.containsKey(spawner.getLocation())){
-                ArrayList<Location> spawnLocations = SpawnerConfig.spawners.get(spawner.getLocation());
+            String name = spawner.getPersistentDataContainer().get(SpawnerEnum.SpawnerKey.NAME.getKey(), PersistentDataType.STRING);
+            CustomSpawner customSpawner = SpawnerConfig.spawners.get(name);
+            ArrayList<Location> spawnLocations = customSpawner.getSpawnLocations();
                 
-                for (Location loc : spawnLocations){
-                    if (event.getEntity() instanceof LivingEntity){
-                        this.spawnCustomEntity(this.loadSpawnerData(spawner), living, loc);
-                        break;
-                    }
+            for (Location loc : spawnLocations){
+                if (event.getEntity() instanceof LivingEntity){
+                    this.spawnCustomEntity(this.loadSpawnerData(spawner), living, loc);
+                    break;
                 }
             }
         }
@@ -74,8 +75,9 @@ public abstract class CustomSpawnerHandler implements Listener{
     }
 
     private void equipToMob(CustomSpawner props, LivingEntity living, int slot){
-        List<MobGear> table = MobGearManager.lootTables.get(props.getTable());
-        ItemStack stack = rollTableForSlot(table, this.getSuffixes(slot));
+        LootTable table = LootTableConfig.lootTables.get(props.getTable());
+        List<LootItem> tableItems = table.getItems();
+        ItemStack stack = rollTableForSlot(tableItems, this.getSuffixes(slot));
 
         switch(slot){
             case 0:
@@ -96,22 +98,23 @@ public abstract class CustomSpawnerHandler implements Listener{
         }
     }
 
-    private ItemStack rollTable(List<MobGear> table){
-        int totalWeight = table.stream().mapToInt(MobGear::getWeight).sum();
+    private ItemStack rollTable(List<LootItem> table){
+        int totalWeight = table.stream().mapToInt(LootItem::getWeight).sum();
         int rand = 1 + (int)(Math.random() * totalWeight);
 
         int cumulative = 0;
-        for (MobGear gear : table){
-            cumulative += gear.getWeight();
+        for (LootItem item : table){
+            cumulative += item.getWeight();
             if (rand <= cumulative){
-                return gear.getItem();
+                ItemStack stack = new ItemStack(item.getMaterial());
+                return stack;
             }
         }
         return new ItemStack(Material.AIR);
     }
 
-    private ItemStack rollTableForSlot(List<MobGear> table, String[] suffixes){
-        List<MobGear> filtered = table.stream().filter(gear -> Arrays.stream(suffixes).anyMatch(suffix -> gear.getItem().getType().name().endsWith(suffix))).toList();
+    private ItemStack rollTableForSlot(List<LootItem> table, String[] suffixes){
+        List<LootItem> filtered = table.stream().filter(gear -> Arrays.stream(suffixes).anyMatch(suffix -> gear.getMaterial().name().endsWith(suffix))).toList();
         if (filtered.isEmpty()){
             return new ItemStack(Material.AIR);
         }
@@ -177,7 +180,7 @@ public abstract class CustomSpawnerHandler implements Listener{
     }
 
     private boolean lootTableExists(String lootTable){
-        return MobGearManager.lootTables.containsKey(lootTable);
+        return LootTableConfig.lootTables.containsKey(lootTable);
     }
 
     private void setSpawnerProps(CreatureSpawner spawner, CustomSpawner props){

@@ -2,7 +2,7 @@ package me.dotu.MMO;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.dotu.MMO.Augments.SlowEatAugment;
+import me.dotu.MMO.Augments.BowPowerAugment;
 import me.dotu.MMO.ChunkLoader.ChunkDataManager;
 import me.dotu.MMO.Commands.DotuMmoCommand;
 import me.dotu.MMO.Commands.TestCommand;
@@ -10,7 +10,7 @@ import me.dotu.MMO.Configs.ItemConfig;
 import me.dotu.MMO.Configs.PlayerConfig;
 import me.dotu.MMO.Configs.SettingsConfig;
 import me.dotu.MMO.Configs.SpawnerConfig;
-import me.dotu.MMO.Inventories.SpawnerSettingsInventory;
+import me.dotu.MMO.Inventories.SpawnerInventoryClicked;
 import me.dotu.MMO.Managers.PvpManager;
 import me.dotu.MMO.Skills.Axe;
 import me.dotu.MMO.Skills.Fishing;
@@ -51,10 +51,10 @@ public class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new Augment(), this);
 
         // Event Listeners (Augments)
-        this.getServer().getPluginManager().registerEvents(new SlowEatAugment(), this);
+        this.getServer().getPluginManager().registerEvents(new BowPowerAugment(), this);
 
         // Event Listeners (Inventory)
-        this.getServer().getPluginManager().registerEvents(new SpawnerSettingsInventory(), this);
+        this.getServer().getPluginManager().registerEvents(new SpawnerInventoryClicked(), this);
 
         // Command executors
         this.getCommand("test").setExecutor(new TestCommand());
@@ -90,14 +90,15 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         System.out.println("DotuMMO has been disabled!");
+
         PlayerConfig playerConfig = new PlayerConfig();
         playerConfig.saveAllPlayerSettingsToFile();
 
         SettingsConfig settingsConfig = new SettingsConfig();
-        settingsConfig.saveToFile();
+        settingsConfig.saveAllSettingsToFile();
 
         ChunkDataManager cdm = new ChunkDataManager();
-        cdm.saveAllChunkDataToJson();
+        cdm.saveAllChunkDataToFile();
 
         SpawnerConfig spawnerConfig = new SpawnerConfig();
         spawnerConfig.saveAllSpawnerSettingsToFile();

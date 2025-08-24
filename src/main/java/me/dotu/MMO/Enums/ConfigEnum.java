@@ -1,5 +1,6 @@
 package me.dotu.MMO.Enums;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import me.dotu.MMO.Skills.MasterSkill;
@@ -51,8 +52,6 @@ public class ConfigEnum {
         SETTINGS{
             @Override
             public void populate(JsonObject defaultConfig){
-                JsonObject settings = new JsonObject();
-
                 JsonObject weaponSettings = new JsonObject();
                 weaponSettings.addProperty("enabled", true);
 
@@ -70,16 +69,13 @@ public class ConfigEnum {
                     skillSettings.addProperty(skill.toString().toLowerCase(), true);
                 }
 
-                settings.add("enabled_skills", skillSettings);
-                settings.add("weapon", weaponSettings);
-                settings.add("tool", toolSettings);
-                settings.add("armor", armorSettings);
-                settings.add("pvp", pvpSettings);
-
-
-                defaultConfig.add("Settings", settings);
+                defaultConfig.add("enabled_skills", skillSettings);
+                defaultConfig.add("weapon", weaponSettings);
+                defaultConfig.add("tool", toolSettings);
+                defaultConfig.add("armor", armorSettings);
+                defaultConfig.add("pvp", pvpSettings);
             }
-        },
+    },
 
         PLAYERDATA{
             @Override
@@ -176,6 +172,33 @@ public class ConfigEnum {
                 mobTable.add("IMPOSSIBLE", impossible);  
                 
                 defaultConfig.add("Tables", mobTable);
+            }
+        },
+
+        SPAWNER_DATA{
+            @Override
+            public void populate(JsonObject defaultConfig){
+                JsonObject spawner = new JsonObject();
+
+                spawner.addProperty("min_level", 10);
+                spawner.addProperty("max_level", 50);
+                spawner.addProperty("min_spawn_delay", 10);
+                spawner.addProperty("max_spawn_delay", 50);
+                spawner.addProperty("spawn_range", 25);
+                spawner.addProperty("difficulty", 0.5D);
+                spawner.addProperty("armored", true);
+                spawner.addProperty("weaponed", true);
+                spawner.addProperty("name_visible", true);
+                spawner.addProperty("spawn_randomly", false);
+                spawner.addProperty("table", "default");
+                
+                JsonArray spawnLocations = new JsonArray();
+                spawnLocations.add("world.100.100.100");
+                spawnLocations.add("world.200.200.200");
+
+                spawner.add("spawn_locations", spawnLocations);
+
+                defaultConfig.add("test_spawner", spawner);
             }
         };
 

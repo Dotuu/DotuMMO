@@ -31,7 +31,7 @@ import me.dotu.MMO.Enums.RewardTableEnum;
 public class ChunkDataManager implements Listener {
     public static HashMap<String, ChunkData> loadedChunks = new HashMap<>();
 
-    public void saveAllChunkDataToJson(){
+    public void saveAllChunkDataToFile(){
         for (String chunkId : loadedChunks.keySet()){
             saveChunkDataToJson(chunkId);
         }
@@ -61,8 +61,6 @@ public class ChunkDataManager implements Listener {
                 }
             }
         }
-
-        loadedChunks.remove(chunkId);
     }
 
     public ArrayList<Location> loadChunkDataFromJson(String identifier) {
@@ -88,6 +86,7 @@ public class ChunkDataManager implements Listener {
 
         if (loadedChunks.containsKey(chunkId)) {
             this.saveChunkDataToJson(chunkId);
+            loadedChunks.remove(chunkId);
         }
     }
 

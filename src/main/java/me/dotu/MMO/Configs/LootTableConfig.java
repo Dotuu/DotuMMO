@@ -3,6 +3,8 @@ package me.dotu.MMO.Configs;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Material;
@@ -13,6 +15,7 @@ import com.google.gson.JsonParser;
 
 import me.dotu.MMO.Augments.Augment;
 import me.dotu.MMO.Enums.AugmentEnum;
+import me.dotu.MMO.Enums.ConfigEnum;
 import me.dotu.MMO.Enums.GemEnum;
 import me.dotu.MMO.Enums.ItemEnum;
 import me.dotu.MMO.Gems.Gem;
@@ -21,12 +24,15 @@ import me.dotu.MMO.LootTables.LootTable;
 import me.dotu.MMO.Managers.JsonFileManager;
 
 public class LootTableConfig extends JsonFileManager {
-    private String filename;
-    public static ArrayList<LootTable> lootTables = new ArrayList<>();
+    public static HashMap<String, LootTable> lootTables = new HashMap<>();
     public static ArrayList<LootItem> lootItems = new ArrayList<>();
 
     public LootTableConfig() {
-        super("tables");
+        super("tables", "");
+
+        this.setupDefaults(Arrays.asList(
+            ConfigEnum.Type.SETTINGS
+        ));
     }
 
     public void loadTablesToMap() {
@@ -44,7 +50,7 @@ public class LootTableConfig extends JsonFileManager {
 
                     LootTable lootTable = new LootTable(name, uuid);
                     lootTable.setItems(items);
-                    lootTables.add(lootTable);
+                    lootTables.put(name, lootTable);
                 } catch (Exception e) {
 
                 }
@@ -104,13 +110,14 @@ public class LootTableConfig extends JsonFileManager {
 
             int minLevelToUse = jsonObj.get("minLevelToUse").getAsInt();
 
-            String name = jsonObj.get("name").getAsString();
+            String augmentStr = jsonObj.get("augment").getAsString();
+            AugmentEnum.Augment augment = AugmentEnum.Augment.valueOf(augmentStr);
 
             String description = jsonObj.get("description").getAsString();
 
-            Augment augment = new Augment(tiers, minLevelToUse, name, description, category);
+            Augment newAugment = new Augment(tiers, minLevelToUse, augment, description, category);
 
-            augments.add(augment);
+            augments.add(newAugment);
         }
         return augments; 
     }
@@ -128,13 +135,14 @@ public class LootTableConfig extends JsonFileManager {
 
             int minLevelToUse = jsonObj.get("minLevelToUse").getAsInt();
 
-            String name = jsonObj.get("name").getAsString();
+            String gemStr = jsonObj.get("gem").getAsString();
+            GemEnum.Gem gem = GemEnum.Gem.valueOf(gemStr);
 
             String description = jsonObj.get("description").getAsString();
 
-            Gem gem = new Gem(tiers, minLevelToUse, name, description, category);
+            Gem newGem = new Gem(tiers, minLevelToUse, gem, description, category);
 
-            gems.add(gem);
+            gems.add(newGem);
         }
         return gems; 
     }

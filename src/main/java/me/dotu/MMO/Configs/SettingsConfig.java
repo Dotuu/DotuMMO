@@ -1,6 +1,5 @@
 package me.dotu.MMO.Configs;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Arrays;
@@ -13,7 +12,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import me.dotu.MMO.Enums.ConfigEnum;
-import me.dotu.MMO.Main;
 import me.dotu.MMO.Managers.JsonFileManager;
 import me.dotu.MMO.Managers.SettingsManager;
 
@@ -21,22 +19,22 @@ public class SettingsConfig extends JsonFileManager{
     public static HashMap<ConfigEnum.Settings, SettingsManager> settingsMap = new HashMap<>();
 
     public SettingsConfig() {
-        super( new File(Main.plugin.getDataFolder(), "settings.json"), "configs");
-
-        this.createFileIfNotExists("settings.json");
+        super("configs","dotummo");
 
         this.setupDefaults(Arrays.asList(
             ConfigEnum.Type.SETTINGS
         ));
+
+        this.populateSettingsMap();
     }
     
     public void reloadConfig(){
         settingsMap.clear();
-        this.loadFromFile();
+        this.populateSettingsMap();
     }
 
     @Override
-    protected void loadFromFile(){
+    protected void populateSettingsMap(){
         JsonObject read = null;
         try (FileReader reader = new FileReader(this.file)){
             read = JsonParser.parseReader(reader).getAsJsonObject();
@@ -44,7 +42,7 @@ public class SettingsConfig extends JsonFileManager{
         }
 
         if (read != null){
-            JsonObject settingsJson = read.getAsJsonObject("Settings");
+            JsonObject settingsJson = read;
             String settingsName;
             for (ConfigEnum.Settings name : ConfigEnum.Settings.values()){
                 settingsName = name.toString().toLowerCase();
@@ -57,7 +55,7 @@ public class SettingsConfig extends JsonFileManager{
     }
 
     @Override
-    public void saveToFile(){
+    public void saveAllSettingsToFile(){
         JsonObject settings = new JsonObject();
 
         for (Map.Entry<ConfigEnum.Settings, SettingsManager> entry : settingsMap.entrySet()) {
@@ -67,12 +65,9 @@ public class SettingsConfig extends JsonFileManager{
 
         }
 
-        JsonObject root = new JsonObject();
-        root.add("Settings", settings);
-
         try(FileWriter writer = new FileWriter(this.file)){
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            gson.toJson(root, writer);
+            gson.toJson(settings, writer);
         }
         catch(Exception e){
 

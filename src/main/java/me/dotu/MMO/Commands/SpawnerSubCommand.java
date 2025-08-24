@@ -1,19 +1,12 @@
 package me.dotu.MMO.Commands;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.dotu.MMO.Enums.PermissionEnum;
-import me.dotu.MMO.Inventories.SpawnerSettingsInventory;
+import me.dotu.MMO.Inventories.SpawnerInventory;
 
 public class SpawnerSubCommand implements SubCommand{
-
-    private static final HashMap<UUID, SpawnerSettingsInventory> spawnerSettingsSessions = new HashMap<>();
-
-
     @Override
     public String getName(){
         return "spawner";
@@ -40,8 +33,8 @@ public class SpawnerSubCommand implements SubCommand{
             }
 
             switch(args[1].toLowerCase()){
-                case "create":
-                    this.handleCreateSpawnerCommand(player);
+                case "add":
+                    this.handleAddSpawnerCommand(player, args);
                     break;
                 case "edit":
                     break;
@@ -50,10 +43,14 @@ public class SpawnerSubCommand implements SubCommand{
         return false;
     }
     
-    private void handleCreateSpawnerCommand(Player player){
-        SpawnerSettingsInventory inv = spawnerSettingsSessions.computeIfAbsent(
-            player.getUniqueId(), uuid -> new SpawnerSettingsInventory()
-        );
-        inv.openInventory(player, spawnerSettingsSessions);
+    private void handleAddSpawnerCommand(Player player, String[] args){
+        if (args.length == 2){
+            SpawnerInventory spawnerInv = new SpawnerInventory(player, 0);
+            spawnerInv.createInventoryItems();
+            spawnerInv.openInventory(player);
+        }
+        else{
+
+        }
     }
 }

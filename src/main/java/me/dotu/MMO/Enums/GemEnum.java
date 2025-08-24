@@ -2,7 +2,7 @@ package me.dotu.MMO.Enums;
 
 public class GemEnum {
     public static enum Gem {
-        FIRE_IMMUNE("fire_immune");
+        FIRE_IMMUNE("Fire Immune");
 
         private final String name;
 

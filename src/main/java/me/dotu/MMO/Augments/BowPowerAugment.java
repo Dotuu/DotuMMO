@@ -12,15 +12,15 @@ import me.dotu.MMO.Enums.AugmentEnum;
 import me.dotu.MMO.Enums.ItemEnum;
 import me.dotu.MMO.Main;
 
-public class SlowEatAugment extends Augment implements Listener{
+public class BowPowerAugment extends Augment implements Listener{
     
-    private final NamespacedKey namedKey = new NamespacedKey(Main.plugin, AugmentEnum.Augment.SLOW_EAT.getName());
+    private final NamespacedKey namedKey = new NamespacedKey(Main.plugin, AugmentEnum.Augment.BOW_POWER.getName());
 
-    public SlowEatAugment() {
-        super("Slow Eat", 1, new ItemEnum.Tier[]{
+    public BowPowerAugment() {
+        super(new ItemEnum.Tier[]{
             ItemEnum.Tier.COMMON,
             ItemEnum.Tier.EPIC
-        });
+        }, 10, AugmentEnum.Augment.BOW_POWER, "This augment increases bow power", AugmentEnum.Category.BOW);
     }
     
     @EventHandler

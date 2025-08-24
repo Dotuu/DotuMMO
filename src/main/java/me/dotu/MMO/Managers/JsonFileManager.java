@@ -15,32 +15,12 @@ public abstract class JsonFileManager {
 
     protected final String path;
     protected File file;
-
-    protected JsonFileManager(String path){
-        this.path = path;
-    }
+    protected String fileName;
+    private String extension = ".json";
     
-    protected JsonFileManager(File file, String path){
-        this.file = file;
+    protected JsonFileManager(String path, String fileName){
         this.path = path;
-    }
-
-    protected void createFileIfNotExists(String fileName){
-        File dir = new File(Main.plugin.getDataFolder(), this.path);
-        
-        if (!dir.exists()){
-            dir.mkdirs();
-        }
-        this.file = new File(dir, fileName);
-
-        try{
-            if (!this.file.exists()){
-                this.file.createNewFile();
-            }
-        }
-        catch(Exception e){
-
-        }
+        this.fileName = fileName;
     }
 
     protected void reloadFile(File file){
@@ -48,7 +28,17 @@ public abstract class JsonFileManager {
     }
 
     protected void setupDefaults(List<ConfigEnum.Type> fileDefaults){
-        if (!this.file.exists()){
+        if (this.file == null){
+            File dir = new File(Main.plugin.getDataFolder(), this.path);
+
+            if (!dir.exists()){
+                dir.mkdirs();
+            }
+
+            this.file = new File(dir, this.fileName + this.extension);
+        }
+
+        if (this.file.exists()){
             return;
         }
 
@@ -65,11 +55,27 @@ public abstract class JsonFileManager {
         }
     }
     
-    protected void loadFromFile(){
+    protected void populateSettingsMap(){
         
     }
 
-    protected void saveToFile(){
+    protected void saveAllSettingsToFile(){
 
+    }
+    
+    protected boolean getBooleanFromJson(JsonObject obj, String member){
+        return obj.get(member).getAsBoolean();
+    }
+
+    protected String getStringFromJson(JsonObject obj, String member){
+        return obj.get(member).getAsString();
+    }
+
+    protected double getDoubleFromJson(JsonObject obj, String member){
+        return obj.get(member).getAsDouble();
+    }
+
+    protected int getIntFromJson(JsonObject obj, String member){
+        return obj.get(member).getAsInt();
     }
 }

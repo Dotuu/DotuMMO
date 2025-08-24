@@ -1,5 +1,9 @@
 package me.dotu.MMO.Spawners;
 
+import java.util.ArrayList;
+
+import org.bukkit.Location;
+
 public class CustomSpawner {
 
     private int minLevel;
@@ -14,7 +18,24 @@ public class CustomSpawner {
     private int minSpawnDelay;
     private int maxSpawnDelay;
     private int spawnRange;
+    private ArrayList<Location> spawnLocations;
 
+    public CustomSpawner(int minLevel, int maxLevel, double difficulty, boolean armored, boolean weaponed, boolean nameVisible, boolean spawnRandomly, String name, String table, int minSpawnDelay, int maxSpawnDelay, int spawnRange, ArrayList<Location> spawnLocations){
+        this.minLevel = minLevel;
+        this.maxLevel = maxLevel;
+        this.difficulty = difficulty;
+        this.armored = armored;
+        this.weaponed = weaponed;
+        this.nameVisible = nameVisible;
+        this.spawnRandomly = spawnRandomly;
+        this.name = name;
+        this.table = table;
+        this.minSpawnDelay = minSpawnDelay;
+        this.maxSpawnDelay = maxSpawnDelay;
+        this.spawnRange = spawnRange;
+        this.spawnLocations = spawnLocations;
+    }
+    
     public CustomSpawner(int minLevel, int maxLevel, double difficulty, boolean armored, boolean weaponed, boolean nameVisible, boolean spawnRandomly, String name, String table, int minSpawnDelay, int maxSpawnDelay, int spawnRange){
         this.minLevel = minLevel;
         this.maxLevel = maxLevel;
@@ -28,6 +49,7 @@ public class CustomSpawner {
         this.minSpawnDelay = minSpawnDelay;
         this.maxSpawnDelay = maxSpawnDelay;
         this.spawnRange = spawnRange;
+        this.spawnLocations = new ArrayList<Location>();
     }
 
     public int getMinLevel() {
@@ -124,5 +146,17 @@ public class CustomSpawner {
 
     public void setSpawnRange(int spawnRange) {
         this.spawnRange = spawnRange;
+    }
+
+    public ArrayList<Location> getSpawnLocations() {
+        return this.spawnLocations;
+    }
+
+    public void setSpawnLocations(ArrayList<Location> spawnLocations) {
+        this.spawnLocations = spawnLocations;
+    }
+
+    public void addSpawnLocations(Location spawnLocation) {
+        this.spawnLocations.add(spawnLocation);
     }
 }

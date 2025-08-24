@@ -6,14 +6,14 @@ import me.dotu.MMO.Enums.ItemEnum;
 public class Gem {
     private ItemEnum.Tier[] tiers;
     private int minLevelToUse;
-    private String name;
+    private GemEnum.Gem gem;
     private String description;
     private GemEnum.Category category;
 
-    public Gem(ItemEnum.Tier tiers[], int minLevelToUse, String name, String desciption, GemEnum.Category category) {
+    public Gem(ItemEnum.Tier tiers[], int minLevelToUse, GemEnum.Gem gem, String desciption, GemEnum.Category category) {
         this.tiers = tiers;
         this.minLevelToUse = minLevelToUse;
-        this.name = name;
+        this.gem = gem;
         this.description = desciption;
         this.category = category;
     }
@@ -34,14 +34,6 @@ public class Gem {
         this.minLevelToUse = minLevelToUse;
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getDescription() {
         return this.description;
     }
@@ -56,6 +48,14 @@ public class Gem {
 
     public void setCategory(GemEnum.Category category) {
         this.category = category;
+    }
+
+    public GemEnum.Gem getGem() {
+        return this.gem;
+    }
+
+    public void setGem(GemEnum.Gem gem) {
+        this.gem = gem;
     }
 
 }
