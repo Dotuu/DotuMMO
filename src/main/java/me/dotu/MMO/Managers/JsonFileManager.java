@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import me.dotu.MMO.Enums.ConfigEnum;
+import me.dotu.MMO.Enums.DefaultConfig;
 import me.dotu.MMO.Main;
 
 public abstract class JsonFileManager {
@@ -27,7 +27,7 @@ public abstract class JsonFileManager {
         // reload logic here later
     }
 
-    protected void setupDefaults(List<ConfigEnum.Type> fileDefaults){
+    protected void setupDefaults(List<DefaultConfig.Type> fileDefaults){
         if (this.file == null){
             File dir = new File(Main.plugin.getDataFolder(), this.path);
 
@@ -44,7 +44,7 @@ public abstract class JsonFileManager {
 
         JsonObject root = new JsonObject();
 
-        for (ConfigEnum.Type setting : fileDefaults){
+        for (DefaultConfig.Type setting : fileDefaults){
             setting.populate(root);
         }
 

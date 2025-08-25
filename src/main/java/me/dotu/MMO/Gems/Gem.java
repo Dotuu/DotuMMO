@@ -1,16 +1,17 @@
 package me.dotu.MMO.Gems;
 
-import me.dotu.MMO.Enums.GemEnum;
-import me.dotu.MMO.Enums.ItemEnum;
+import me.dotu.MMO.Enums.GemCategory;
+import me.dotu.MMO.Enums.GemType;
+import me.dotu.MMO.Enums.ItemTier;
 
 public class Gem {
-    private ItemEnum.Tier[] tiers;
+    private ItemTier[] tiers;
     private int minLevelToUse;
-    private GemEnum.Gem gem;
+    private GemType gem;
     private String description;
-    private GemEnum.Category category;
+    private GemCategory category;
 
-    public Gem(ItemEnum.Tier tiers[], int minLevelToUse, GemEnum.Gem gem, String desciption, GemEnum.Category category) {
+    public Gem(ItemTier tiers[], int minLevelToUse, GemType gem, String desciption, GemCategory category) {
         this.tiers = tiers;
         this.minLevelToUse = minLevelToUse;
         this.gem = gem;
@@ -18,11 +19,11 @@ public class Gem {
         this.category = category;
     }
 
-    public ItemEnum.Tier[] getTiers() {
+    public ItemTier[] getTiers() {
         return this.tiers;
     }
 
-    public void setTiers(ItemEnum.Tier[] tiers) {
+    public void setTiers(ItemTier[] tiers) {
         this.tiers = tiers;
     }
 
@@ -42,19 +43,19 @@ public class Gem {
         this.description = description;
     }
 
-    public GemEnum.Category getCategory() {
+    public GemCategory getCategory() {
         return this.category;
     }
 
-    public void setCategory(GemEnum.Category category) {
+    public void setCategory(GemCategory category) {
         this.category = category;
     }
 
-    public GemEnum.Gem getGem() {
+    public GemType getGem() {
         return this.gem;
     }
 
-    public void setGem(GemEnum.Gem gem) {
+    public void setGem(GemType gem) {
         this.gem = gem;
     }
 

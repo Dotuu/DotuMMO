@@ -17,7 +17,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import me.dotu.MMO.Enums.ConfigEnum;
+import me.dotu.MMO.Enums.DefaultConfig;
 import me.dotu.MMO.Managers.JsonFileManager;
 import me.dotu.MMO.Spawners.CustomSpawner;
 
@@ -27,8 +27,7 @@ public class SpawnerConfig extends JsonFileManager {
     public SpawnerConfig() {
         super("data", "spawners");
 
-        List<ConfigEnum.Type> defaults = Arrays.asList(
-            ConfigEnum.Type.SPAWNER_DATA
+        List<DefaultConfig.Type> defaults = Arrays.asList(DefaultConfig.Type.SPAWNER_DATA
         );
 
         this.setupDefaults(defaults);

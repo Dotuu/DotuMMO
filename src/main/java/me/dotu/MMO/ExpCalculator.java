@@ -2,29 +2,30 @@ package me.dotu.MMO;
 
 import java.util.UUID;
 
-import me.dotu.MMO.Enums.SkillEnum;
+import me.dotu.MMO.Enums.SkillDifficulty;
 import me.dotu.MMO.Managers.PvpManager;
 
 public class ExpCalculator {
 
     private static final int baseXp = 100;
 
-    public static int getExpNeededForNextLevel(int level, SkillEnum.Difficulty difficultyEnum){
+    public static int getExpNeededForNextLevel(int level, SkillDifficulty difficultyEnum) {
         double difficulty = difficultyEnum.getDifficultyValue();
         return (int) (baseXp * Math.pow(level, difficulty));
     }
 
-    public static int calculateRewardedExp(SkillEnum.Difficulty difficultyEnum, int obtainedXp){
+    public static int calculateRewardedExp(SkillDifficulty difficultyEnum, int obtainedXp) {
         double difficulty = difficultyEnum.getDifficultyValue();
         double xpGained = obtainedXp / difficulty;
         return (int) xpGained;
     }
 
-    public static int getLevelFromExp(int totalXp, SkillEnum.Difficulty difficultyEnum){
+    public static int getLevelFromExp(int totalXp, SkillDifficulty difficultyEnum) {
         int level = 1;
-        while(true){
+        while (true) {
             int xpForNextLevel = getExpNeededForNextLevel(level + 1, difficultyEnum);
-            if(totalXp < xpForNextLevel){ // If player/level xp is less than xp needed for next level break out and return 
+            if (totalXp < xpForNextLevel) { // If player/level xp is less than xp needed for next level break out and
+                                            // return
                 break;
             }
             level++;
@@ -32,7 +33,7 @@ public class ExpCalculator {
         return level;
     }
 
-    public static int calculatePvpExp(UUID uuid){
+    public static int calculatePvpExp(UUID uuid) {
         PvpManager pvpManager = new PvpManager();
         double kdr = pvpManager.getKdr(uuid);
 

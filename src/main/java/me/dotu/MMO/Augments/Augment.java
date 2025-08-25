@@ -1,18 +1,20 @@
 package me.dotu.MMO.Augments;
 
-import me.dotu.MMO.Enums.AugmentEnum;
-import me.dotu.MMO.Enums.ItemEnum;
+import me.dotu.MMO.Enums.AugmentCategory;
+import me.dotu.MMO.Enums.AugmentType;
+import me.dotu.MMO.Enums.ItemTier;
 import me.dotu.MMO.Managers.AugmentManager;
 
-public class Augment extends AugmentManager{
+public class Augment extends AugmentManager {
 
-    private ItemEnum.Tier[] tiers;
+    private ItemTier[] tiers;
     private int minLevelToUse;
-    private AugmentEnum.Augment augment;
+    private AugmentType augment;
     private String description;
-    private AugmentEnum.Category category;
+    private AugmentCategory category;
 
-    public Augment(ItemEnum.Tier tiers[], int minLevelToUse, AugmentEnum.Augment augment, String desciption, AugmentEnum.Category category) {
+    public Augment(ItemTier[] tiers, int minLevelToUse, AugmentType augment, String desciption,
+            AugmentCategory category) {
         this.tiers = tiers;
         this.minLevelToUse = minLevelToUse;
         this.augment = augment;
@@ -28,11 +30,11 @@ public class Augment extends AugmentManager{
         this.minLevelToUse = minLevel;
     }
 
-    public ItemEnum.Tier[] getTiers() {
+    public ItemTier[] getTiers() {
         return this.tiers;
     }
 
-    public void setTiers(ItemEnum.Tier[] tiers) {
+    public void setTiers(ItemTier[] tiers) {
         this.tiers = tiers;
     }
 
@@ -44,19 +46,19 @@ public class Augment extends AugmentManager{
         this.description = description;
     }
 
-    public AugmentEnum.Category getCategory() {
+    public AugmentCategory getCategory() {
         return category;
     }
 
-    public void setCategory(AugmentEnum.Category category) {
+    public void setCategory(AugmentCategory category) {
         this.category = category;
     }
 
-    public AugmentEnum.Augment getAugment() {
+    public AugmentType getAugment() {
         return this.augment;
     }
 
-    public void setAugment(AugmentEnum.Augment augment) {
+    public void setAugment(AugmentType augment) {
         this.augment = augment;
     }
 }

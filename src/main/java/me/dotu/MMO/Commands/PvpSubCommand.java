@@ -4,13 +4,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.dotu.MMO.Configs.SettingsConfig;
-import me.dotu.MMO.Enums.ConfigEnum;
-import me.dotu.MMO.Enums.PermissionEnum;
+import me.dotu.MMO.Enums.DefaultConfig;
+import me.dotu.MMO.Enums.PermissionType;
 import me.dotu.MMO.Managers.MessageManager;
 import me.dotu.MMO.Managers.PvpManager;
 import me.dotu.MMO.Managers.SettingsManager;
 
-public class PvpSubCommand implements SubCommand{
+public class PvpSubCommand implements SubCommand {
 
     @Override
     public String getName() {
@@ -18,12 +18,12 @@ public class PvpSubCommand implements SubCommand{
     }
 
     @Override
-    public String getPermission(){
-        return PermissionEnum.Permissions.PVP.getPermission();
+    public String getPermission() {
+        return PermissionType.PVP.getPermission();
     }
 
     @Override
-    public boolean isConsoleSafe(){
+    public boolean isConsoleSafe() {
         return true;
     }
 
@@ -31,14 +31,17 @@ public class PvpSubCommand implements SubCommand{
     public boolean execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
 
-        if (player.hasPermission(this.getPermission()) || player.hasPermission(PermissionEnum.Permissions.ADMIN.getPermission())){
-            switch(args[1].toLowerCase()){
+        if (player.hasPermission(this.getPermission())
+                || player.hasPermission(PermissionType.ADMIN.getPermission())) {
+            switch (args[1].toLowerCase()) {
                 case "startseason":
-                    if (this.handleStartSeasonCommand()){
-                        player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "New season started, all stats have been reset"));
+                    if (this.handleStartSeasonCommand()) {
+                        player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS,
+                                "New season started, all stats have been reset"));
                         break;
                     }
-                    player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Something went wrong, please check console for logs"));
+                    player.sendMessage(MessageManager.send(MessageManager.Type.ERROR,
+                            "Something went wrong, please check console for logs"));
                     break;
                 default:
                     // send help list
@@ -48,14 +51,14 @@ public class PvpSubCommand implements SubCommand{
 
         return false;
     }
-    
-    private boolean handleStartSeasonCommand(){
+
+    private boolean handleStartSeasonCommand() {
         try {
             PvpManager pvpManager = new PvpManager();
             pvpManager.resetPvpSeasonForOnlinePlayers();
-            
-            SettingsManager settingsManager = SettingsConfig.settingsMap.get(ConfigEnum.Settings.PVP);
-            settingsManager.setSettingsLong(ConfigEnum.Settings.PVP, "season_timer", System.currentTimeMillis());
+
+            SettingsManager settingsManager = SettingsConfig.settingsMap.get(DefaultConfig.Settings.PVP);
+            settingsManager.setSettingsLong(DefaultConfig.Settings.PVP, "season_timer", System.currentTimeMillis());
             return true;
         } catch (Exception e) {
             return false;

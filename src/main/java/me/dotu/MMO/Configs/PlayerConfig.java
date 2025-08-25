@@ -18,7 +18,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import me.dotu.MMO.Enums.ConfigEnum;
+import me.dotu.MMO.Enums.DefaultConfig;
 import me.dotu.MMO.Main;
 import me.dotu.MMO.Managers.JsonFileManager;
 import me.dotu.MMO.Managers.PlayerManager;
@@ -99,7 +99,7 @@ public class PlayerConfig extends JsonFileManager implements Listener{
         
         JsonObject defaultConfig = new JsonObject();
         
-        ConfigEnum.Type.PLAYERDATA.populate(defaultConfig);
+        DefaultConfig.Type.PLAYERDATA.populate(defaultConfig);
         
         try (FileWriter writer = new FileWriter(this.getPlayerFile(uuid))) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();

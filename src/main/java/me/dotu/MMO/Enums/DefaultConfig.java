@@ -5,11 +5,11 @@ import com.google.gson.JsonObject;
 
 import me.dotu.MMO.Skills.Skill;
 
-public class ConfigEnum {
+public class DefaultConfig {
     public static enum Type {
-        TOOLS{
+        TOOLS {
             @Override
-            public void populate(JsonObject defaultConfig){
+            public void populate(JsonObject defaultConfig) {
                 JsonObject tools = new JsonObject();
                 JsonObject exampleTool = new JsonObject();
 
@@ -20,10 +20,10 @@ public class ConfigEnum {
                 defaultConfig.add("Tools", tools);
             }
         },
-        
-        ARMORS{
+
+        ARMORS {
             @Override
-            public void populate(JsonObject defaultConfig){
+            public void populate(JsonObject defaultConfig) {
                 JsonObject armors = new JsonObject();
                 JsonObject exampleArmor = new JsonObject();
 
@@ -35,9 +35,9 @@ public class ConfigEnum {
             }
         },
 
-        WEAPONS{
+        WEAPONS {
             @Override
-            public void populate(JsonObject defaultConfig){
+            public void populate(JsonObject defaultConfig) {
                 JsonObject weapons = new JsonObject();
                 JsonObject exampleWeapon = new JsonObject();
 
@@ -49,9 +49,9 @@ public class ConfigEnum {
             }
         },
 
-        SETTINGS{
+        SETTINGS {
             @Override
-            public void populate(JsonObject defaultConfig){
+            public void populate(JsonObject defaultConfig) {
                 JsonObject weaponSettings = new JsonObject();
                 weaponSettings.addProperty("enabled", true);
 
@@ -63,9 +63,9 @@ public class ConfigEnum {
 
                 JsonObject pvpSettings = new JsonObject();
                 pvpSettings.addProperty("season_timer", System.currentTimeMillis());
-                
+
                 JsonObject skillSettings = new JsonObject();
-                for (SkillEnum.Skill skill : SkillEnum.Skill.values()){
+                for (SkillType skill : SkillType.values()) {
                     skillSettings.addProperty(skill.toString().toLowerCase(), true);
                 }
 
@@ -75,11 +75,11 @@ public class ConfigEnum {
                 defaultConfig.add("armor", armorSettings);
                 defaultConfig.add("pvp", pvpSettings);
             }
-    },
+        },
 
-        PLAYERDATA{
+        PLAYERDATA {
             @Override
-            public void populate(JsonObject defaultConfig){
+            public void populate(JsonObject defaultConfig) {
                 JsonObject playerData = new JsonObject();
 
                 JsonObject guild = new JsonObject();
@@ -99,9 +99,9 @@ public class ConfigEnum {
 
                 JsonObject skills = new JsonObject();
                 JsonObject skillsExp = new JsonObject();
-                for (SkillEnum.Skill skillName : SkillEnum.Skill.values()){
+                for (SkillType skillName : SkillType.values()) {
                     Skill skill = Skill.skillsMap.get(skillName);
-                    if (skill != null){
+                    if (skill != null) {
                         skillsExp.addProperty(skill.getName(), skill.getStartingLevel());
                     }
                 }
@@ -117,9 +117,9 @@ public class ConfigEnum {
             }
         },
 
-        MOB_TABLE{
+        MOB_TABLE {
             @Override
-            public void populate(JsonObject defaultConfig){
+            public void populate(JsonObject defaultConfig) {
                 JsonObject mobTable = new JsonObject();
 
                 // Easy Table
@@ -169,15 +169,15 @@ public class ConfigEnum {
                 mobTable.add("HARD", hard);
                 mobTable.add("VERY_HARD", veryHard);
                 mobTable.add("BRUTAL", brutal);
-                mobTable.add("IMPOSSIBLE", impossible);  
-                
+                mobTable.add("IMPOSSIBLE", impossible);
+
                 defaultConfig.add("Tables", mobTable);
             }
         },
 
-        SPAWNER_DATA{
+        SPAWNER_DATA {
             @Override
-            public void populate(JsonObject defaultConfig){
+            public void populate(JsonObject defaultConfig) {
                 JsonObject spawner = new JsonObject();
 
                 spawner.addProperty("min_level", 10);
@@ -191,7 +191,7 @@ public class ConfigEnum {
                 spawner.addProperty("name_visible", true);
                 spawner.addProperty("spawn_randomly", false);
                 spawner.addProperty("table", "default");
-                
+
                 JsonArray spawnLocations = new JsonArray();
                 spawnLocations.add("world.100.100.100");
                 spawnLocations.add("world.200.200.200");
@@ -204,8 +204,8 @@ public class ConfigEnum {
 
         public abstract void populate(JsonObject config);
     }
-    
-    public static enum Settings{
+
+    public static enum Settings {
         ENABLED_SKILLS,
         WEAPON,
         TOOL,
@@ -213,7 +213,7 @@ public class ConfigEnum {
         PVP
     }
 
-    public static enum PlayerSettings{
+    public static enum PlayerSettings {
         SKILLS,
         GUILD,
         TITLES,

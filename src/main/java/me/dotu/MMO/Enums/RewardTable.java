@@ -3,7 +3,7 @@ package me.dotu.MMO.Enums;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 
-public class RewardTableEnum {
+public class RewardTable {
     public static enum FishingReward {
         RAW_COD(EntityType.COD, 20),
         RAW_SALMON(EntityType.SALMON, 30),

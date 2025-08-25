@@ -143,4 +143,8 @@ public class CustomSpawner {
     public void addSpawnLocations(Location spawnLocation) {
         this.spawnLocations.add(spawnLocation);
     }
+
+    public void removeSpawnLocations(Location spawnLocation){
+        this.spawnLocations.remove(spawnLocation);
+    }
 }

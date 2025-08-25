@@ -5,6 +5,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import me.dotu.MMO.Augments.BowPowerAugment;
 import me.dotu.MMO.ChunkLoader.ChunkDataManager;
 import me.dotu.MMO.Commands.DotuMmoCommand;
+import me.dotu.MMO.Commands.PvpSubCommand;
+import me.dotu.MMO.Commands.SpawnerSubCommand;
 import me.dotu.MMO.Commands.TestCommand;
 import me.dotu.MMO.Configs.ExpTableConfig;
 import me.dotu.MMO.Configs.ItemConfig;
@@ -26,15 +28,20 @@ import me.dotu.MMO.UI.ExpBar;
 public class Main extends JavaPlugin {
 
     public static Main plugin;
+
     /*
      * move augment code to seperate file to manage augmenting an item
      * do the same for gems
+     * SAVE CustomSpawner to json file on disable
      */
     @Override
     public void onEnable() {
         System.out.println("DotuMMO has been enabled!");
 
         plugin = this;
+
+        SpawnerSubCommand spawnerSubCommand = new SpawnerSubCommand();
+        PvpSubCommand pvpSubCommand = new PvpSubCommand();
 
         // setup config files
         new ItemConfig();
@@ -55,6 +62,7 @@ public class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new PvpManager(), this);
         this.getServer().getPluginManager().registerEvents(new Augment(), this);
         this.getServer().getPluginManager().registerEvents(new CustomSpawnerHandler(), this);
+        this.getServer().getPluginManager().registerEvents(spawnerSubCommand, this);
 
         // Event Listeners (Augments)
         this.getServer().getPluginManager().registerEvents(new BowPowerAugment(), this);
@@ -65,7 +73,7 @@ public class Main extends JavaPlugin {
         // Command executors
         this.getCommand("test").setExecutor(new TestCommand());
         this.getCommand("chunktest").setExecutor(new TestCommand());
-        this.getCommand("dotummo").setExecutor(new DotuMmoCommand());
+        this.getCommand("dotummo").setExecutor(new DotuMmoCommand(spawnerSubCommand, pvpSubCommand));
 
         // Load essentials
     }

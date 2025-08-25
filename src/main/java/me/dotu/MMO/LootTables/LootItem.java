@@ -5,7 +5,7 @@ import java.util.List;
 import org.bukkit.Material;
 
 import me.dotu.MMO.Augments.Augment;
-import me.dotu.MMO.Enums.ItemEnum;
+import me.dotu.MMO.Enums.ItemTier;
 import me.dotu.MMO.Gems.Gem;
 
 public class LootItem {
@@ -15,10 +15,10 @@ public class LootItem {
     private String displayName;
     private List<String> lores;
     private int weight;
-    private ItemEnum.Tier[] tiers;
+    private ItemTier[] tiers;
 
     public LootItem(List<Augment> augments, List<Gem> gems, Material material, String displayName, List<String> lores,
-            int weight, ItemEnum.Tier[] tiers) {
+            int weight, ItemTier[] tiers) {
         this.augments = augments;
         this.gems = gems;
         this.material = material;
@@ -75,11 +75,11 @@ public class LootItem {
         this.weight = weight;
     }
 
-    public void setTiers(ItemEnum.Tier[] tier) {
+    public void setTiers(ItemTier[] tier) {
         this.tiers = tier;
     }
 
-    public ItemEnum.Tier[] getTiers() {
+    public ItemTier[] getTiers() {
         return this.tiers;
     }
 }

@@ -26,7 +26,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import me.dotu.MMO.Main;
-import me.dotu.MMO.Enums.RewardTableEnum;
+import me.dotu.MMO.Enums.RewardTable;
 
 public class ChunkDataManager implements Listener {
     public static HashMap<String, ChunkData> loadedChunks = new HashMap<>();
@@ -156,11 +156,11 @@ public class ChunkDataManager implements Listener {
 
     public ArrayList<Material> getBlocksList() {
         ArrayList<Material> returnArray = new ArrayList<>();
-        for (RewardTableEnum.MiningReward drop : RewardTableEnum.MiningReward.values()) {
+        for (RewardTable.MiningReward drop : RewardTable.MiningReward.values()) {
             returnArray.add(drop.getMaterial());
         }
 
-        for (RewardTableEnum.WoodcuttingReward drop : RewardTableEnum.WoodcuttingReward.values()) {
+        for (RewardTable.WoodcuttingReward drop : RewardTable.WoodcuttingReward.values()) {
             returnArray.add(drop.getMaterial());
         }
 

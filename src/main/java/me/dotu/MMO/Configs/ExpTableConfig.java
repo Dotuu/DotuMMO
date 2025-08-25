@@ -11,18 +11,17 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import me.dotu.MMO.Enums.ConfigEnum;
+import me.dotu.MMO.Enums.DefaultConfig;
 import me.dotu.MMO.Managers.JsonFileManager;
 import me.dotu.MMO.Managers.SettingsManager;
 
 public class ExpTableConfig extends JsonFileManager{
-    public static HashMap<ConfigEnum.Settings, SettingsManager> settingsMap = new HashMap<>();
+    public static HashMap<DefaultConfig.Settings, SettingsManager> settingsMap = new HashMap<>();
 
     public ExpTableConfig() {
         super("tables/exp","skills");
 
-        this.setupDefaults(Arrays.asList(
-            ConfigEnum.Type.SETTINGS
+        this.setupDefaults(Arrays.asList(DefaultConfig.Type.SETTINGS
         ));
 
         this.populateSettingsMap();
@@ -44,7 +43,7 @@ public class ExpTableConfig extends JsonFileManager{
         if (read != null){
             JsonObject settingsJson = read;
             String settingsName;
-            for (ConfigEnum.Settings name : ConfigEnum.Settings.values()){
+            for (DefaultConfig.Settings name : DefaultConfig.Settings.values()){
                 settingsName = name.toString().toLowerCase();
                 if (settingsJson.has(settingsName)){
                     JsonObject settings = settingsJson.getAsJsonObject(settingsName);
@@ -58,8 +57,8 @@ public class ExpTableConfig extends JsonFileManager{
     public void saveAllSettingsToFile(){
         JsonObject settings = new JsonObject();
 
-        for (Map.Entry<ConfigEnum.Settings, SettingsManager> entry : settingsMap.entrySet()) {
-            ConfigEnum.Settings key = entry.getKey();
+        for (Map.Entry<DefaultConfig.Settings, SettingsManager> entry : settingsMap.entrySet()) {
+            DefaultConfig.Settings key = entry.getKey();
             SettingsManager manager = entry.getValue();
             settings.add(key.toString().toLowerCase(), manager.getSettings());
 

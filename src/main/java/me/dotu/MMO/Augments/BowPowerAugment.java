@@ -8,26 +8,25 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
-import me.dotu.MMO.Enums.AugmentEnum;
-import me.dotu.MMO.Enums.ItemEnum;
 import me.dotu.MMO.Main;
+import me.dotu.MMO.Enums.AugmentCategory;
+import me.dotu.MMO.Enums.AugmentType;
+import me.dotu.MMO.Enums.ItemTier;
 
-public class BowPowerAugment extends Augment implements Listener{
-    
-    private final NamespacedKey namedKey = new NamespacedKey(Main.plugin, AugmentEnum.Augment.BOW_POWER.getName());
+public class BowPowerAugment extends Augment implements Listener {
+
+    private final NamespacedKey namedKey = new NamespacedKey(Main.plugin, AugmentType.BOW_POWER.getName());
 
     public BowPowerAugment() {
-        super(new ItemEnum.Tier[]{
-            ItemEnum.Tier.COMMON,
-            ItemEnum.Tier.EPIC
-        }, 10, AugmentEnum.Augment.BOW_POWER, "This augment increases bow power", AugmentEnum.Category.BOW);
+        super(new ItemTier[] { ItemTier.COMMON, ItemTier.EPIC }, 10, AugmentType.BOW_POWER,
+                "This augment increases bow power", AugmentCategory.BOW);
     }
-    
+
     @EventHandler
-    public void onEatEvent(PlayerItemConsumeEvent event){
+    public void onEatEvent(PlayerItemConsumeEvent event) {
         ArrayList<ItemStack> items = this.getAugmentableItems(event.getPlayer());
 
-        if (this.hasAugment(items, this.namedKey)){
+        if (this.hasAugment(items, this.namedKey)) {
             event.getPlayer().sendMessage("Augment detected!");
         }
     }
