@@ -263,8 +263,6 @@ public class CustomSpawnerHandler implements Listener {
             CustomSpawner customSpawner = this.getSpawnerFromNsk(nskArray[0]);
             String spawnerLoc = nskArray[1];
 
-            Bukkit.broadcastMessage(spawnerLoc);
-
             if (customSpawner == null || spawnerLoc == null){
                 return;
             }
@@ -275,8 +273,6 @@ public class CustomSpawnerHandler implements Listener {
             if (spawnerData.getActiveEntitiesAmount() < 0){
                 spawnerData.setActiveEntitiesAmount(0);
             }
-
-            Bukkit.broadcastMessage("New entity count: " + Integer.toString(spawnerData.getActiveEntitiesAmount()));
         }
     }
 

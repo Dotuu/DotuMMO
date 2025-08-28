@@ -25,6 +25,9 @@ public class SpawnerRunnable implements Runnable {
     private void setupSpawnerData(){
         for (SpawnerLocationData sld : SpawnerLocationDataConfig.spawnerLocationData.values()){
             CustomSpawner customSpawner = SpawnerConfig.spawners.get(sld.getLinkedCustomSpawner());
+            if (customSpawner == null){
+                continue;
+            }
             int spawnDelay = customSpawner.getSpawnDelay();
             SpawnerEntityData spawnerData = new SpawnerEntityData(customSpawner, (long) spawnDelay, 0, sld.getSpawnerLocation());
             SpawnerConfig.spawnerDataList.put(LocationUtils.serializeLocation(sld.getSpawnerLocation()), spawnerData);
