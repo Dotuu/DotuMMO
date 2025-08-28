@@ -14,6 +14,7 @@ import me.dotu.MMO.Configs.LootTableConfig;
 import me.dotu.MMO.Configs.PlayerConfig;
 import me.dotu.MMO.Configs.SettingsConfig;
 import me.dotu.MMO.Configs.SpawnerConfig;
+import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
 import me.dotu.MMO.Inventories.SpawnerInventoryClicked;
 import me.dotu.MMO.Managers.PvpManager;
 import me.dotu.MMO.Skills.Axe;
@@ -22,35 +23,53 @@ import me.dotu.MMO.Skills.Mining;
 import me.dotu.MMO.Skills.Sword;
 import me.dotu.MMO.Skills.Woodcutting;
 import me.dotu.MMO.Spawners.CustomSpawnerHandler;
+import me.dotu.MMO.Spawners.SpawnerRunnable;
 import me.dotu.MMO.Stations.Augment;
 import me.dotu.MMO.UI.ExpBar;
 
 public class Main extends JavaPlugin {
-
     public static Main plugin;
 
     /*
      * move augment code to seperate file to manage augmenting an item
      * do the same for gems
      * SAVE CustomSpawner to json file on disable
+     * WHEN a spawner config reload command is added make sure to re-run the setupSpawnerData() function in SpawnerRunnable
+     * Change saveSpawnerSettingsToFile to only save the essential stuff such as spawner locations and spawn locations
+     * Make function to kill every entity on the map that has dotummo tag for spawners
+     * I need active entity count to be seperate for every spawner on the map
      */
+
+    private SpawnerConfig spawnerConfig;
+    private ItemConfig itemConfig;
+    private SettingsConfig settingsConfig;
+    private LootTableConfig lootTableConfig;
+    private ExpTableConfig expTableConfig;
+    private PlayerConfig playerConfig;
+    private ChunkDataManager chunkDataManager;
+    private CustomSpawnerHandler customSpawnerHandler;
+    private SpawnerLocationDataConfig spawnerLocationDataConfig;
+    private SpawnerRunnable spawnerRunnable;
+    
     @Override
     public void onEnable() {
         System.out.println("DotuMMO has been enabled!");
 
         plugin = this;
 
+        this.spawnerConfig = new SpawnerConfig();
+        this.itemConfig = new ItemConfig();
+        this.settingsConfig = new SettingsConfig();
+        this.lootTableConfig = new LootTableConfig();
+        this.expTableConfig = new ExpTableConfig();
+        this.playerConfig = new PlayerConfig();
+        this.chunkDataManager = new ChunkDataManager();
+        this.customSpawnerHandler = new CustomSpawnerHandler();
+        this.spawnerLocationDataConfig = new SpawnerLocationDataConfig();
+        this.spawnerRunnable = new SpawnerRunnable();
+        
         SpawnerSubCommand spawnerSubCommand = new SpawnerSubCommand();
         PvpSubCommand pvpSubCommand = new PvpSubCommand();
-
-        // setup config files
-        new ItemConfig();
-        new SettingsConfig();
-        new SpawnerConfig();
-        new LootTableConfig();
-        new ExpTableConfig();
-
-        // setup data files
 
         // Event Listeners
         this.registerSkills();
@@ -75,7 +94,8 @@ public class Main extends JavaPlugin {
         this.getCommand("chunktest").setExecutor(new TestCommand());
         this.getCommand("dotummo").setExecutor(new DotuMmoCommand(spawnerSubCommand, pvpSubCommand));
 
-        // Load essentials
+        // Runnables
+        this.spawnerRunnable.start();
     }
 
     public void registerSkills() {
@@ -105,17 +125,12 @@ public class Main extends JavaPlugin {
     public void onDisable() {
         System.out.println("DotuMMO has been disabled!");
 
-        PlayerConfig playerConfig = new PlayerConfig();
-        playerConfig.saveAllPlayerSettingsToFile();
-
-        SettingsConfig settingsConfig = new SettingsConfig();
-        settingsConfig.saveAllSettingsToFile();
-
-        ChunkDataManager cdm = new ChunkDataManager();
-        cdm.saveAllChunkDataToFile();
-
-        SpawnerConfig spawnerConfig = new SpawnerConfig();
-        spawnerConfig.saveAllSpawnerSettingsToFile();
+        this.playerConfig.saveAllPlayerSettingsToFile();
+        this.settingsConfig.saveAllSettingsToFile();
+        this.chunkDataManager.saveAllChunkDataToFile();
+        this.spawnerConfig.saveAllSpawnerSettingsToFile();
+        this.customSpawnerHandler.killTaggedEntities();
+        this.spawnerLocationDataConfig.saveAllSpawnerSettingsToFile();
     }
 
     public static void main(String[] args) {

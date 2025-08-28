@@ -49,7 +49,7 @@ public class PvpSubCommand implements SubCommand {
             }
         }
 
-        return false;
+        return true;
     }
 
     private boolean handleStartSeasonCommand() {

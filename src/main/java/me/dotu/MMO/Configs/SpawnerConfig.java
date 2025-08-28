@@ -2,33 +2,28 @@ package me.dotu.MMO.Configs;
 
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import me.dotu.MMO.Enums.DefaultConfig;
 import me.dotu.MMO.Managers.JsonFileManager;
 import me.dotu.MMO.Spawners.CustomSpawner;
+import me.dotu.MMO.Spawners.SpawnerEntityData;
 
 public class SpawnerConfig extends JsonFileManager {
     public static HashMap<String, CustomSpawner> spawners = new HashMap<>();
+    public static HashMap<String, SpawnerEntityData> spawnerDataList = new HashMap<>();
 
     public SpawnerConfig() {
-        super("data", "spawners");
+        super("configs", "spawners");
 
-        List<DefaultConfig.Type> defaults = Arrays.asList(DefaultConfig.Type.SPAWNER_DATA
-        );
+        List<DefaultConfig.Type> defaults = Arrays.asList(DefaultConfig.Type.SPAWNER_DATA);
 
         this.setupDefaults(defaults);
 
@@ -36,54 +31,47 @@ public class SpawnerConfig extends JsonFileManager {
     }
 
     public void saveAllSpawnerSettingsToFile() {
-    JsonObject root = new JsonObject();
+        JsonObject root = new JsonObject();
 
-    for (CustomSpawner spawner : spawners.values()) {
-        JsonObject spawnerObj = new JsonObject();
-        spawnerObj.addProperty("min_level", spawner.getMinLevel());
-        spawnerObj.addProperty("max_level", spawner.getMaxLevel());
-        spawnerObj.addProperty("min_spawn_delay", spawner.getMinSpawnDelay());
-        spawnerObj.addProperty("max_spawn_delay", spawner.getMaxSpawnDelay());
-        spawnerObj.addProperty("spawn_range", spawner.getSpawnRange());
-        spawnerObj.addProperty("difficulty", spawner.getDifficulty());
-        spawnerObj.addProperty("armored", spawner.isArmored());
-        spawnerObj.addProperty("weaponed", spawner.isWeaponed());
-        spawnerObj.addProperty("name_visible", spawner.isNameVisible());
-        spawnerObj.addProperty("spawn_randomly", spawner.isSpawnRandomly());
-        spawnerObj.addProperty("table", spawner.getTable());
+        for (CustomSpawner spawner : spawners.values()) {
+            JsonObject spawnerObj = new JsonObject();
+            spawnerObj.addProperty("min_level", spawner.getMinLevel());
+            spawnerObj.addProperty("max_level", spawner.getMaxLevel());
+            spawnerObj.addProperty("spawn_delay", spawner.getSpawnDelay());
+            spawnerObj.addProperty("spawn_range", spawner.getSpawnRange());
+            spawnerObj.addProperty("spawn_count", spawner.getMaxSpawnCount());
+            spawnerObj.addProperty("difficulty", spawner.getDifficulty());
+            spawnerObj.addProperty("armored", spawner.isArmored());
+            spawnerObj.addProperty("weaponed", spawner.isWeaponed());
+            spawnerObj.addProperty("name_visible", spawner.isNameVisible());
+            spawnerObj.addProperty("spawn_randomly", spawner.isSpawnRandomly());
+            spawnerObj.addProperty("table", spawner.getTable());
 
-        // Save spawn_locations
-        JsonArray spawnLocationsArray = new JsonArray();
-        for (Location loc : spawner.getSpawnLocations()) {
-            spawnLocationsArray.add(serializeLocation(loc)); // Use your location serialization method
+            root.add(spawner.getName(), spawnerObj);
         }
-        spawnerObj.add("spawn_locations", spawnLocationsArray);
 
-        root.add(spawner.getName(), spawnerObj);
+        try (FileWriter writer = new FileWriter(this.file)) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(root, writer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-
-    try (FileWriter writer = new FileWriter(this.file)) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        gson.toJson(root, writer);
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-}
 
     private void populateSpawnersMap() {
         spawners.clear();
 
         try (FileReader reader = new FileReader(this.file)) {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            
+
             for (String name : root.keySet()) {
                 JsonObject spawnerObj = root.getAsJsonObject(name);
 
                 int minLevel = this.getIntFromJson(spawnerObj, "min_level");
                 int maxLevel = this.getIntFromJson(spawnerObj, "max_level");
-                int minSpawnDelay = this.getIntFromJson(spawnerObj, "min_spawn_delay");
-                int maxSpawnDelay = this.getIntFromJson(spawnerObj, "max_spawn_delay");
+                int spawnDelay = this.getIntFromJson(spawnerObj, "spawn_delay");
                 int spawnRange = this.getIntFromJson(spawnerObj, "spawn_range");
+                int spawnCount = this.getIntFromJson(spawnerObj, "spawn_count");
 
                 double difficulty = this.getDoubleFromJson(spawnerObj, "difficulty");
 
@@ -94,53 +82,23 @@ public class SpawnerConfig extends JsonFileManager {
 
                 String table = this.getStringFromJson(spawnerObj, "table");
 
-                JsonArray spawnLocationsJson = spawnerObj.get("spawn_locations").getAsJsonArray();
-                ArrayList<Location> spawnLocations = new ArrayList<>();
-
-                for (int y = 0; y < spawnLocationsJson.size(); y++) {
-                    String locationString = spawnLocationsJson.get(y).getAsString();
-                    Location listLoc = this.deSerializeLocation(locationString);
-                    spawnLocations.add(listLoc);
-                }
-
                 CustomSpawner customSpawner = new CustomSpawner(
-                    minLevel, 
-                    maxLevel, 
-                    difficulty, 
-                    armored, 
-                    weaponed, 
-                    nameVisible, 
-                    spawnRandomly, 
-                    name, 
-                    table, 
-                    minSpawnDelay, 
-                    maxSpawnDelay, 
-                    spawnRange, 
-                    spawnLocations
-                );
-
-                customSpawner.setSpawnLocations(spawnLocations);
+                        minLevel,
+                        maxLevel,
+                        difficulty,
+                        armored,
+                        weaponed,
+                        nameVisible,
+                        spawnRandomly,
+                        name,
+                        table,
+                        spawnDelay,
+                        spawnRange,
+                        spawnCount);
 
                 spawners.put(name, customSpawner);
             }
         } catch (Exception e) {
         }
-    }
-
-    private String serializeLocation(Location location) {
-        String world = location.getWorld().getName();
-        int x = location.getBlockX();
-        int y = location.getBlockY();
-        int z = location.getBlockZ();
-        return world + "." + x + "." + y + "." + z;
-    }
-
-    private Location deSerializeLocation(String location) {
-        String[] locationData = location.split("\\.");
-        World world = Bukkit.getServer().getWorld(locationData[0]);
-        double x = Double.parseDouble(locationData[1]);
-        double y = Double.parseDouble(locationData[2]);
-        double z = Double.parseDouble(locationData[3]);
-        return new Location(world, x, y, z);
     }
 }

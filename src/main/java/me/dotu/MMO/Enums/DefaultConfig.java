@@ -182,9 +182,9 @@ public class DefaultConfig {
 
                 spawner.addProperty("min_level", 10);
                 spawner.addProperty("max_level", 50);
-                spawner.addProperty("min_spawn_delay", 10);
-                spawner.addProperty("max_spawn_delay", 50);
+                spawner.addProperty("spawn_delay", 60);
                 spawner.addProperty("spawn_range", 25);
+                spawner.addProperty("spawn_count", 10);
                 spawner.addProperty("difficulty", 0.5D);
                 spawner.addProperty("armored", true);
                 spawner.addProperty("weaponed", true);
@@ -193,12 +193,20 @@ public class DefaultConfig {
                 spawner.addProperty("table", "default");
 
                 JsonArray spawnLocations = new JsonArray();
-                spawnLocations.add("world.100.100.100");
-                spawnLocations.add("world.200.200.200");
+                JsonArray spawnerLocations = new JsonArray();
 
                 spawner.add("spawn_locations", spawnLocations);
+                spawner.add("spawner_locations", spawnerLocations);
 
                 defaultConfig.add("test_spawner", spawner);
+            }
+        },
+        SPAWNER_LOCATION_DATA {
+            @Override
+            public void populate(JsonObject defaultConfig) {
+                JsonObject spawner = new JsonObject();
+
+                defaultConfig.add("", spawner);
             }
         };
 

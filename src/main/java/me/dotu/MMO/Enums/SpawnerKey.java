@@ -15,8 +15,7 @@ public enum SpawnerKey {
     SPAWN_RANDOMLY("spawnRandomly"),
     NAME("name"),
     TABLE("table"),
-    MIN_SPAWN_DELAY("minSpawnDelay"),
-    MAX_SPAWN_DELAY("maxSpawnDelay"),
+    SPAWN_DELAY("spawnDelay"),
     SPAWN_RANGE("spawnRange");
 
     private final String key;

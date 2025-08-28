@@ -1,9 +1,5 @@
 package me.dotu.MMO.Spawners;
 
-import java.util.ArrayList;
-
-import org.bukkit.Location;
-
 public class CustomSpawner {
 
     private int minLevel;
@@ -15,12 +11,11 @@ public class CustomSpawner {
     private boolean spawnRandomly;
     private String name;
     private String table;
-    private int minSpawnDelay;
-    private int maxSpawnDelay;
+    private int spawnDelay;
     private int spawnRange;
-    private ArrayList<Location> spawnLocations;
+    private int maxSpawnCount;
 
-    public CustomSpawner(int minLevel, int maxLevel, double difficulty, boolean armored, boolean weaponed, boolean nameVisible, boolean spawnRandomly, String name, String table, int minSpawnDelay, int maxSpawnDelay, int spawnRange, ArrayList<Location> spawnLocations){
+    public CustomSpawner(int minLevel, int maxLevel, double difficulty, boolean armored, boolean weaponed, boolean nameVisible, boolean spawnRandomly, String name, String table, int spawnDelay, int spawnRange, int maxSpawnCount){
         this.minLevel = minLevel;
         this.maxLevel = maxLevel;
         this.difficulty = difficulty;
@@ -30,10 +25,9 @@ public class CustomSpawner {
         this.spawnRandomly = spawnRandomly;
         this.name = name;
         this.table = table;
-        this.minSpawnDelay = minSpawnDelay;
-        this.maxSpawnDelay = maxSpawnDelay;
+        this.spawnDelay = spawnDelay;
         this.spawnRange = spawnRange;
-        this.spawnLocations = spawnLocations;
+        this.maxSpawnCount = maxSpawnCount;
     }
 
     public int getMinLevel() {
@@ -108,20 +102,12 @@ public class CustomSpawner {
         this.table = table;
     }
 
-    public int getMinSpawnDelay() {
-        return this.minSpawnDelay;
+    public int getSpawnDelay() {
+        return this.spawnDelay;
     }
 
-    public void setMinSpawnDelay(int minSpawnDelay) {
-        this.minSpawnDelay = minSpawnDelay;
-    }
-
-    public int getMaxSpawnDelay() {
-        return this.maxSpawnDelay;
-    }
-
-    public void setMaxSpawnDelay(int maxSpawnDelay) {
-        this.maxSpawnDelay = maxSpawnDelay;
+    public void setSpawnDelay(int SpawnDelay) {
+        this.spawnDelay = SpawnDelay;
     }
 
     public int getSpawnRange() {
@@ -132,19 +118,11 @@ public class CustomSpawner {
         this.spawnRange = spawnRange;
     }
 
-    public ArrayList<Location> getSpawnLocations() {
-        return this.spawnLocations;
+    public int getMaxSpawnCount() {
+        return this.maxSpawnCount;
     }
 
-    public void setSpawnLocations(ArrayList<Location> spawnLocations) {
-        this.spawnLocations = spawnLocations;
-    }
-
-    public void addSpawnLocations(Location spawnLocation) {
-        this.spawnLocations.add(spawnLocation);
-    }
-
-    public void removeSpawnLocations(Location spawnLocation){
-        this.spawnLocations.remove(spawnLocation);
+    public void setMaxSpawnCount(int maxSpawnCount) {
+        this.maxSpawnCount = maxSpawnCount;
     }
 }

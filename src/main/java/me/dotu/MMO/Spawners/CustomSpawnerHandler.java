@@ -4,16 +4,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityCombustByBlockEvent;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -21,9 +33,12 @@ import org.bukkit.persistence.PersistentDataType;
 
 import me.dotu.MMO.Configs.LootTableConfig;
 import me.dotu.MMO.Configs.SpawnerConfig;
+import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
 import me.dotu.MMO.Enums.SpawnerKey;
 import me.dotu.MMO.LootTables.LootItem;
 import me.dotu.MMO.LootTables.LootTable;
+import me.dotu.MMO.Main;
+import me.dotu.MMO.Utils.LocationUtils;
 import net.md_5.bungee.api.ChatColor;
 
 public class CustomSpawnerHandler implements Listener {
@@ -31,56 +46,80 @@ public class CustomSpawnerHandler implements Listener {
     public CustomSpawnerHandler() {
     }
 
-    @EventHandler
-    public void onMobSpawn(SpawnerSpawnEvent event) {
-        CreatureSpawner spawner = event.getSpawner();
-        LivingEntity living = (LivingEntity) event.getEntity();
-        event.setCancelled(true);
-        if (spawner.getPersistentDataContainer().has(SpawnerKey.ROOT.getKey())) {
-            String name = spawner.getPersistentDataContainer().get(SpawnerKey.NAME.getKey(), PersistentDataType.STRING);
-            CustomSpawner customSpawner = SpawnerConfig.spawners.get(name);
-            ArrayList<Location> spawnLocations = customSpawner.getSpawnLocations();
+    private final NamespacedKey entityTag = new NamespacedKey(Main.plugin, "DotuMMO_CustomEntity");
+    private final NamespacedKey entityTagSpawnerLink = new NamespacedKey(Main.plugin, "DotuMMO_EntitySpawnerLoc");
 
-            for (Location loc : spawnLocations) {
-                if (event.getEntity() instanceof LivingEntity) {
-                    this.spawnCustomEntity(customSpawner, living, loc);
-                    break;
-                }
-            }
+    public void spawnCustomEntity(Location spawnerLoc, String spawnerLinkLoc){
+        if (spawnerLoc == null || spawnerLoc.getWorld() == null){
+            return;
         }
-    }
+        if (spawnerLoc.getBlock().getType() != Material.SPAWNER){
+            return;
+        }
 
-    private void spawnCustomEntity(CustomSpawner props, LivingEntity living, Location loc) {
-        World world = loc.getWorld();
-        // set entity health
-        living.setHealth(calculateHealth(this.getRandomLevel(props.getMinLevel(), props.getMaxLevel())));
+        CreatureSpawner spawner = (CreatureSpawner) spawnerLoc.getBlock().getState();
+        if (!spawner.getPersistentDataContainer().has(SpawnerKey.ROOT.getKey())){
+            return;
+        }
 
-        // set entity armor
+        EntityType type = spawner.getSpawnedType();
+        if (!type.isAlive() || !type.isSpawnable()){
+            return;
+        }
+
+        String name = spawner.getPersistentDataContainer().get(SpawnerKey.NAME.getKey(), PersistentDataType.STRING);
+        if (name == null){
+            return;
+        }
+
+        CustomSpawner customSpawner = SpawnerConfig.spawners.get(name);
+        if (customSpawner == null){
+            return;
+        }
+
+        SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData.get(LocationUtils.serializeLocation(spawnerLoc));
+        Location mobSpawnLocation = this.getRandomLocation(sld.getSpawnLocations());
+        if (mobSpawnLocation == null || mobSpawnLocation.getWorld() != spawnerLoc.getWorld()) {
+            return;
+        }
+        
+        Location temp = mobSpawnLocation.clone();
+        if (temp.getBlock().getType().isSolid()){
+            temp.add(0, 1, 0);
+        }
+        temp.add(0.5, 0, 0.5);
+
+        LivingEntity living = (LivingEntity) temp.getWorld().spawnEntity(temp, type);
+
         if (this.hasEquipmentSlots(living)) {
-            if (props.isArmored()) {
+            boolean equip = this.canEquipGear(customSpawner);
+            if (customSpawner.isArmored() && equip) {
                 for (int x = 0; x < 4; x++) {
-                    if (this.canEquipGear(props)) {
-                        this.equipToMob(props, living, x);
-                    }
+                    this.equipItemsToMob(customSpawner, living, x);
                 }
             }
-            // set entity weapon
-            if (props.isWeaponed()) {
-                if (this.canEquipGear(props)) {
-                    this.equipToMob(props, living, 4);
-                }
+            if (customSpawner.isWeaponed() && equip) {
+                this.equipItemsToMob(customSpawner, living, 4);
             }
         }
+
+        living.teleport(temp);
+        this.setHealth(customSpawner, living);
+        this.setDisplayName(customSpawner, living);
+        this.tagEntity(living, spawnerLinkLoc);
     }
 
-    private int getRandomLevel(int min, int max) {
-        return min + (int) (Math.random() * (max - min) + 1);
+    private int getRandomNumber(int min, int max) {
+        if (max < min) {
+            return min;
+        }
+        return min + (int) (Math.random() * (max - min + 1));
     }
 
-    private void equipToMob(CustomSpawner props, LivingEntity living, int slot) {
-        LootTable table = LootTableConfig.lootTables.get(props.getTable());
+    private void equipItemsToMob(CustomSpawner customSpawner, LivingEntity living, int slot) {
+        LootTable table = LootTableConfig.lootTables.get(customSpawner.getTable());
         List<LootItem> tableItems = table.getItems();
-        ItemStack stack = rollTableForSlot(tableItems, this.getSuffixes(slot));
+        ItemStack stack = rollTable(tableItems, this.getSuffixes(slot));
 
         switch (slot) {
             case 0:
@@ -101,29 +140,28 @@ public class CustomSpawnerHandler implements Listener {
         }
     }
 
-    private ItemStack rollTable(List<LootItem> table) {
-        int totalWeight = table.stream().mapToInt(LootItem::getWeight).sum();
-        int rand = 1 + (int) (Math.random() * totalWeight);
+    private ItemStack rollTable(List<LootItem> table, String[] suffixes) {
+        List<LootItem> source = table;
+        if (suffixes != null && suffixes.length > 0) {
+            source = table.stream()
+                    .filter(li -> Arrays.stream(suffixes)
+                    .anyMatch(suf -> li.getMaterial().name().endsWith(suf)))
+                    .toList();
+            if (source.isEmpty()) return new ItemStack(Material.AIR);
+        }
 
+        int totalWeight = source.stream().mapToInt(LootItem::getWeight).sum();
+        if (totalWeight <= 0) return new ItemStack(Material.AIR);
+
+        int rand = 1 + (int) (Math.random() * totalWeight);
         int cumulative = 0;
-        for (LootItem item : table) {
+        for (LootItem item : source) {
             cumulative += item.getWeight();
             if (rand <= cumulative) {
-                ItemStack stack = new ItemStack(item.getMaterial());
-                return stack;
+                return new ItemStack(item.getMaterial());
             }
         }
         return new ItemStack(Material.AIR);
-    }
-
-    private ItemStack rollTableForSlot(List<LootItem> table, String[] suffixes) {
-        List<LootItem> filtered = table.stream()
-                .filter(gear -> Arrays.stream(suffixes).anyMatch(suffix -> gear.getMaterial().name().endsWith(suffix)))
-                .toList();
-        if (filtered.isEmpty()) {
-            return new ItemStack(Material.AIR);
-        }
-        return rollTable(filtered);
     }
 
     private String[] getSuffixes(int slot) {
@@ -143,9 +181,17 @@ public class CustomSpawnerHandler implements Listener {
         }
     }
 
-    private boolean canEquipGear(CustomSpawner props) {
-        if (this.rollChance(props.getDifficulty())) {
-            if (this.lootTableExists(props.getTable())) {
+    private Location getRandomLocation(ArrayList<Location> spawnLocations){
+        if (spawnLocations == null || spawnLocations.isEmpty()){
+            return null;
+        }
+        int index = getRandomNumber(0, spawnLocations.size() - 1);
+        return spawnLocations.get(index);
+    }
+
+    private boolean canEquipGear(CustomSpawner customSpawner) {
+        if (this.rollChanceToGear(customSpawner.getDifficulty())) {
+            if (this.lootTableExists(customSpawner.getTable())) {
                 return true;
             }
         }
@@ -156,7 +202,7 @@ public class CustomSpawnerHandler implements Listener {
         return (entity instanceof Mob) && entity.getEquipment() != null;
     }
 
-    private boolean rollChance(double chance) {
+    private boolean rollChanceToGear(double chance) {
         return Math.random() < (chance / 100.0);
     }
 
@@ -166,38 +212,186 @@ public class CustomSpawnerHandler implements Listener {
         return (int) (baseHealth * Math.pow(growthRate, level - 1));
     }
 
+    private void setDisplayName(CustomSpawner customSpawner, LivingEntity living){
+        if (customSpawner.isNameVisible()){
+            living.setCustomNameVisible(true);
+            String entityName = living.getName();
+            int health = (int) living.getHealth();
+            String displayHealth = Integer.toString((int) Math.ceil(health));
+            living.setCustomName(ChatColor.YELLOW + entityName + " " + ChatColor.RED + displayHealth);
+        }
+        else{
+            living.setCustomNameVisible(false);
+        }
+    }
+
+    private void tagEntity(LivingEntity living, String spawnerLinkLoc){
+        living.getPersistentDataContainer().set(this.entityTag, PersistentDataType.BOOLEAN, true);
+        living.getPersistentDataContainer().set(this.entityTagSpawnerLink, PersistentDataType.STRING, spawnerLinkLoc);
+    }
+
     @EventHandler
-    public void blockPlace(BlockPlaceEvent event) {
+    public void entityDamageEvent(EntityDamageEvent event){
+        if (!(event.getEntity() instanceof LivingEntity)){
+            return;
+        }
+
+        LivingEntity living = (LivingEntity) event.getEntity();
+        if (living.getPersistentDataContainer().has(this.entityTag)){
+            String[] livingNameParts = living.getName().split("\\ ");
+            String entityName = livingNameParts[0];
+            double preHealth = living.getHealth();
+            double postHealth = Math.max(0.0, preHealth - event.getFinalDamage());
+            String displayHealth = Integer.toString((int) Math.ceil(postHealth));
+            living.setCustomName(ChatColor.YELLOW + entityName + " " + ChatColor.RED + displayHealth);
+        }
+    }
+
+    @EventHandler
+    public void spawnerSpawn(SpawnerSpawnEvent event){
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void entityDeath(EntityDeathEvent event){
+        if (!(event.getEntity() instanceof LivingEntity)){
+            return;
+        }
+        LivingEntity living = (LivingEntity) event.getEntity();
+        if (living.getPersistentDataContainer().has(this.entityTag) && living.getPersistentDataContainer().has(this.entityTagSpawnerLink)){
+            String[] nskArray = living.getPersistentDataContainer().get(this.entityTagSpawnerLink, PersistentDataType.STRING).split("\\|");
+            CustomSpawner customSpawner = this.getSpawnerFromNsk(nskArray[0]);
+            String spawnerLoc = nskArray[1];
+
+            Bukkit.broadcastMessage(spawnerLoc);
+
+            if (customSpawner == null || spawnerLoc == null){
+                return;
+            }
+
+            SpawnerEntityData spawnerData = SpawnerConfig.spawnerDataList.get(spawnerLoc);
+            spawnerData.setActiveEntitiesAmount(spawnerData.getActiveEntitiesAmount() - 1);
+
+            if (spawnerData.getActiveEntitiesAmount() < 0){
+                spawnerData.setActiveEntitiesAmount(0);
+            }
+
+            Bukkit.broadcastMessage("New entity count: " + Integer.toString(spawnerData.getActiveEntitiesAmount()));
+        }
+    }
+
+    private CustomSpawner getSpawnerFromNsk(String spawnerName){
+        return SpawnerConfig.spawners.get(spawnerName);
+    }
+
+    private void setHealth(CustomSpawner customSpawner, LivingEntity living){
+        int level = this.getRandomNumber(customSpawner.getMinLevel(), customSpawner.getMaxLevel());
+        int targetHealth = calculateHealth(level);
+        if (targetHealth < 1) {
+            targetHealth = 1;
+        }
+
+        AttributeInstance maxAttr = living.getAttribute(Attribute.MAX_HEALTH);
+        if (maxAttr != null) {
+            maxAttr.setBaseValue(targetHealth);
+            living.setHealth(maxAttr.getValue());
+        } else {
+            living.setHealth(Math.min(targetHealth, living.getHealth()));
+        }
+    }
+
+    @EventHandler
+    public void spawnerPlace(BlockPlaceEvent event) {
         Block block = event.getBlock();
 
         if (block.getType() == Material.SPAWNER) {
             ItemStack handItem = event.getItemInHand();
             ItemMeta handMeta = handItem.getItemMeta();
             if (handMeta.getPersistentDataContainer().has(SpawnerKey.ROOT.getKey(), PersistentDataType.BOOLEAN)) {
-                String name = handMeta.getPersistentDataContainer().get(SpawnerKey.NAME.getKey(),
-                        PersistentDataType.STRING);
+                String name = handMeta.getPersistentDataContainer().get(SpawnerKey.NAME.getKey(), PersistentDataType.STRING);
                 CreatureSpawner spawner = (CreatureSpawner) block.getState();
                 CustomSpawner customSpawner = SpawnerConfig.spawners.get(name);
-                this.setSpawnerProps(spawner, customSpawner);
+                this.setSpawnerProps(customSpawner, spawner);
+                spawner.setSpawnRange(customSpawner.getSpawnRange());
+                SpawnerLocationData sld = new SpawnerLocationData(customSpawner.getName(), block.getLocation(), null);
+                SpawnerLocationDataConfig.spawnerLocationData.put(LocationUtils.serializeLocation(block.getLocation()), sld);
             }
         }
     }
 
-    public static ItemStack decorateSpawnerStack(CustomSpawner spawner) {
-        String spawnerName = spawner.getName();
+    @EventHandler
+    public void spawnerBreak(BlockBreakEvent event){
+        Block block = event.getBlock();
+
+        if (block.getType() == Material.SPAWNER){
+            CreatureSpawner spawner = (CreatureSpawner) block.getState();
+            try {
+                if (spawner.getPersistentDataContainer().has(SpawnerKey.ROOT.getKey(), PersistentDataType.BOOLEAN)){
+                    SpawnerLocationDataConfig.spawnerLocationData.remove(LocationUtils.serializeLocation(block.getLocation()));
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    @EventHandler
+    public void entityCombust(EntityCombustEvent event){
+        if (!(event.getEntity() instanceof LivingEntity)){
+            return;
+        }
+
+        if (event instanceof EntityCombustByBlockEvent){
+            return;
+        }
+
+        if (event instanceof EntityCombustByEntityEvent){
+            return;
+        }
+
+        LivingEntity living = (LivingEntity) event.getEntity();
+        if (!living.getPersistentDataContainer().has(this.entityTag) && !living.getPersistentDataContainer().has(this.entityTagSpawnerLink)){
+            return;
+        }
+
+        event.setCancelled(true);
+    }
+
+    public void killTaggedEntities(){
+        for (World world : Bukkit.getServer().getWorlds()){
+            for (Entity entity : world.getEntities()){
+                if (!(entity instanceof LivingEntity)){
+                    continue;
+                }
+
+                LivingEntity living = (LivingEntity) entity;
+                if (!living.getPersistentDataContainer().has(this.entityTag) && !living.getPersistentDataContainer().has(this.entityTagSpawnerLink)){
+                    continue;
+                }
+
+                if (living.isDead()){
+                    continue;
+                }
+
+                living.remove();
+            }
+        }
+    }
+
+
+    public static ItemStack decorateSpawnerStack(CustomSpawner customSpawner) {
+        String spawnerName = customSpawner.getName();
 
         List<String> lores = Arrays.asList(
-                ChatColor.AQUA + "Loot Table: " + ChatColor.YELLOW + spawner.getTable(),
-                ChatColor.AQUA + "Min Level: " + ChatColor.YELLOW + String.valueOf(spawner.getMinLevel()),
-                ChatColor.AQUA + "Max Level: " + ChatColor.YELLOW + String.valueOf(spawner.getMaxLevel()),
-                ChatColor.AQUA + "Min Spawn Delay: " + ChatColor.YELLOW + String.valueOf(spawner.getMinSpawnDelay()),
-                ChatColor.AQUA + "Max Spawn Delay: " + ChatColor.YELLOW + String.valueOf(spawner.getMaxSpawnDelay()),
-                ChatColor.AQUA + "Spawn Range: " + ChatColor.YELLOW + String.valueOf(spawner.getSpawnRange()),
-                ChatColor.AQUA + "Difficulty: " + ChatColor.YELLOW + Double.toString(spawner.getDifficulty()),
-                ChatColor.AQUA + "Armored: " + ChatColor.YELLOW + Boolean.toString(spawner.isArmored()),
-                ChatColor.AQUA + "Weaponed: " + ChatColor.YELLOW + Boolean.toString(spawner.isWeaponed()),
-                ChatColor.AQUA + "Name Visible: " + ChatColor.YELLOW + Boolean.toString(spawner.isNameVisible()),
-                ChatColor.AQUA + "Spawn Randomly: " + ChatColor.YELLOW + Boolean.toString(spawner.isSpawnRandomly()));
+                ChatColor.AQUA + "Loot Table: " + ChatColor.YELLOW + customSpawner.getTable(),
+                ChatColor.AQUA + "Min Level: " + ChatColor.YELLOW + String.valueOf(customSpawner.getMinLevel()),
+                ChatColor.AQUA + "Max Level: " + ChatColor.YELLOW + String.valueOf(customSpawner.getMaxLevel()),
+                ChatColor.AQUA + "Spawn Delay (ticks): " + ChatColor.YELLOW + String.valueOf(customSpawner.getSpawnDelay()),
+                ChatColor.AQUA + "Spawn Range: " + ChatColor.YELLOW + String.valueOf(customSpawner.getSpawnRange()),
+                ChatColor.AQUA + "Difficulty: " + ChatColor.YELLOW + Double.toString(customSpawner.getDifficulty()),
+                ChatColor.AQUA + "Armored: " + ChatColor.YELLOW + Boolean.toString(customSpawner.isArmored()),
+                ChatColor.AQUA + "Weaponed: " + ChatColor.YELLOW + Boolean.toString(customSpawner.isWeaponed()),
+                ChatColor.AQUA + "Name Visible: " + ChatColor.YELLOW + Boolean.toString(customSpawner.isNameVisible()),
+                ChatColor.AQUA + "Spawn Randomly: " + ChatColor.YELLOW + Boolean.toString(customSpawner.isSpawnRandomly()));
 
         ItemStack item = new ItemStack(Material.SPAWNER);
         ItemMeta meta = item.getItemMeta();
@@ -212,37 +406,20 @@ public class CustomSpawnerHandler implements Listener {
         return item;
     }
 
-    public void setSpawnerProps(CreatureSpawner spawner, CustomSpawner customSpawner) {
+    public void setSpawnerProps(CustomSpawner customSpawner, CreatureSpawner spawner) {
         spawner.getPersistentDataContainer().set(SpawnerKey.ROOT.getKey(), PersistentDataType.BOOLEAN, true);
-        spawner.getPersistentDataContainer().set(SpawnerKey.MIN_LEVEL.getKey(), PersistentDataType.INTEGER,
-                customSpawner.getMinLevel());
-        spawner.getPersistentDataContainer().set(SpawnerKey.MAX_LEVEL.getKey(), PersistentDataType.INTEGER,
-                customSpawner.getMaxLevel());
-        spawner.getPersistentDataContainer().set(SpawnerKey.DIFFICULTY.getKey(), PersistentDataType.DOUBLE,
-                customSpawner.getDifficulty());
-        spawner.getPersistentDataContainer().set(SpawnerKey.ARMORED.getKey(), PersistentDataType.BOOLEAN,
-                customSpawner.isArmored());
-        spawner.getPersistentDataContainer().set(SpawnerKey.WEAPONED.getKey(), PersistentDataType.BOOLEAN,
-                customSpawner.isWeaponed());
-        spawner.getPersistentDataContainer().set(SpawnerKey.NAME_VISIBLE.getKey(), PersistentDataType.BOOLEAN,
-                customSpawner.isNameVisible());
-        spawner.getPersistentDataContainer().set(SpawnerKey.SPAWN_RANDOMLY.getKey(), PersistentDataType.BOOLEAN,
-                customSpawner.isSpawnRandomly());
-        spawner.getPersistentDataContainer().set(SpawnerKey.NAME.getKey(), PersistentDataType.STRING,
-                customSpawner.getName());
-        spawner.getPersistentDataContainer().set(SpawnerKey.TABLE.getKey(), PersistentDataType.STRING,
-                customSpawner.getTable());
-        spawner.getPersistentDataContainer().set(SpawnerKey.MIN_SPAWN_DELAY.getKey(), PersistentDataType.INTEGER,
-                customSpawner.getMinSpawnDelay());
-        spawner.getPersistentDataContainer().set(SpawnerKey.MAX_SPAWN_DELAY.getKey(), PersistentDataType.INTEGER,
-                customSpawner.getMaxSpawnDelay());
-        spawner.getPersistentDataContainer().set(SpawnerKey.SPAWN_RANGE.getKey(), PersistentDataType.INTEGER,
-                customSpawner.getMaxSpawnDelay());
+        spawner.getPersistentDataContainer().set(SpawnerKey.MIN_LEVEL.getKey(), PersistentDataType.INTEGER, customSpawner.getMinLevel());
+        spawner.getPersistentDataContainer().set(SpawnerKey.MAX_LEVEL.getKey(), PersistentDataType.INTEGER, customSpawner.getMaxLevel());
+        spawner.getPersistentDataContainer().set(SpawnerKey.DIFFICULTY.getKey(), PersistentDataType.DOUBLE, customSpawner.getDifficulty());
+        spawner.getPersistentDataContainer().set(SpawnerKey.ARMORED.getKey(), PersistentDataType.BOOLEAN, customSpawner.isArmored());
+        spawner.getPersistentDataContainer().set(SpawnerKey.WEAPONED.getKey(), PersistentDataType.BOOLEAN, customSpawner.isWeaponed());
+        spawner.getPersistentDataContainer().set(SpawnerKey.NAME_VISIBLE.getKey(), PersistentDataType.BOOLEAN, customSpawner.isNameVisible());
+        spawner.getPersistentDataContainer().set(SpawnerKey.SPAWN_RANDOMLY.getKey(), PersistentDataType.BOOLEAN, customSpawner.isSpawnRandomly());
+        spawner.getPersistentDataContainer().set(SpawnerKey.NAME.getKey(), PersistentDataType.STRING, customSpawner.getName());
+        spawner.getPersistentDataContainer().set(SpawnerKey.TABLE.getKey(), PersistentDataType.STRING, customSpawner.getTable());
+        spawner.getPersistentDataContainer().set(SpawnerKey.SPAWN_DELAY.getKey(), PersistentDataType.INTEGER, customSpawner.getSpawnDelay());
+        spawner.getPersistentDataContainer().set(SpawnerKey.SPAWN_RANGE.getKey(), PersistentDataType.INTEGER, customSpawner.getSpawnRange());
         spawner.update();
-    }
-
-    public int getSpawnLevel(int min, int max) {
-        return min + (int) (Math.random() * ((max - min) + 1));
     }
 
     private boolean lootTableExists(String lootTable) {

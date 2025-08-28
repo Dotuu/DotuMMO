@@ -51,6 +51,6 @@ public class TestCommand implements CommandExecutor{
                 System.out.println(Integer.toString(ChunkDataManager.loadedChunks.size()));
             }
         }
-        return false;
+        return true;
     }
 }

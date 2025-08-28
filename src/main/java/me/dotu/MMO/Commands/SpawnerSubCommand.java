@@ -3,6 +3,9 @@ package me.dotu.MMO.Commands;
 import java.util.HashMap;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,13 +16,17 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.dotu.MMO.Configs.SpawnerConfig;
+import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
 import me.dotu.MMO.Enums.MarkerColor;
 import me.dotu.MMO.Enums.PermissionType;
+import me.dotu.MMO.Enums.SpawnerKey;
 import me.dotu.MMO.Inventories.SpawnerInventory;
 import me.dotu.MMO.Managers.MessageManager;
 import me.dotu.MMO.Marker;
 import me.dotu.MMO.Spawners.CustomSpawner;
 import me.dotu.MMO.Spawners.CustomSpawnerHandler;
+import me.dotu.MMO.Spawners.SpawnerLocationData;
+import me.dotu.MMO.Utils.LocationUtils;
 import net.md_5.bungee.api.ChatColor;
 
 public class SpawnerSubCommand implements SubCommand, Listener {
@@ -62,7 +69,7 @@ public class SpawnerSubCommand implements SubCommand, Listener {
                     break;
             }
         }
-        return false;
+        return true;
     }
 
     private void handleAddSpawnerCommand(Player player, String[] args) {
@@ -97,23 +104,37 @@ public class SpawnerSubCommand implements SubCommand, Listener {
             return;
         }
 
-        if (args.length == 2) {
-            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Please specify a spawner name"));
-        } else {
-            if (!SpawnerConfig.spawners.containsKey(args[2])) {
-                player.sendMessage(
-                        MessageManager.send(MessageManager.Type.ERROR, "Spawner with that name does not exist"));
+        Block block = player.getTargetBlockExact(10);
+        if (block == null){
+            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Spawner block not found within 10 blocks"));
+            return;
+        }
+
+        if (block.getType() != Material.SPAWNER){
+            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Target block is not a spawner block"));
+            return;
+        }
+
+        CreatureSpawner spawner = (CreatureSpawner) block.getState();
+        if (!spawner.getPersistentDataContainer().has(SpawnerKey.NAME.getKey())){
+            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Target block is not a DotuMMO custom spawner"));
+        }
+
+        else {
+            String spawnerLocString = LocationUtils.serializeLocation(block.getLocation());
+            if (!SpawnerLocationDataConfig.spawnerLocationData.containsKey(spawnerLocString)) {
+                player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Spawner not found"));
                 return;
             }
 
-            CustomSpawner customSpawner = SpawnerConfig.spawners.get(args[2]);
-            player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Now in edit mode for " + args[2]));
-            player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Use /dotummo spawner edit to exit"));
-            player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS,
-                    "Left Click block to set spawn block, right click block to remove spawn block"));
+            SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData.get(LocationUtils.serializeLocation(block.getLocation()));
 
-            Marker marker = new Marker(player, customSpawner.getSpawnLocations(), MarkerColor.RED, 10);
-            this.editing.put(player.getName(), args[2]);
+            player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Now in edit mode"));
+            player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Use /dotummo spawner edit to exit"));
+            player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Left Click block to set spawn block, right click block to remove spawn block"));
+
+            Marker marker = new Marker(player, sld.getSpawnLocations(), MarkerColor.RED, 10);
+            this.editing.put(player.getName(), LocationUtils.serializeLocation(sld.getSpawnerLocation()));
             this.viewingMarkers.put(player.getName(), marker);
         }
     }
@@ -122,15 +143,16 @@ public class SpawnerSubCommand implements SubCommand, Listener {
     public void interactSpawnerBlock(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (this.editing.containsKey(player.getName())) {
-            CustomSpawner customSpawner = SpawnerConfig.spawners.get(this.editing.get(player.getName()));
+            String spawnerKey = this.editing.get(player.getName());
+            SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData.get(spawnerKey);
             Marker marker = viewingMarkers.computeIfAbsent(player.getName(),
-                    k -> new Marker(player, customSpawner.getSpawnLocations(), MarkerColor.RED, 10));
+                    k -> new Marker(player, sld.getSpawnLocations(), MarkerColor.RED, 10));
 
             if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                 event.setCancelled(true);
                 Location clickedLoc = event.getClickedBlock().getLocation();
-                if (!customSpawner.getSpawnLocations().contains(clickedLoc)) {
-                    customSpawner.addSpawnLocations(clickedLoc);
+                if (!sld.getSpawnLocations().contains(clickedLoc)) {
+                    sld.addSpawnLocations(clickedLoc);
                     marker.addMarker(clickedLoc);
                     player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Added spawn location"));
                 }
@@ -138,8 +160,8 @@ public class SpawnerSubCommand implements SubCommand, Listener {
 
             if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 Location clickedLoc = event.getClickedBlock().getLocation();
-                if (customSpawner.getSpawnLocations().contains(clickedLoc)) {
-                    customSpawner.removeSpawnLocations(clickedLoc);
+                if (sld.getSpawnLocations().contains(clickedLoc)) {
+                    sld.removeSpawnLocations(clickedLoc);
                     marker.removeMarker(clickedLoc);
                     player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Removed spawn location"));
                 }
