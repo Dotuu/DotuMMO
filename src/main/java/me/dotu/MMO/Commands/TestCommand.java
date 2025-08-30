@@ -5,7 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.dotu.MMO.ChunkLoader.ChunkDataManager;
+import me.dotu.MMO.Configs.ChunkDataConfig;
 
 public class TestCommand implements CommandExecutor{
 
@@ -45,10 +45,10 @@ public class TestCommand implements CommandExecutor{
         else if (command.getName().equalsIgnoreCase("chunktest")){
             if (sender instanceof Player){
                 Player player = (Player) sender;
-                player.sendMessage(Integer.toString(ChunkDataManager.loadedChunks.size()));
+                player.sendMessage(Integer.toString(ChunkDataConfig.loadedChunks.size()));
             }
             else{
-                System.out.println(Integer.toString(ChunkDataManager.loadedChunks.size()));
+                System.out.println(Integer.toString(ChunkDataConfig.loadedChunks.size()));
             }
         }
         return true;

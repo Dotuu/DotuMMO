@@ -8,7 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import me.dotu.MMO.Configs.PlayerConfig;
-import me.dotu.MMO.Enums.DefaultConfig;
+import me.dotu.MMO.Enums.PlayerSettings;
 
 public class PlayerManager implements Listener{
 
@@ -18,7 +18,7 @@ public class PlayerManager implements Listener{
         this.config = config;
     }
 
-    public int getSettingsInt(UUID uuid, DefaultConfig.PlayerSettings key, String prop, int defaultValue){
+    public int getSettingsInt(UUID uuid, PlayerSettings key, String prop, int defaultValue){
         PlayerManager manager = PlayerConfig.playerSettings.get(uuid);
         if (manager != null){
             JsonObject data = getOrCreateObject(manager.getSettings(), "Data");
@@ -28,7 +28,7 @@ public class PlayerManager implements Listener{
         return defaultValue;
     }
 
-    public void setSettingsInt(UUID uuid, DefaultConfig.PlayerSettings key, String prop, int value){
+    public void setSettingsInt(UUID uuid, PlayerSettings key, String prop, int value){
         PlayerManager manager = PlayerConfig.playerSettings.get(uuid);
         if (manager != null){
             JsonObject data = getOrCreateObject(manager.getSettings(), "Data");
@@ -37,17 +37,18 @@ public class PlayerManager implements Listener{
         }
     }
 
-    public String getSettingsString(UUID uuid, DefaultConfig.PlayerSettings key, String prop, String defaultValue){
+    public String getSettingsString(UUID uuid, PlayerSettings key, String prop, String defaultValue){
         PlayerManager manager = PlayerConfig.playerSettings.get(uuid);
         if (manager != null){
             JsonObject data = getOrCreateObject(manager.getSettings(), "Data");
-            JsonObject obj = getOrCreateObject(data, key.toString().toLowerCase());
+            JsonObject obj;
+            obj = getOrCreateObject(data, key.toString().toLowerCase());
             return obj.has(prop) ? obj.get(prop).getAsString() : defaultValue;
         }
         return defaultValue;
     }
 
-    public long getSettingsLong(UUID uuid, DefaultConfig.PlayerSettings key, String prop, long defaultValue){
+    public long getSettingsLong(UUID uuid, PlayerSettings key, String prop, long defaultValue){
         PlayerManager manager = PlayerConfig.playerSettings.get(uuid);
         if (manager != null){
             JsonObject data = getOrCreateObject(manager.getSettings(), "Data");
@@ -57,7 +58,7 @@ public class PlayerManager implements Listener{
         return defaultValue;
     }
 
-    public void setSettingsLong(UUID uuid, DefaultConfig.PlayerSettings key, String prop, long value){
+    public void setSettingsLong(UUID uuid, PlayerSettings key, String prop, long value){
         PlayerManager manager = PlayerConfig.playerSettings.get(uuid);
         if (manager != null){
             JsonObject data = getOrCreateObject(manager.getSettings(), "Data");

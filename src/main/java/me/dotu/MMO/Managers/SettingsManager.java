@@ -3,7 +3,7 @@ package me.dotu.MMO.Managers;
 import com.google.gson.JsonObject;
 
 import me.dotu.MMO.Configs.SettingsConfig;
-import me.dotu.MMO.Enums.DefaultConfig;
+import me.dotu.MMO.Enums.Settings;
 
 public class SettingsManager {
     private JsonObject settings;
@@ -21,7 +21,7 @@ public class SettingsManager {
     }
     
 
-    public boolean getSettingsBoolean(DefaultConfig.Settings key, String prop, boolean defaultValue){
+    public boolean getSettingsBoolean (Settings key, String prop, boolean defaultValue){
         SettingsManager manager = SettingsConfig.settingsMap.get(key);
         if (manager != null){
             JsonObject obj = manager.getSettings();
@@ -30,7 +30,7 @@ public class SettingsManager {
         return defaultValue;
     }
 
-    public int getSettingsInt(DefaultConfig.Settings key, String prop, int defaultValue){
+    public int getSettingsInt(Settings key, String prop, int defaultValue){
         SettingsManager manager = SettingsConfig.settingsMap.get(key);
         if (manager != null){
             JsonObject obj = manager.getSettings();
@@ -39,7 +39,7 @@ public class SettingsManager {
         return defaultValue;
     }
 
-    public String getSettingsString(DefaultConfig.Settings key, String prop, String defaultValue){
+    public String getSettingsString(Settings key, String prop, String defaultValue){
         SettingsManager manager = SettingsConfig.settingsMap.get(key);
         if (manager != null){
             JsonObject obj = manager.getSettings();
@@ -48,7 +48,7 @@ public class SettingsManager {
         return defaultValue;
     }
 
-    public long getSettingsLong(DefaultConfig.Settings key, String prop, long defaultValue){
+    public long getSettingsLong(Settings key, String prop, long defaultValue){
         SettingsManager manager = SettingsConfig.settingsMap.get(key);
         if (manager != null){
             JsonObject obj = manager.getSettings();
@@ -57,7 +57,7 @@ public class SettingsManager {
         return defaultValue;
     }
 
-    public void setSettingsLong(DefaultConfig.Settings key, String prop, long value){
+    public void setSettingsLong(Settings key, String prop, long value){
         SettingsManager manager = SettingsConfig.settingsMap.get(key);
         if (manager != null){
             JsonObject obj = manager.getSettings();

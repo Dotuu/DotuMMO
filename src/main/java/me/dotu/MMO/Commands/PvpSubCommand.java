@@ -4,8 +4,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.dotu.MMO.Configs.SettingsConfig;
-import me.dotu.MMO.Enums.DefaultConfig;
 import me.dotu.MMO.Enums.PermissionType;
+import me.dotu.MMO.Enums.Settings;
 import me.dotu.MMO.Managers.MessageManager;
 import me.dotu.MMO.Managers.PvpManager;
 import me.dotu.MMO.Managers.SettingsManager;
@@ -57,8 +57,8 @@ public class PvpSubCommand implements SubCommand {
             PvpManager pvpManager = new PvpManager();
             pvpManager.resetPvpSeasonForOnlinePlayers();
 
-            SettingsManager settingsManager = SettingsConfig.settingsMap.get(DefaultConfig.Settings.PVP);
-            settingsManager.setSettingsLong(DefaultConfig.Settings.PVP, "season_timer", System.currentTimeMillis());
+            SettingsManager settingsManager = SettingsConfig.settingsMap.get(Settings.PVP);
+            settingsManager.setSettingsLong(Settings.PVP, "season_timer", System.currentTimeMillis());
             return true;
         } catch (Exception e) {
             return false;

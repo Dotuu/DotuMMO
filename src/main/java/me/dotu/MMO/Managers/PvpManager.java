@@ -10,7 +10,8 @@ import com.google.gson.JsonObject;
 
 import me.dotu.MMO.Configs.PlayerConfig;
 import me.dotu.MMO.Configs.SettingsConfig;
-import me.dotu.MMO.Enums.DefaultConfig;
+import me.dotu.MMO.Enums.PlayerSettings;
+import me.dotu.MMO.Enums.Settings;
 
 public class PvpManager implements Listener{
 
@@ -20,17 +21,17 @@ public class PvpManager implements Listener{
 
     @EventHandler
     public void playerJoin(PlayerJoinEvent event){
-        SettingsManager settingsManager = SettingsConfig.settingsMap.get(DefaultConfig.Settings.PVP);
+        SettingsManager settingsManager = SettingsConfig.settingsMap.get(Settings.PVP);
         PlayerManager playerManager = PlayerConfig.playerSettings.get(event.getPlayer().getUniqueId());
         try{
-            long seasonStart = settingsManager.getSettingsLong(DefaultConfig.Settings.PVP, "season_timer", System.currentTimeMillis());
-            long currentPlayerSeason = playerManager.getSettingsLong(event.getPlayer().getUniqueId(), DefaultConfig.PlayerSettings.PVP, "season_timer", System.currentTimeMillis());
+            long seasonStart = settingsManager.getSettingsLong(Settings.PVP, "season_timer", System.currentTimeMillis());
+            long currentPlayerSeason = playerManager.getSettingsLong(event.getPlayer().getUniqueId(), PlayerSettings.PVP, "season_timer", System.currentTimeMillis());
 
             event.getPlayer().sendMessage("Season start: " + Long.toString(seasonStart));
             event.getPlayer().sendMessage("Player season: " + Long.toString(currentPlayerSeason));
             if (seasonStart > currentPlayerSeason){
-                playerManager.setSettingsInt(event.getPlayer().getUniqueId(), DefaultConfig.PlayerSettings.PVP, "kills", 0);
-                playerManager.setSettingsInt(event.getPlayer().getUniqueId(), DefaultConfig.PlayerSettings.PVP, "deaths", 0);
+                playerManager.setSettingsInt(event.getPlayer().getUniqueId(), PlayerSettings.PVP, "kills", 0);
+                playerManager.setSettingsInt(event.getPlayer().getUniqueId(), PlayerSettings.PVP, "deaths", 0);
             }
         }
         catch(Exception e){
@@ -95,9 +96,9 @@ public class PvpManager implements Listener{
     public void resetPvpSeasonForOnlinePlayers(){
         for (UUID uuid : PlayerConfig.playerSettings.keySet()){
             PlayerManager manager = PlayerConfig.playerSettings.get(uuid);
-            manager.setSettingsInt(uuid, DefaultConfig.PlayerSettings.PVP, "kills", 0);
-            manager.setSettingsInt(uuid, DefaultConfig.PlayerSettings.PVP, "deaths", 0);
-            manager.setSettingsLong(uuid, DefaultConfig.PlayerSettings.PVP, "season_timer", System.currentTimeMillis());
+            manager.setSettingsInt(uuid, PlayerSettings.PVP, "kills", 0);
+            manager.setSettingsInt(uuid, PlayerSettings.PVP, "deaths", 0);
+            manager.setSettingsLong(uuid, PlayerSettings.PVP, "season_timer", System.currentTimeMillis());
         }
     }
 }

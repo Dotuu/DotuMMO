@@ -12,8 +12,11 @@ import me.dotu.MMO.ExpCalculator;
 
 public class Axe extends Skill implements Listener {
 
+    private final boolean skillEnabled;
+
     public Axe() {
         super("Axe", SkillDifficulty.NORMAL, SkillType.AXE, 100, 0);
+        this.skillEnabled = this.isSkillEnabled("axe");
     }
 
     public void registerSkill() {
@@ -22,6 +25,10 @@ public class Axe extends Skill implements Listener {
 
     @EventHandler
     public void entityDeath(EntityDeathEvent event) {
+        if (this.skillEnabled == false){
+            return;
+        }
+
         // PVE
         if (event.getEntity().getKiller() instanceof Player && !(event.getEntity() instanceof Player)) {
             Player player = (Player) event.getEntity().getKiller();

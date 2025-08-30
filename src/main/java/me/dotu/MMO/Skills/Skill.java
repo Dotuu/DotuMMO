@@ -5,10 +5,13 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import me.dotu.MMO.ExpCalculator;
+import me.dotu.MMO.Configs.SettingsConfig;
+import me.dotu.MMO.Enums.Settings;
 import me.dotu.MMO.Enums.SkillDifficulty;
 import me.dotu.MMO.Enums.SkillType;
+import me.dotu.MMO.ExpCalculator;
 import me.dotu.MMO.Managers.MessageManager;
+import me.dotu.MMO.Managers.SettingsManager;
 import me.dotu.MMO.Managers.SkillsManager;
 import me.dotu.MMO.UI.ExpBar;
 import net.md_5.bungee.api.ChatMessageType;
@@ -23,8 +26,7 @@ public class Skill {
 
     public static HashMap<SkillType, Skill> skillsMap = new HashMap<>();
 
-    protected Skill(String name, SkillDifficulty difficulty, SkillType skill, int maxLevel,
-            int startingLevel) {
+    protected Skill(String name, SkillDifficulty difficulty, SkillType skill, int maxLevel, int startingLevel) {
         this.skill = skill;
         this.difficulty = difficulty;
         this.maxLevel = maxLevel;
@@ -74,6 +76,11 @@ public class Skill {
 
     public void setSkill(SkillType skill) {
         this.skill = skill;
+    }
+
+    protected boolean isSkillEnabled(String skillName){
+        SettingsManager enabledSkills = SettingsConfig.settingsMap.get(Settings.ENABLED_SKILLS);
+        return enabledSkills.getSettingsBoolean(Settings.ENABLED_SKILLS, skillName, true);
     }
 
     public void processExpReward(Player player, Skill skill, int xpReward) {

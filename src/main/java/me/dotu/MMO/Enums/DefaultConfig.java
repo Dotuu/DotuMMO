@@ -212,20 +212,4 @@ public class DefaultConfig {
 
         public abstract void populate(JsonObject config);
     }
-
-    public static enum Settings {
-        ENABLED_SKILLS,
-        WEAPON,
-        TOOL,
-        ARMOR,
-        PVP
-    }
-
-    public static enum PlayerSettings {
-        SKILLS,
-        GUILD,
-        TITLES,
-        PARTY,
-        PVP
-    }
 }

@@ -12,11 +12,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import me.dotu.MMO.Enums.DefaultConfig;
+import me.dotu.MMO.Enums.Settings;
 import me.dotu.MMO.Managers.JsonFileManager;
 import me.dotu.MMO.Managers.SettingsManager;
 
-public class SettingsConfig extends JsonFileManager{
-    public static HashMap<DefaultConfig.Settings, SettingsManager> settingsMap = new HashMap<>();
+public final class SettingsConfig extends JsonFileManager{
+    public static HashMap<Settings, SettingsManager> settingsMap = new HashMap<>();
 
     public SettingsConfig() {
         super("configs","dotummo");
@@ -43,7 +44,7 @@ public class SettingsConfig extends JsonFileManager{
         if (read != null){
             JsonObject settingsJson = read;
             String settingsName;
-            for (DefaultConfig.Settings name : DefaultConfig.Settings.values()){
+            for (Settings name : Settings.values()){
                 settingsName = name.toString().toLowerCase();
                 if (settingsJson.has(settingsName)){
                     JsonObject settings = settingsJson.getAsJsonObject(settingsName);
@@ -57,8 +58,8 @@ public class SettingsConfig extends JsonFileManager{
     public void saveAllSettingsToFile(){
         JsonObject settings = new JsonObject();
 
-        for (Map.Entry<DefaultConfig.Settings, SettingsManager> entry : settingsMap.entrySet()) {
-            DefaultConfig.Settings key = entry.getKey();
+        for (Map.Entry<Settings, SettingsManager> entry : settingsMap.entrySet()) {
+            Settings key = entry.getKey();
             SettingsManager manager = entry.getValue();
             settings.add(key.toString().toLowerCase(), manager.getSettings());
 

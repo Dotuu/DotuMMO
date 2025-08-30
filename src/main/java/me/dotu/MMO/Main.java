@@ -3,11 +3,11 @@ package me.dotu.MMO;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.dotu.MMO.Augments.BowPowerAugment;
-import me.dotu.MMO.ChunkLoader.ChunkDataManager;
 import me.dotu.MMO.Commands.DotuMmoCommand;
 import me.dotu.MMO.Commands.PvpSubCommand;
 import me.dotu.MMO.Commands.SpawnerSubCommand;
 import me.dotu.MMO.Commands.TestCommand;
+import me.dotu.MMO.Configs.ChunkDataConfig;
 import me.dotu.MMO.Configs.ExpTableConfig;
 import me.dotu.MMO.Configs.ItemConfig;
 import me.dotu.MMO.Configs.LootTableConfig;
@@ -16,14 +16,16 @@ import me.dotu.MMO.Configs.SettingsConfig;
 import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
 import me.dotu.MMO.Inventories.SpawnerInventoryClicked;
+import me.dotu.MMO.Managers.ChunkDataManager;
 import me.dotu.MMO.Managers.PvpManager;
+import me.dotu.MMO.Runnables.FileRunnable;
+import me.dotu.MMO.Runnables.SpawnerRunnable;
 import me.dotu.MMO.Skills.Axe;
 import me.dotu.MMO.Skills.Fishing;
 import me.dotu.MMO.Skills.Mining;
 import me.dotu.MMO.Skills.Sword;
 import me.dotu.MMO.Skills.Woodcutting;
 import me.dotu.MMO.Spawners.CustomSpawnerHandler;
-import me.dotu.MMO.Spawners.SpawnerRunnable;
 import me.dotu.MMO.Stations.Augment;
 import me.dotu.MMO.UI.ExpBar;
 
@@ -34,9 +36,12 @@ public class Main extends JavaPlugin {
      * move augment code to seperate file to manage augmenting an item
      * do the same for gems
      * SAVE CustomSpawner to json file on disable
-     * WHEN a spawner config reload command is added make sure to re-run the setupSpawnerData() function in SpawnerRunnable
-     * Change saveSpawnerSettingsToFile to only save the essential stuff such as spawner locations and spawn locations
-     * Make function to kill every entity on the map that has dotummo tag for spawners
+     * WHEN a spawner config reload command is added make sure to re-run the
+     * setupSpawnerData() function in SpawnerRunnable
+     * Change saveSpawnerSettingsToFile to only save the essential stuff such as
+     * spawner locations and spawn locations
+     * Make function to kill every entity on the map that has dotummo tag for
+     * spawners
      * I need active entity count to be seperate for every spawner on the map
      */
 
@@ -46,11 +51,12 @@ public class Main extends JavaPlugin {
     private LootTableConfig lootTableConfig;
     private ExpTableConfig expTableConfig;
     private PlayerConfig playerConfig;
-    private ChunkDataManager chunkDataManager;
+    private ChunkDataConfig chunkDataConfig;
     private CustomSpawnerHandler customSpawnerHandler;
     private SpawnerLocationDataConfig spawnerLocationDataConfig;
     private SpawnerRunnable spawnerRunnable;
-    
+    private FileRunnable fileRunnable;
+
     @Override
     public void onEnable() {
         System.out.println("DotuMMO has been enabled!");
@@ -63,11 +69,12 @@ public class Main extends JavaPlugin {
         this.lootTableConfig = new LootTableConfig();
         this.expTableConfig = new ExpTableConfig();
         this.playerConfig = new PlayerConfig();
-        this.chunkDataManager = new ChunkDataManager();
+        this.chunkDataConfig = new ChunkDataConfig();
         this.customSpawnerHandler = new CustomSpawnerHandler();
         this.spawnerLocationDataConfig = new SpawnerLocationDataConfig();
         this.spawnerRunnable = new SpawnerRunnable();
-        
+        this.fileRunnable = new FileRunnable();
+
         SpawnerSubCommand spawnerSubCommand = new SpawnerSubCommand();
         PvpSubCommand pvpSubCommand = new PvpSubCommand();
 
@@ -75,12 +82,13 @@ public class Main extends JavaPlugin {
         this.registerSkills();
 
         // Other
-        this.getServer().getPluginManager().registerEvents(new ChunkDataManager(), this);
+        this.getServer().getPluginManager().registerEvents(new ChunkDataConfig(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerConfig(), this);
         this.getServer().getPluginManager().registerEvents(new ExpBar(), this);
         this.getServer().getPluginManager().registerEvents(new PvpManager(), this);
         this.getServer().getPluginManager().registerEvents(new Augment(), this);
         this.getServer().getPluginManager().registerEvents(new CustomSpawnerHandler(), this);
+        this.getServer().getPluginManager().registerEvents(new ChunkDataManager(), this);
         this.getServer().getPluginManager().registerEvents(spawnerSubCommand, this);
 
         // Event Listeners (Augments)
@@ -96,6 +104,7 @@ public class Main extends JavaPlugin {
 
         // Runnables
         this.spawnerRunnable.start();
+        this.fileRunnable.start();
     }
 
     public void registerSkills() {
@@ -127,10 +136,13 @@ public class Main extends JavaPlugin {
 
         this.playerConfig.saveAllPlayerSettingsToFile();
         this.settingsConfig.saveAllSettingsToFile();
-        this.chunkDataManager.saveAllChunkDataToFile();
+        this.chunkDataConfig.saveAllChunkDataToFile();
         this.spawnerConfig.saveAllSpawnerSettingsToFile();
         this.customSpawnerHandler.killTaggedEntities();
         this.spawnerLocationDataConfig.saveAllSpawnerSettingsToFile();
+
+        this.spawnerRunnable.stop();
+        this.fileRunnable.stop();
     }
 
     public static void main(String[] args) {

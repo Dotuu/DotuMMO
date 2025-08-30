@@ -11,14 +11,20 @@ import me.dotu.MMO.Enums.SkillType;
 
 public class Cooking extends Skill implements Listener {
 
+    private final boolean skillEnabled;
+
     public Cooking() {
         super("Cooking", SkillDifficulty.NORMAL, SkillType.COOKING, 100, 0);
+        this.skillEnabled = this.isSkillEnabled("cooking");
     }
 
     @EventHandler
     public void furnaceSmeltEvent(FurnaceSmeltEvent event) {
+        if (this.skillEnabled == false){
+            return;
+        }
+
         ItemStack source = event.getSource();
         Material sourceMaterial = source.getType();
-
     }
 }
