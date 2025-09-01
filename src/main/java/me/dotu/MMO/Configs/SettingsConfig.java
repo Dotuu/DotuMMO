@@ -16,37 +16,36 @@ import me.dotu.MMO.Enums.Settings;
 import me.dotu.MMO.Managers.JsonFileManager;
 import me.dotu.MMO.Managers.SettingsManager;
 
-public final class SettingsConfig extends JsonFileManager{
+public final class SettingsConfig extends JsonFileManager {
     public static HashMap<Settings, SettingsManager> settingsMap = new HashMap<>();
 
     public SettingsConfig() {
-        super("configs","dotummo");
+        super("configs", "dotummo");
 
-        this.setupDefaults(Arrays.asList(DefaultConfig.Type.SETTINGS
-        ));
+        this.setupDefaults(Arrays.asList(DefaultConfig.SETTINGS));
 
-        this.populateSettingsMap();
+        this.populateMap();
     }
-    
-    public void reloadConfig(){
+
+    public void reloadConfig() {
         settingsMap.clear();
-        this.populateSettingsMap();
+        this.populateMap();
     }
 
     @Override
-    protected void populateSettingsMap(){
+    protected void populateMap() {
         JsonObject read = null;
-        try (FileReader reader = new FileReader(this.file)){
+        try (FileReader reader = new FileReader(this.file)) {
             read = JsonParser.parseReader(reader).getAsJsonObject();
         } catch (Exception e) {
         }
 
-        if (read != null){
+        if (read != null) {
             JsonObject settingsJson = read;
             String settingsName;
-            for (Settings name : Settings.values()){
+            for (Settings name : Settings.values()) {
                 settingsName = name.toString().toLowerCase();
-                if (settingsJson.has(settingsName)){
+                if (settingsJson.has(settingsName)) {
                     JsonObject settings = settingsJson.getAsJsonObject(settingsName);
                     settingsMap.put(name, new SettingsManager(settings));
                 }
@@ -55,21 +54,19 @@ public final class SettingsConfig extends JsonFileManager{
     }
 
     @Override
-    public void saveAllSettingsToFile(){
+    public void saveAllToFile() {
         JsonObject settings = new JsonObject();
 
         for (Map.Entry<Settings, SettingsManager> entry : settingsMap.entrySet()) {
             Settings key = entry.getKey();
             SettingsManager manager = entry.getValue();
             settings.add(key.toString().toLowerCase(), manager.getSettings());
-
         }
 
-        try(FileWriter writer = new FileWriter(this.file)){
+        try (FileWriter writer = new FileWriter(this.file)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(settings, writer);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
 
         }
     }

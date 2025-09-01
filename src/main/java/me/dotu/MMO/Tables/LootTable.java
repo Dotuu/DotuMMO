@@ -1,17 +1,14 @@
-package me.dotu.MMO.LootTables;
+package me.dotu.MMO.Tables;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class LootTable {
     private String tableName;
-    private UUID uuid;
     private ArrayList<LootItem> items;
 
-    public LootTable(String tableName, UUID uuid) {
+    public LootTable(String tableName, ArrayList<LootItem> items) {
         this.tableName = tableName;
-        this.uuid = uuid;
-        this.items = new ArrayList<LootItem>();
+        this.items = items;
     }
 
     public String getTableName() {
@@ -20,14 +17,6 @@ public class LootTable {
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
-    }
-
-    public UUID getUUID() {
-        return this.uuid;
-    }
-
-    public void setUUID(UUID uuid) {
-        this.uuid = uuid;
     }
 
     public ArrayList<LootItem> getItems() {

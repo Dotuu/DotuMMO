@@ -22,22 +22,22 @@ import me.dotu.MMO.Enums.GemCategory;
 import me.dotu.MMO.Enums.GemType;
 import me.dotu.MMO.Enums.ItemTier;
 import me.dotu.MMO.Gems.Gem;
-import me.dotu.MMO.LootTables.LootItem;
-import me.dotu.MMO.LootTables.LootTable;
 import me.dotu.MMO.Managers.JsonFileManager;
+import me.dotu.MMO.Tables.LootItem;
+import me.dotu.MMO.Tables.LootTable;
 
 public class LootTableConfig extends JsonFileManager {
     public static HashMap<String, LootTable> lootTables = new HashMap<>();
-    public static ArrayList<LootItem> lootItems = new ArrayList<>();
 
     public LootTableConfig() {
         super("tables/loot", "");
 
-        this.setupDefaults(Arrays.asList(DefaultConfig.Type.SETTINGS));
+        this.setupDefaults(Arrays.asList(DefaultConfig.SETTINGS));
     }
 
-    public void loadTablesToMap() {
-        File[] files = this.file.listFiles((dir, name) -> name.endsWith(".json"));
+    @Override
+    public void populateMap() {
+        File[] files = this.file.listFiles((dir, name) -> name.endsWith(this.extension));
         file.listFiles();
 
         if (files != null) {
@@ -47,10 +47,8 @@ public class LootTableConfig extends JsonFileManager {
 
                     ArrayList<LootItem> items = this.getLootItems(root.getAsJsonArray("items"));
                     String name = root.get("name").getAsString();
-                    UUID uuid = UUID.fromString(tableFile.getName().replace(".json", ""));
 
-                    LootTable lootTable = new LootTable(name, uuid);
-                    lootTable.setItems(items);
+                    LootTable lootTable = new LootTable(name, items);
                     lootTables.put(name, lootTable);
                 } catch (Exception e) {
 

@@ -23,14 +23,15 @@ public class SpawnerConfig extends JsonFileManager {
     public SpawnerConfig() {
         super("configs", "spawners");
 
-        List<DefaultConfig.Type> defaults = Arrays.asList(DefaultConfig.Type.SPAWNER_DATA);
+        List<DefaultConfig> defaults = Arrays.asList(DefaultConfig.SPAWNER_DATA);
 
         this.setupDefaults(defaults);
 
-        this.populateSpawnersMap();
+        this.populateMap();
     }
 
-    public void saveAllSpawnerSettingsToFile() {
+    @Override
+    public void saveAllToFile() {
         JsonObject root = new JsonObject();
 
         for (CustomSpawner spawner : spawners.values()) {
@@ -58,7 +59,8 @@ public class SpawnerConfig extends JsonFileManager {
         }
     }
 
-    private void populateSpawnersMap() {
+    @Override
+    public void populateMap() {
         spawners.clear();
 
         try (FileReader reader = new FileReader(this.file)) {

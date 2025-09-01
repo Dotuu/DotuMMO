@@ -16,8 +16,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import me.dotu.MMO.Main;
 import me.dotu.MMO.ChunkLoader.ChunkData;
+import me.dotu.MMO.Main;
 import me.dotu.MMO.Managers.JsonFileManager;
 import me.dotu.MMO.Utils.LocationUtils;
 
@@ -28,7 +28,30 @@ public class ChunkDataConfig extends JsonFileManager implements Listener {
 
     public static HashMap<String, ChunkData> loadedChunks = new HashMap<>();
 
-    public void saveAllChunkDataToFile() {
+    @Override
+    public void saveAllToFile() {
+        HashMap<String, ChunkData> newLoadedChunks = new HashMap<>();
+        for (Map.Entry<String, ChunkData> chunk : loadedChunks.entrySet()) {
+            ChunkData chunkData = chunk.getValue();
+            String chunkId = chunk.getKey();
+
+            if (chunkData.isUpdated() == false) {
+                continue;
+            }
+
+            if (chunkData.isLoaded()) {
+                newLoadedChunks.put(chunkId, chunkData);
+                continue;
+            }
+
+            this.saveChunkDataToJson(chunkId, chunkData);
+        }
+        loadedChunks.clear();
+
+        loadedChunks = newLoadedChunks;
+    }
+
+    public void saveAllChunkDataToFileOnDisable() {
         for (Map.Entry<String, ChunkData> chunk : loadedChunks.entrySet()) {
             ChunkData chunkData = chunk.getValue();
             String chunkId = chunk.getKey();
@@ -43,12 +66,12 @@ public class ChunkDataConfig extends JsonFileManager implements Listener {
     }
 
     public void saveChunkDataToJson(String chunkId, ChunkData chunkData) {
-        File chunkDataFolder = new File(Main.plugin.getDataFolder(), "chunkdata");
+        File chunkDataFolder = new File(Main.plugin.getDataFolder(), this.path);
         if (!chunkDataFolder.exists()) {
             chunkDataFolder.mkdirs();
         }
 
-        File chunkFile = new File(new File(Main.plugin.getDataFolder(), "chunkdata"), chunkId + ".json");
+        File chunkFile = new File(new File(Main.plugin.getDataFolder(), this.path), chunkId + this.extension);
         ArrayList<String> locations = new ArrayList<>();
         for (Location blockLocation : chunkData.getBlockLocations()) {
             String locationStr = LocationUtils.serializeLocation(blockLocation);
@@ -70,8 +93,8 @@ public class ChunkDataConfig extends JsonFileManager implements Listener {
     }
 
     public ArrayList<Location> loadChunkDataFromJson(String identifier) {
-        String filename = identifier + ".json";
-        File chunkFile = new File(new File(Main.plugin.getDataFolder(), "chunkdata"), filename);
+        String filename = identifier + this.extension;
+        File chunkFile = new File(new File(Main.plugin.getDataFolder(), this.path), filename);
 
         try (FileReader reader = new FileReader(chunkFile)) {
             JsonArray locationsArray = JsonParser.parseReader(reader).getAsJsonArray();

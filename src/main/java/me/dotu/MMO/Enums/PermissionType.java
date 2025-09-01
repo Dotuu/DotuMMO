@@ -6,12 +6,13 @@ public enum PermissionType {
     SPAWNER("spawner");
 
     private final String permission;
+    private final String prefix = "dotummo.";
 
     PermissionType(String permission) {
         this.permission = permission;
     }
 
     public String getPermission() {
-        return this.permission;
+        return this.prefix + this.permission;
     }
 }

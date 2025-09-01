@@ -135,11 +135,12 @@ public class Main extends JavaPlugin {
         System.out.println("DotuMMO has been disabled!");
 
         this.playerConfig.saveAllPlayerSettingsToFile();
-        this.settingsConfig.saveAllSettingsToFile();
-        this.chunkDataConfig.saveAllChunkDataToFile();
-        this.spawnerConfig.saveAllSpawnerSettingsToFile();
+        this.settingsConfig.saveAllToFile();
+        this.chunkDataConfig.saveAllChunkDataToFileOnDisable();
+        ;
+        this.spawnerConfig.saveAllToFile();
         this.customSpawnerHandler.killTaggedEntities();
-        this.spawnerLocationDataConfig.saveAllSpawnerSettingsToFile();
+        this.spawnerLocationDataConfig.saveAllToFile();
 
         this.spawnerRunnable.stop();
         this.fileRunnable.stop();

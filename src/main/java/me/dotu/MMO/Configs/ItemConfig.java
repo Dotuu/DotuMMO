@@ -9,9 +9,9 @@ public class ItemConfig extends JsonFileManager{
     public ItemConfig() {
         super("configs", "items");
 
-        this.setupDefaults(Arrays.asList(DefaultConfig.Type.TOOLS,
-            DefaultConfig.Type.ARMORS,
-            DefaultConfig.Type.WEAPONS
+        this.setupDefaults(Arrays.asList(DefaultConfig.TOOLS,
+            DefaultConfig.ARMORS,
+            DefaultConfig.WEAPONS
         ));
     }
 }

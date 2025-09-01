@@ -9,11 +9,13 @@ public class ChunkData {
     private ArrayList<Location> blockLocations;
     private String chunkId;
     private boolean updated;
+    private boolean loaded;
 
-    public ChunkData(ArrayList<Location> blockLocations, String chunkId, boolean updated) {
+    public ChunkData(ArrayList<Location> blockLocations, String chunkId, boolean updated, boolean loaded) {
         this.blockLocations = blockLocations;
         this.chunkId = chunkId;
         this.updated = updated;
+        this.loaded = loaded;
     }
 
     public String getChunkId() {
@@ -46,5 +48,13 @@ public class ChunkData {
 
     public boolean isUpdated() {
         return this.updated;
+    }
+
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
     }
 }

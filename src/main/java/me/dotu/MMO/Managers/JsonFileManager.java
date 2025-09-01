@@ -2,7 +2,9 @@ package me.dotu.MMO.Managers;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,35 +18,35 @@ public abstract class JsonFileManager {
     protected final String path;
     protected File file;
     protected String fileName;
-    private String extension = ".json";
-    
-    protected JsonFileManager(String path, String fileName){
+    protected String extension = ".json";
+
+    protected JsonFileManager(String path, String fileName) {
         this.path = path;
         this.fileName = fileName;
     }
 
-    protected void reloadFile(File file){
+    protected void reloadFile(File file) {
         // reload logic here later
     }
 
-    protected void setupDefaults(List<DefaultConfig.Type> fileDefaults){
-        if (this.file == null){
+    protected void setupDefaults(List<DefaultConfig> fileDefaults) {
+        if (this.file == null) {
             File dir = new File(Main.plugin.getDataFolder(), this.path);
 
-            if (!dir.exists()){
+            if (!dir.exists()) {
                 dir.mkdirs();
             }
 
             this.file = new File(dir, this.fileName + this.extension);
         }
 
-        if (this.file.exists()){
+        if (this.file.exists()) {
             return;
         }
 
         JsonObject root = new JsonObject();
 
-        for (DefaultConfig.Type setting : fileDefaults){
+        for (DefaultConfig setting : fileDefaults) {
             setting.populate(root);
         }
 
@@ -54,28 +56,55 @@ public abstract class JsonFileManager {
         } catch (Exception e) {
         }
     }
-    
-    protected void populateSettingsMap(){
-        
+
+    protected void setupDefaults(HashMap<File, DefaultConfig> files) {
+        for (Map.Entry<File, DefaultConfig> mapFile : files.entrySet()) {
+            this.file = mapFile.getKey();
+            DefaultConfig type = mapFile.getValue();
+
+            File dir = new File(Main.plugin.getDataFolder(), this.path);
+
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            if (this.file.exists()) {
+                return;
+            }
+
+            JsonObject root = new JsonObject();
+
+            type.populate(root);
+
+            try (FileWriter writer = new FileWriter(this.file)) {
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                gson.toJson(root, writer);
+            } catch (Exception e) {
+            }
+        }
     }
 
-    protected void saveAllSettingsToFile(){
+    protected void populateMap() {
 
     }
-    
-    protected boolean getBooleanFromJson(JsonObject obj, String member){
+
+    protected void saveAllToFile() {
+
+    }
+
+    protected boolean getBooleanFromJson(JsonObject obj, String member) {
         return obj.get(member).getAsBoolean();
     }
 
-    protected String getStringFromJson(JsonObject obj, String member){
+    protected String getStringFromJson(JsonObject obj, String member) {
         return obj.get(member).getAsString();
     }
 
-    protected double getDoubleFromJson(JsonObject obj, String member){
+    protected double getDoubleFromJson(JsonObject obj, String member) {
         return obj.get(member).getAsDouble();
     }
 
-    protected int getIntFromJson(JsonObject obj, String member){
+    protected int getIntFromJson(JsonObject obj, String member) {
         return obj.get(member).getAsInt();
     }
 }

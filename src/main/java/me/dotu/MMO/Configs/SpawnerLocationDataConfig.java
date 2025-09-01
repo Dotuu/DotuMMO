@@ -20,21 +20,22 @@ import me.dotu.MMO.Managers.JsonFileManager;
 import me.dotu.MMO.Spawners.SpawnerLocationData;
 import me.dotu.MMO.Utils.LocationUtils;
 
-public class SpawnerLocationDataConfig extends JsonFileManager{
+public class SpawnerLocationDataConfig extends JsonFileManager {
 
     public static HashMap<String, SpawnerLocationData> spawnerLocationData = new HashMap<>();
 
     public SpawnerLocationDataConfig() {
         super("data", "spawnerdata");
 
-        List<DefaultConfig.Type> defaults = Arrays.asList(DefaultConfig.Type.SPAWNER_LOCATION_DATA);
+        List<DefaultConfig> defaults = Arrays.asList(DefaultConfig.SPAWNER_LOCATION_DATA);
 
         this.setupDefaults(defaults);
 
-        this.populateSpawnersMap();
+        this.populateMap();
     }
 
-    public void saveAllSpawnerSettingsToFile() {
+    @Override
+    public void saveAllToFile() {
         JsonObject root = new JsonObject();
 
         for (SpawnerLocationData sld : spawnerLocationData.values()) {
@@ -61,7 +62,8 @@ public class SpawnerLocationDataConfig extends JsonFileManager{
         }
     }
 
-    private void populateSpawnersMap() {
+    @Override
+    public void populateMap() {
         spawnerLocationData.clear();
 
         try (FileReader reader = new FileReader(this.file)) {
@@ -72,7 +74,8 @@ public class SpawnerLocationDataConfig extends JsonFileManager{
 
                 String linkedSpawner = this.getStringFromJson(spawnerObj, "linked_spawner");
 
-                Location spawnerLoc = LocationUtils.deSerializeLocation(this.getStringFromJson(spawnerObj, "spawner_location"));
+                Location spawnerLoc = LocationUtils
+                        .deSerializeLocation(this.getStringFromJson(spawnerObj, "spawner_location"));
 
                 JsonArray spawnLocationsJson = spawnerObj.get("spawn_locations").getAsJsonArray();
                 ArrayList<Location> spawnLocations = new ArrayList<>();
@@ -90,4 +93,4 @@ public class SpawnerLocationDataConfig extends JsonFileManager{
         } catch (Exception e) {
         }
     }
-} 
+}

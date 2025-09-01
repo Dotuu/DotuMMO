@@ -24,7 +24,6 @@ import me.dotu.MMO.Managers.JsonFileManager;
 import me.dotu.MMO.Managers.PlayerManager;
 
 public class PlayerConfig extends JsonFileManager implements Listener{
-    private String filename;
     public static HashMap<UUID, PlayerManager> playerSettings = new HashMap<>();
 
     public PlayerConfig() {
@@ -64,9 +63,9 @@ public class PlayerConfig extends JsonFileManager implements Listener{
     }
 
     public void loadFromFile(UUID uuid){
-        this.filename = uuid.toString() + ".json";
-        if (!this.filename.isEmpty()){
-            this.file = new File(new File(Main.plugin.getDataFolder(), "playerdata"), this.filename);
+        this.fileName = uuid.toString() + this.extension;
+        if (!this.fileName.isEmpty()){
+            this.file = new File(new File(Main.plugin.getDataFolder(), this.path), this.fileName);
             if (!this.getPlayerFile(uuid).exists()){
                 this.setupPlayerDefaults(uuid);
             }
@@ -75,8 +74,8 @@ public class PlayerConfig extends JsonFileManager implements Listener{
     }
 
     private File getPlayerFile(UUID uuid){
-        String playerFile = uuid.toString() + ".json";
-        return new File(new File(Main.plugin.getDataFolder(), "playerdata"), playerFile);
+        String playerFile = uuid.toString() + this.extension;
+        return new File(new File(Main.plugin.getDataFolder(), this.path), playerFile);
     }
 
     private JsonObject getPlayerFileData(UUID uuid){
@@ -99,7 +98,7 @@ public class PlayerConfig extends JsonFileManager implements Listener{
         
         JsonObject defaultConfig = new JsonObject();
         
-        DefaultConfig.Type.PLAYERDATA.populate(defaultConfig);
+        DefaultConfig.PLAYERDATA.populate(defaultConfig);
         
         try (FileWriter writer = new FileWriter(this.getPlayerFile(uuid))) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();

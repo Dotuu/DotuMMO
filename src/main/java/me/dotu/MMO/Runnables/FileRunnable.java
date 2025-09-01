@@ -2,8 +2,8 @@ package me.dotu.MMO.Runnables;
 
 import org.bukkit.Bukkit;
 
-import me.dotu.MMO.Main;
 import me.dotu.MMO.Configs.ChunkDataConfig;
+import me.dotu.MMO.Main;
 
 public class FileRunnable implements Runnable {
 
@@ -20,11 +20,12 @@ public class FileRunnable implements Runnable {
 
     @Override
     public void run() {
+        Bukkit.broadcastMessage("Saving all chunk data to file!");
         this.saveChunkData();
     }
 
     private void saveChunkData() {
         ChunkDataConfig chunkDataConfig = new ChunkDataConfig();
-        chunkDataConfig.saveAllChunkDataToFile();
+        chunkDataConfig.saveAllToFile();
     }
 }

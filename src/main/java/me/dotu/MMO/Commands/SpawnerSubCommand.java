@@ -53,8 +53,7 @@ public class SpawnerSubCommand implements SubCommand, Listener {
     public boolean execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
 
-        if (player.hasPermission(this.getPermission())
-                || player.hasPermission(PermissionType.ADMIN.getPermission())) {
+        if (player.hasPermission(this.getPermission()) || player.hasPermission(PermissionType.ADMIN.getPermission())) {
             if (args.length == 1) {
                 // send sub command list
                 return false;
@@ -105,19 +104,21 @@ public class SpawnerSubCommand implements SubCommand, Listener {
         }
 
         Block block = player.getTargetBlockExact(10);
-        if (block == null){
-            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Spawner block not found within 10 blocks"));
+        if (block == null) {
+            player.sendMessage(
+                    MessageManager.send(MessageManager.Type.ERROR, "Spawner block not found within 10 blocks"));
             return;
         }
 
-        if (block.getType() != Material.SPAWNER){
+        if (block.getType() != Material.SPAWNER) {
             player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Target block is not a spawner block"));
             return;
         }
 
         CreatureSpawner spawner = (CreatureSpawner) block.getState();
-        if (!spawner.getPersistentDataContainer().has(SpawnerKey.NAME.getKey())){
-            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Target block is not a DotuMMO custom spawner"));
+        if (!spawner.getPersistentDataContainer().has(SpawnerKey.NAME.getKey())) {
+            player.sendMessage(
+                    MessageManager.send(MessageManager.Type.ERROR, "Target block is not a DotuMMO custom spawner"));
         }
 
         else {
@@ -127,11 +128,13 @@ public class SpawnerSubCommand implements SubCommand, Listener {
                 return;
             }
 
-            SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData.get(LocationUtils.serializeLocation(block.getLocation()));
+            SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData
+                    .get(LocationUtils.serializeLocation(block.getLocation()));
 
             player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Now in edit mode"));
             player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Use /dotummo spawner edit to exit"));
-            player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Left Click block to set spawn block, right click block to remove spawn block"));
+            player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS,
+                    "Left Click block to set spawn block, right click block to remove spawn block"));
 
             Marker marker = new Marker(player, sld.getSpawnLocations(), MarkerColor.RED, 10);
             this.editing.put(player.getName(), LocationUtils.serializeLocation(sld.getSpawnerLocation()));

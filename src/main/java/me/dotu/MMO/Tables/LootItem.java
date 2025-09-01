@@ -1,4 +1,4 @@
-package me.dotu.MMO.LootTables;
+package me.dotu.MMO.Tables;
 
 import java.util.List;
 

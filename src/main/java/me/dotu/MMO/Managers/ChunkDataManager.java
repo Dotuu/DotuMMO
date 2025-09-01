@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 
 import me.dotu.MMO.ChunkLoader.ChunkData;
 import me.dotu.MMO.Configs.ChunkDataConfig;
@@ -21,6 +22,18 @@ public class ChunkDataManager implements Listener {
 
     public ChunkDataManager() {
         this.chunkDataConfig = new ChunkDataConfig();
+    }
+
+    @EventHandler
+    public void chunkUnloadEvent(ChunkUnloadEvent event){
+        String chunkId = this.getChunkIdentifier(event.getChunk());
+
+        if (!ChunkDataConfig.loadedChunks.containsKey(chunkId)){
+            return;
+        }
+
+        ChunkData chunkData = ChunkDataConfig.loadedChunks.get(chunkId);
+        chunkData.setLoaded(false);
     }
 
     @EventHandler
@@ -37,7 +50,7 @@ public class ChunkDataManager implements Listener {
 
         if (!ChunkDataConfig.loadedChunks.containsKey(chunkId)) {
             ArrayList<Location> blockLocations = chunkDataConfig.loadChunkDataFromJson(chunkId);
-            ChunkDataConfig.loadedChunks.put(chunkId, new ChunkData(blockLocations, chunkId, true));
+            ChunkDataConfig.loadedChunks.put(chunkId, new ChunkData(blockLocations, chunkId, true, true));
         }
 
         ChunkData chunkData = ChunkDataConfig.loadedChunks.get(chunkId);
@@ -60,7 +73,7 @@ public class ChunkDataManager implements Listener {
 
         if (!ChunkDataConfig.loadedChunks.containsKey(chunkId)) {
             ArrayList<Location> blockLocations = chunkDataConfig.loadChunkDataFromJson(chunkId);
-            ChunkDataConfig.loadedChunks.put(chunkId, new ChunkData(blockLocations, chunkId, false));
+            ChunkDataConfig.loadedChunks.put(chunkId, new ChunkData(blockLocations, chunkId, false, true));
         }
 
         ChunkData chunkData = ChunkDataConfig.loadedChunks.get(chunkId);
@@ -78,7 +91,7 @@ public class ChunkDataManager implements Listener {
 
             if (!ChunkDataConfig.loadedChunks.containsKey(chunkId)) {
                 ArrayList<Location> blockLocations = chunkDataConfig.loadChunkDataFromJson(chunkId);
-                ChunkDataConfig.loadedChunks.put(chunkId, new ChunkData(blockLocations, chunkId, false));
+                ChunkDataConfig.loadedChunks.put(chunkId, new ChunkData(blockLocations, chunkId, false, true));
             }
 
             Location blockLoc = block.getLocation();
