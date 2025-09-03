@@ -14,11 +14,14 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 
 import me.dotu.MMO.ChunkLoader.ChunkData;
 import me.dotu.MMO.Configs.ChunkDataConfig;
-import me.dotu.MMO.Enums.RewardTable;
+import me.dotu.MMO.Configs.ExpTableConfig;
+import me.dotu.MMO.Tables.ExpTable;
 
 public class ChunkDataManager implements Listener {
 
     private ChunkDataConfig chunkDataConfig;
+
+    private final String[] skillsToFetch = {"mining", "woodcutting"};
 
     public ChunkDataManager() {
         this.chunkDataConfig = new ChunkDataConfig();
@@ -38,7 +41,7 @@ public class ChunkDataManager implements Listener {
 
     @EventHandler
     public void blockPlace(BlockPlaceEvent event) {
-        ArrayList<Material> blocks = this.getBlocksList();
+        ArrayList<Material> blocks = this.getBlocksList(this.skillsToFetch);
         Material placed = event.getBlock().getType();
 
         Block placedBlock = event.getBlock();
@@ -61,7 +64,7 @@ public class ChunkDataManager implements Listener {
 
     @EventHandler
     public void blockBreak(BlockBreakEvent event) {
-        ArrayList<Material> blocks = this.getBlocksList();
+        ArrayList<Material> blocks = this.getBlocksList(this.skillsToFetch);
         Material broken = event.getBlock().getType();
 
         Block brokenBlock = event.getBlock();
@@ -83,7 +86,7 @@ public class ChunkDataManager implements Listener {
     }
 
     public boolean wasBlockBroken(Block block) {
-        ArrayList<Material> blocks = this.getBlocksList();
+        ArrayList<Material> blocks = this.getBlocksList(this.skillsToFetch);
         Material broken = block.getType();
 
         if (blocks.contains(broken)) {
@@ -102,14 +105,16 @@ public class ChunkDataManager implements Listener {
         return false;
     }
 
-    public ArrayList<Material> getBlocksList() {
+    public ArrayList<Material> getBlocksList(String[] skills) {
         ArrayList<Material> returnArray = new ArrayList<>();
-        for (RewardTable.MiningReward drop : RewardTable.MiningReward.values()) {
-            returnArray.add(drop.getMaterial());
-        }
 
-        for (RewardTable.WoodcuttingReward drop : RewardTable.WoodcuttingReward.values()) {
-            returnArray.add(drop.getMaterial());
+        for (String skill : skills){
+            ExpTable<?> expTables = ExpTableConfig.expTables.get(skill);
+            if (expTables.isMaterialTable()){
+                for (Material material : expTables.asMaterials()){
+                    returnArray.add(material);
+                }
+            }
         }
 
         return returnArray;

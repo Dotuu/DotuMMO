@@ -1,10 +1,16 @@
 package me.dotu.MMO.Skills;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import me.dotu.MMO.Configs.ExpTableConfig;
 import me.dotu.MMO.Configs.SettingsConfig;
 import me.dotu.MMO.Enums.Settings;
 import me.dotu.MMO.Enums.SkillDifficulty;
@@ -13,6 +19,8 @@ import me.dotu.MMO.ExpCalculator;
 import me.dotu.MMO.Managers.MessageManager;
 import me.dotu.MMO.Managers.SettingsManager;
 import me.dotu.MMO.Managers.SkillsManager;
+import me.dotu.MMO.Tables.ExpSource;
+import me.dotu.MMO.Tables.ExpTable;
 import me.dotu.MMO.UI.ExpBar;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -83,10 +91,46 @@ public class Skill {
         return enabledSkills.getSettingsBoolean(Settings.ENABLED_SKILLS, skillName, true);
     }
 
-    public void processExpReward(Player player, Skill skill, int xpReward) {
+    public ExpSource<?> getExpSourceBlock(Block block, Player player){
+        ExpTable<?> expTable = this.getExpTable(this.name.toLowerCase());
+        if (expTable.isMaterialTable()){
+            ArrayList<ExpSource<?>> expItems = expTable.getExpItems();
+
+            for (ExpSource<?> item : expItems){
+                Material material = (Material) item.getTableSource();
+                if (block.getType() == material){
+                    this.processExpReward(player, this, item.getMinExp(), item.getMaxExp());
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
+
+    public ExpSource<?> getExpSourceEntity(Entity entity, Player player){
+        ExpTable<?> expTable = this.getExpTable(this.name.toLowerCase());
+        if (expTable.isMaterialTable()){
+            ArrayList<ExpSource<?>> expItems = expTable.getExpItems();
+
+            for (ExpSource<?> e : expItems){
+                EntityType entityType = (EntityType) e.getTableSource();
+                if (entity.getType() == entityType){
+                    this.processExpReward(player, this, e.getMinExp(), e.getMaxExp());
+                    return e;
+                }
+            }
+        }
+        return null;
+    }
+
+    public ExpTable<?> getExpTable(String key){
+        return ExpTableConfig.expTables.get(key);
+    }
+
+    public void processExpReward(Player player, Skill skill, int minExp, int maxExp) {
         UUID uuid = player.getUniqueId();
 
-        int xpGained = ExpCalculator.calculateRewardedExp(skill.getDifficulty(), xpReward);
+        int xpGained = ExpCalculator.calculateRewardedExp(skill.getDifficulty(), minExp, maxExp);
         SkillsManager skillsManager = new SkillsManager();
         skillsManager.setSkills(uuid, skill.getSkill().toString(), xpGained);
 

@@ -5,11 +5,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import me.dotu.MMO.Enums.RewardTable;
 import me.dotu.MMO.Enums.SkillDifficulty;
 import me.dotu.MMO.Enums.SkillType;
 import me.dotu.MMO.Managers.ChunkDataManager;
-import me.dotu.MMO.ExpCalculator;
+import me.dotu.MMO.Tables.ExpSource;
 
 public class Woodcutting extends Skill implements Listener {
 
@@ -30,16 +29,16 @@ public class Woodcutting extends Skill implements Listener {
             return;
         }
 
+        Player player = event.getPlayer();
         ChunkDataManager cdm = new ChunkDataManager();
         if (cdm.wasBlockBroken(event.getBlock()) == false) {
-            for (RewardTable.WoodcuttingReward drop : RewardTable.WoodcuttingReward.values()) {
-                if (event.getBlock().getType() == drop.getMaterial()) {
-                    Player player = event.getPlayer();
-                    int xpGained = ExpCalculator.calculateRewardedExp(this.getDifficulty(), drop.getXpValue());
+            ExpSource<?> source = this.getExpSourceBlock(event.getBlock(), player);
 
-                    this.processExpReward(player, this, xpGained);
-                }
+            if (source == null){
+                return;
             }
+
+            this.processExpReward(player, this, source.getMinExp(), source.getMaxExp());
         }
     }
 }

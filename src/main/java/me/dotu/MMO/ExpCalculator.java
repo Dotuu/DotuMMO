@@ -14,9 +14,10 @@ public class ExpCalculator {
         return (int) (baseXp * Math.pow(level, difficulty));
     }
 
-    public static int calculateRewardedExp(SkillDifficulty difficultyEnum, int obtainedXp) {
+    public static int calculateRewardedExp(SkillDifficulty difficultyEnum, int minExp, int maxExp) {
+        int obtainedExp = RandomNum.getRandom(minExp, minExp);
         double difficulty = difficultyEnum.getDifficultyValue();
-        double xpGained = obtainedXp / difficulty;
+        double xpGained = obtainedExp / difficulty;
         return (int) xpGained;
     }
 

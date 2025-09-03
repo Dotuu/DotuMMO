@@ -211,46 +211,109 @@ public enum DefaultConfig {
     FISHING{
         @Override
         public void populate(JsonObject defaultConfig){
-            JsonObject root = new JsonObject();
+            final int MIN = 20, MAX = 30;
+            defaultConfig.addProperty("name", "fishing");
+            JsonArray sources = new JsonArray();
+            String[] mats = {"COD","SALMON","TROPICAL_FISH","PUFFERFISH"};
 
-            root.addProperty("COD", 15);
-            defaultConfig.add("exp", root);
+            for (String material : mats) {
+                JsonObject obj = new JsonObject();
+                obj.addProperty("material", material);
+                obj.addProperty("min_exp", MIN);
+                obj.addProperty("max_exp", MAX);
+                sources.add(obj);
+            }
+            defaultConfig.add("sources", sources);
         }
     },
     MINING{
         @Override
         public void populate(JsonObject defaultConfig){
-            JsonObject root = new JsonObject();
+            final int MIN = 20, MAX = 30;
+            defaultConfig.addProperty("name", "mining");
+            JsonArray sources = new JsonArray();
+            String[] mats = {
+                "COAL_ORE","DEEPSLATE_COAL_ORE","COPPER_ORE","DEEPSLATE_COPPER_ORE",
+                "IRON_ORE","DEEPSLATE_IRON_ORE","REDSTONE_ORE","DEEPSLATE_REDSTONE_ORE",
+                "LAPIS_ORE","DEEPSLATE_LAPIS_ORE","GOLD_ORE","DEEPSLATE_GOLD_ORE",
+                "DIAMOND_ORE","DEEPSLATE_DIAMOND_ORE","EMERALD_ORE","DEEPSLATE_EMERALD_ORE",
+                "NETHER_QUARTZ_ORE","NETHER_GOLD_ORE","ANCIENT_DEBRIS"
+            };
 
-            root.addProperty("COD", 15);
-            defaultConfig.add("exp", root);
+            for (String material : mats){
+                JsonObject obj = new JsonObject();
+                obj.addProperty("material", material);
+                obj.addProperty("min_exp", MIN);
+                obj.addProperty("max_exp", MAX);
+                sources.add(obj);
+            }
+            defaultConfig.add("sources", sources);
         }
     },
     WOODCUTTING{
         @Override
         public void populate(JsonObject defaultConfig){
-            JsonObject root = new JsonObject();
-
-            root.addProperty("COD", 15);
-            defaultConfig.add("exp", root);
+            final int MIN = 20, MAX = 30;
+            defaultConfig.addProperty("name", "woodcutting");
+            JsonArray sources = new JsonArray();
+            String[] mats = {"OAK_LOG","SPRUCE_LOG","BIRCH_LOG","JUNGLE_LOG","ACACIA_LOG", 
+            "DARK_OAK_LOG","MANGROVE_LOG","CHERRY_LOG","PALE_OAK_LOG"};
+                
+            for (String material : mats){
+                JsonObject obj = new JsonObject();
+                obj.addProperty("material", material);
+                obj.addProperty("min_exp", MIN);
+                obj.addProperty("max_exp", MAX);
+                sources.add(obj);
+            }
+            defaultConfig.add("sources", sources);
         }
     },
     AXE{
         @Override
         public void populate(JsonObject defaultConfig){
-            JsonObject root = new JsonObject();
-
-            root.addProperty("COD", 15);
-            defaultConfig.add("exp", root);
+            final int MIN = 20, MAX = 30;
+            defaultConfig.addProperty("name", "axe");
+            JsonArray sources = new JsonArray();
+            String[] entityTypes = {
+                "BLAZE","BOGGED","BREEZE","CREAKING","CREEPER","ELDER_GUARDIAN","ENDERMITE",
+                "ENDER_DRAGON","EVOKER","GHAST","GUARDIAN","HOGLIN","HUSK","MAGMA_CUBE",
+                "PHANTOM","PIGLIN_BRUTE","PILLAGER","RAVAGER","SHULKER","SILVERFISH","SKELETON",
+                "SLIME","STRAY","VEX","VINDICATOR","WARDEN","WITCH","WITHER","WITHER_SKELETON",
+                "ZOGLIN","ZOMBIE","ZOMBIE_VILLAGER"
+            };
+            for (String entityType : entityTypes){
+                JsonObject obj = new JsonObject();
+                obj.addProperty("entitytype", entityType);
+                obj.addProperty("min_exp", MIN);
+                obj.addProperty("max_exp", MAX);
+                sources.add(obj);
+            }
+            defaultConfig.add("sources", sources);
         }
     },
     SWORD{
         @Override
         public void populate(JsonObject defaultConfig){
-            JsonObject root = new JsonObject();
+            final int MIN = 20, MAX = 30;
+            defaultConfig.addProperty("name", "sword");
+            JsonArray sources = new JsonArray();
+            String[] entityTypes = {
+                "BLAZE","BOGGED","BREEZE","CREAKING","CREEPER","ELDER_GUARDIAN","ENDERMITE",
+                "ENDER_DRAGON","EVOKER","GHAST","GUARDIAN","HOGLIN","HUSK","MAGMA_CUBE",
+                "PHANTOM","PIGLIN_BRUTE","PILLAGER","RAVAGER","SHULKER","SILVERFISH","SKELETON",
+                "SLIME","STRAY","VEX","VINDICATOR","WARDEN","WITCH","WITHER","WITHER_SKELETON",
+                "ZOGLIN","ZOMBIE","ZOMBIE_VILLAGER"
+            };
 
-            root.addProperty("COD", 15);
-            defaultConfig.add("exp", root);
+            for (String entityType : entityTypes){
+                JsonObject obj = new JsonObject();
+                obj.addProperty("entitytype", entityType);
+                obj.addProperty("min_exp", MIN);
+                obj.addProperty("max_exp", MAX);
+                sources.add(obj);
+            }
+            defaultConfig.add("sources", sources);
         }
     },
     FARMING{

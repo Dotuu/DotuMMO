@@ -5,10 +5,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
-import me.dotu.MMO.Enums.RewardTable;
 import me.dotu.MMO.Enums.SkillDifficulty;
 import me.dotu.MMO.Enums.SkillType;
-import me.dotu.MMO.ExpCalculator;
+import me.dotu.MMO.Tables.ExpSource;
 
 public class Sword extends Skill implements Listener {
 
@@ -33,20 +32,27 @@ public class Sword extends Skill implements Listener {
         if (event.getEntity().getKiller() instanceof Player && !(event.getEntity() instanceof Player)) {
             Player player = (Player) event.getEntity().getKiller();
             if (holdingSword(player)) {
+                ExpSource<?> source = this.getExpSourceEntity(event.getEntity(), player);
 
-                for (RewardTable.SwordReward drop : RewardTable.SwordReward.values()) {
-                    if (event.getEntity().getType() == drop.getEntityType()) {
-                        int xpGained = ExpCalculator.calculateRewardedExp(this.getDifficulty(), drop.getXpValue());
-
-                        this.processExpReward(player, this, xpGained);
-                    }
+                if (source == null){
+                    return;
                 }
+
+                this.processExpReward(player, this, source.getMinExp(), source.getMaxExp());
             }
         }
-        // PVP
+        // PVP change to process pvp reward instead
         else if (event.getEntity() instanceof Player && event.getEntity().getKiller() instanceof Player) {
             Player killer = (Player) event.getEntity().getKiller();
             Player dead = (Player) event.getEntity();
+
+            ExpSource<?> source = this.getExpSourceEntity(dead, killer);
+
+            if (source == null){
+                return;
+            }
+
+            this.processExpReward(killer, this, source.getMinExp(), source.getMaxExp());
         }
     }
 

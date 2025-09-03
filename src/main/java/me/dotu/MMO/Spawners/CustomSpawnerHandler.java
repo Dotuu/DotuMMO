@@ -36,6 +36,7 @@ import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
 import me.dotu.MMO.Enums.SpawnerKey;
 import me.dotu.MMO.Main;
+import me.dotu.MMO.RandomNum;
 import me.dotu.MMO.Tables.LootItem;
 import me.dotu.MMO.Tables.LootTable;
 import me.dotu.MMO.Utils.LocationUtils;
@@ -111,13 +112,6 @@ public class CustomSpawnerHandler implements Listener {
         this.tagEntity(living, spawnerLinkLoc);
     }
 
-    private int getRandomNumber(int min, int max) {
-        if (max < min) {
-            return min;
-        }
-        return min + (int) (Math.random() * (max - min + 1));
-    }
-
     private void equipItemsToMob(CustomSpawner customSpawner, LivingEntity living, int slot) {
         LootTable table = LootTableConfig.lootTables.get(customSpawner.getTable());
         List<LootItem> tableItems = table.getItems();
@@ -189,7 +183,7 @@ public class CustomSpawnerHandler implements Listener {
         if (spawnLocations == null || spawnLocations.isEmpty()) {
             return null;
         }
-        int index = getRandomNumber(0, spawnLocations.size() - 1);
+        int index = RandomNum.getRandom(0, spawnLocations.size() - 1);
         return spawnLocations.get(index);
     }
 
@@ -286,7 +280,7 @@ public class CustomSpawnerHandler implements Listener {
     }
 
     private void setHealth(CustomSpawner customSpawner, LivingEntity living) {
-        int level = this.getRandomNumber(customSpawner.getMinLevel(), customSpawner.getMaxLevel());
+        int level = RandomNum.getRandom(customSpawner.getMinLevel(), customSpawner.getMaxLevel());
         int targetHealth = calculateHealth(level);
         if (targetHealth < 1) {
             targetHealth = 1;

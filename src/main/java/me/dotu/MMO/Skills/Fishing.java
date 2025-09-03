@@ -5,10 +5,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 
-import me.dotu.MMO.Enums.RewardTable;
 import me.dotu.MMO.Enums.SkillDifficulty;
 import me.dotu.MMO.Enums.SkillType;
-import me.dotu.MMO.ExpCalculator;
+import me.dotu.MMO.Tables.ExpSource;
 
 public class Fishing extends Skill implements Listener {
 
@@ -29,13 +28,14 @@ public class Fishing extends Skill implements Listener {
             return;
         }
         
-        for (RewardTable.FishingReward drop : RewardTable.FishingReward.values()) {
-            if (event.getCaught().getType() == drop.getEntityType()) {
-                Player player = event.getPlayer();
-                int xpGained = ExpCalculator.calculateRewardedExp(this.getDifficulty(), drop.getXpValue());
+        Player player = event.getPlayer();
 
-                this.processExpReward(player, this, xpGained);
-            }
+        ExpSource<?> source = this.getExpSourceEntity(event.getCaught(), player);
+
+        if (source == null){
+            return;
         }
+
+        this.processExpReward(player, this, source.getMinExp(), source.getMaxExp());
     }
 }

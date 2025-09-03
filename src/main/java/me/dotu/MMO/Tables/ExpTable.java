@@ -1,15 +1,19 @@
 package me.dotu.MMO.Tables;
 
+import java.util.ArrayList;
+
+import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
+
 public class ExpTable<T> {
     private String tableName;
-    private int minExp;
-    private int maxExp;
-    private T sourceType;
+    private ArrayList<ExpSource<?>> expItems;
+    private T tableType;
 
-    public ExpTable(String tableName, int minExp, int maxExp, T sourceType) {
-        this.minExp = minExp;
-        this.maxExp = maxExp;
-        this.sourceType = sourceType;
+    public ExpTable(String tableName, ArrayList<ExpSource<?>> expItems, T tableType) {
+        this.tableName = tableName;
+        this.expItems = expItems;
+        this.tableType = tableType;
     }
 
     public String getTableName() {
@@ -20,27 +24,57 @@ public class ExpTable<T> {
         this.tableName = tableName;
     }
 
-    public int getMinExp() {
-        return this.minExp;
+    public ArrayList<ExpSource<?>> getExpItems() {
+        return this.expItems;
     }
 
-    public void setMinExp(int minExp) {
-        this.minExp = minExp;
+    public void setExpItems(ArrayList<ExpSource<?>> expItems) {
+        this.expItems = expItems;
     }
 
-    public int getMaxExp() {
-        return this.maxExp;
+    public T getTableType() {
+        return this.tableType;
     }
 
-    public void setMaxExp(int maxExp) {
-        this.maxExp = maxExp;
+    public void setTableType(T tableType) {
+        this.tableType = tableType;
     }
 
-    public T getSourceType() {
-        return this.sourceType;
+    public boolean isMaterialTable(){
+        return this.tableType instanceof Material;
     }
 
-    public void setSourceType(T sourceType) {
-        this.sourceType = sourceType;
+    public boolean isEntityTable(){
+        return this.tableType instanceof EntityType;
+    }
+
+    public ArrayList<Material> asMaterials(){
+        if (!(this.tableType instanceof Material)){
+            return new ArrayList<Material>();
+        }
+
+        ArrayList<Material> returnList = new ArrayList<>();
+
+        for (ExpSource<?> item : this.expItems){
+            Material material = (Material) item.getTableSource();
+            returnList.add(material);
+        }
+
+        return returnList;
+    }
+
+    public ArrayList<EntityType> asEntityTypes() {
+        if (!(this.tableType instanceof EntityType)){
+            return new ArrayList<EntityType>();
+        }
+
+        ArrayList<EntityType> returnList = new ArrayList<>();
+
+        for (ExpSource<?> item : this.expItems){
+            EntityType entityType = (EntityType) item.getTableSource();
+            returnList.add(entityType);
+        }
+
+        return returnList;
     }
 }
