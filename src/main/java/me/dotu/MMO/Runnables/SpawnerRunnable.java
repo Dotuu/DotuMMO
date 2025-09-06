@@ -8,11 +8,11 @@ import org.bukkit.block.CreatureSpawner;
 
 import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
+import me.dotu.MMO.Main;
 import me.dotu.MMO.Spawners.CustomSpawner;
 import me.dotu.MMO.Spawners.CustomSpawnerHandler;
 import me.dotu.MMO.Spawners.SpawnerEntityData;
 import me.dotu.MMO.Spawners.SpawnerLocationData;
-import me.dotu.MMO.Main;
 import me.dotu.MMO.Utils.LocationUtils;
 
 public class SpawnerRunnable implements Runnable {
@@ -56,10 +56,19 @@ public class SpawnerRunnable implements Runnable {
 
     private void tickSpawner(SpawnerEntityData spawnerData) {
         CustomSpawner customSpawner = spawnerData.getCustomSpawner();
+        if (customSpawner == null) {
+            Main.plugin.getLogger().info("Spawner at: " + spawnerData.getSpawnerLoc().toString()
+                    + ", is linked to a Custom Spawner that no longer exists!");
+        }
+
         Location spawnerLoc = spawnerData.getSpawnerLoc();
         Block spawnerBlock = spawnerLoc.getBlock();
         SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData
                 .get(LocationUtils.serializeLocation(spawnerLoc));
+
+        if (sld == null) {
+            return;
+        }
 
         if (this.isNotSpawner(spawnerBlock)) {
             sld.removeSpawnLocations(spawnerLoc);

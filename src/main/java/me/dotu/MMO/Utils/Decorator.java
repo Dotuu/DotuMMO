@@ -1,4 +1,4 @@
-package me.dotu.MMO;
+package me.dotu.MMO.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

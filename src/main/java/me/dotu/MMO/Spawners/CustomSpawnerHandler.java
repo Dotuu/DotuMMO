@@ -36,10 +36,10 @@ import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
 import me.dotu.MMO.Enums.SpawnerKey;
 import me.dotu.MMO.Main;
-import me.dotu.MMO.RandomNum;
 import me.dotu.MMO.Tables.LootItem;
 import me.dotu.MMO.Tables.LootTable;
 import me.dotu.MMO.Utils.LocationUtils;
+import me.dotu.MMO.Utils.RandomNum;
 import net.md_5.bungee.api.ChatColor;
 
 public class CustomSpawnerHandler implements Listener {
@@ -384,7 +384,7 @@ public class CustomSpawnerHandler implements Listener {
                 ChatColor.AQUA + "Loot Table: " + ChatColor.YELLOW + customSpawner.getTable(),
                 ChatColor.AQUA + "Min Level: " + ChatColor.YELLOW + String.valueOf(customSpawner.getMinLevel()),
                 ChatColor.AQUA + "Max Level: " + ChatColor.YELLOW + String.valueOf(customSpawner.getMaxLevel()),
-                ChatColor.AQUA + "Spawn Delay (ticks): " + ChatColor.YELLOW
+                ChatColor.AQUA + "Spawn Delay (seconds): " + ChatColor.YELLOW
                         + String.valueOf(customSpawner.getSpawnDelay()),
                 ChatColor.AQUA + "Spawn Range: " + ChatColor.YELLOW + String.valueOf(customSpawner.getSpawnRange()),
                 ChatColor.AQUA + "Difficulty: " + ChatColor.YELLOW + Double.toString(customSpawner.getDifficulty()),

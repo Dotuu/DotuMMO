@@ -1,4 +1,4 @@
-package me.dotu.MMO;
+package me.dotu.MMO.Utils;
 
 public class RandomNum {
     public static int getRandom(int num1, int num2){

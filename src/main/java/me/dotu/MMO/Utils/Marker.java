@@ -1,10 +1,12 @@
-package me.dotu.MMO;
+package me.dotu.MMO.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+
 import me.dotu.MMO.Enums.MarkerColor;
 
 public class Marker {

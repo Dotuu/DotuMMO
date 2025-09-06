@@ -7,15 +7,15 @@ import org.bukkit.event.player.PlayerFishEvent;
 
 import me.dotu.MMO.Enums.SkillDifficulty;
 import me.dotu.MMO.Enums.SkillType;
-import me.dotu.MMO.Tables.ExpSource;
+import me.dotu.MMO.Tables.ItemSource;
 
 public class Fishing extends Skill implements Listener {
 
     private final boolean skillEnabled;
 
     public Fishing() {
-        super("Fishing", SkillDifficulty.NORMAL, SkillType.FISHING, 100, 0);
-        this.skillEnabled = this.isSkillEnabled("fishing");
+        super("FISHING", SkillDifficulty.NORMAL, SkillType.FISHING, 100, 0);
+        this.skillEnabled = this.isSkillEnabled("FISHING");
     }
 
     public void registerSkill() {
@@ -30,12 +30,12 @@ public class Fishing extends Skill implements Listener {
         
         Player player = event.getPlayer();
 
-        ExpSource<?> source = this.getExpSourceEntity(event.getCaught(), player);
+        ItemSource<?> source = this.getExpSourceEntity(event.getCaught(), player);
 
         if (source == null){
             return;
         }
 
-        this.processExpReward(player, this, source.getMinExp(), source.getMaxExp());
+        this.processExpReward(player, this, source.getMinExp(), source.getMaxExp(), 1);
     }
 }

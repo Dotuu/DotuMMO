@@ -29,7 +29,7 @@ public class LootTableConfig extends JsonFileManager {
     public static HashMap<String, LootTable> lootTables = new HashMap<>();
 
     public LootTableConfig() {
-        super("tables/loot", "");
+        super("tables", "");
 
         this.setupDefaults(Arrays.asList(DefaultConfig.SETTINGS));
     }
@@ -54,6 +54,11 @@ public class LootTableConfig extends JsonFileManager {
                 }
             }
         }
+    }
+
+    @Override
+    public void saveAllToFile(){
+        
     }
 
     private ArrayList<LootItem> getLootItems(JsonArray items) {

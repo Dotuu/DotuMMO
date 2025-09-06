@@ -18,6 +18,10 @@ public class PlayerManager implements Listener{
         this.config = config;
     }
 
+    public JsonObject getSettings(){
+        return this.config;
+    }
+
     public int getSettingsInt(UUID uuid, PlayerSettings key, String prop, int defaultValue){
         PlayerManager manager = PlayerConfig.playerSettings.get(uuid);
         if (manager != null){
@@ -65,10 +69,6 @@ public class PlayerManager implements Listener{
             JsonObject obj = getOrCreateObject(data, key.toString().toLowerCase());
             obj.addProperty(prop, value);
         }
-    }
-
-    public JsonObject getSettings(){
-        return this.config;
     }
 
     public static JsonObject getOrCreateObject(JsonObject parent, String key){

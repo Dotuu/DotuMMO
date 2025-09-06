@@ -11,12 +11,10 @@ import me.dotu.MMO.Spawners.CustomSpawnerHandler;
 
 public class SpawnerInventory extends CustomInventory{
 
-    private Player player;
     private int startingIndex;
 
     public SpawnerInventory(Player player, int startingIndex) {
         super(new SpawnerHolder(), 54, "Custom Spawner's");
-        this.player = player;
         this.startingIndex = startingIndex;
     }
 

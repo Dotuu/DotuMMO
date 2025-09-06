@@ -30,6 +30,11 @@ public class PlayerConfig extends JsonFileManager implements Listener{
         super("data/playerdata", "");
     }
 
+    @Override
+    public void populateMap(){
+        
+    }
+
     public void saveToFile(UUID uuid){
         PlayerManager manager = playerSettings.get(uuid);
         if (manager != null){
@@ -44,7 +49,8 @@ public class PlayerConfig extends JsonFileManager implements Listener{
         }
     }
 
-    public void saveAllPlayerSettingsToFile(){
+    @Override
+    public void saveAllToFile(){
         for (Map.Entry<UUID, PlayerManager> entry : playerSettings.entrySet()){
             UUID uuid = entry.getKey();
             PlayerManager manager = entry.getValue();
@@ -69,7 +75,7 @@ public class PlayerConfig extends JsonFileManager implements Listener{
             if (!this.getPlayerFile(uuid).exists()){
                 this.setupPlayerDefaults(uuid);
             }
-            playerSettings.put(uuid, new PlayerManager(getPlayerFileData(uuid)));
+            playerSettings.put(uuid, new PlayerManager(getPlayerFileContents(uuid)));
         }
     }
 
@@ -78,7 +84,7 @@ public class PlayerConfig extends JsonFileManager implements Listener{
         return new File(new File(Main.plugin.getDataFolder(), this.path), playerFile);
     }
 
-    private JsonObject getPlayerFileData(UUID uuid){
+    private JsonObject getPlayerFileContents(UUID uuid){
         File playerFile = getPlayerFile(uuid);
         if (!playerFile.exists()){
             return null;

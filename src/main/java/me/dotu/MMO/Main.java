@@ -8,8 +8,8 @@ import me.dotu.MMO.Commands.PvpSubCommand;
 import me.dotu.MMO.Commands.SpawnerSubCommand;
 import me.dotu.MMO.Commands.TestCommand;
 import me.dotu.MMO.Configs.ChunkDataConfig;
-import me.dotu.MMO.Configs.ExpTableConfig;
-import me.dotu.MMO.Configs.ItemConfig;
+import me.dotu.MMO.Configs.CustomItemConfig;
+import me.dotu.MMO.Configs.ItemTableConfig;
 import me.dotu.MMO.Configs.LootTableConfig;
 import me.dotu.MMO.Configs.PlayerConfig;
 import me.dotu.MMO.Configs.SettingsConfig;
@@ -21,12 +21,15 @@ import me.dotu.MMO.Managers.PvpManager;
 import me.dotu.MMO.Runnables.FileRunnable;
 import me.dotu.MMO.Runnables.SpawnerRunnable;
 import me.dotu.MMO.Skills.Axe;
+import me.dotu.MMO.Skills.Cooking;
+import me.dotu.MMO.Skills.Farming;
 import me.dotu.MMO.Skills.Fishing;
 import me.dotu.MMO.Skills.Mining;
 import me.dotu.MMO.Skills.Sword;
 import me.dotu.MMO.Skills.Woodcutting;
 import me.dotu.MMO.Spawners.CustomSpawnerHandler;
 import me.dotu.MMO.Stations.Augment;
+import me.dotu.MMO.StatusEffects.StatusEffect;
 import me.dotu.MMO.UI.ExpBar;
 
 public class Main extends JavaPlugin {
@@ -46,10 +49,10 @@ public class Main extends JavaPlugin {
      */
 
     private SpawnerConfig spawnerConfig;
-    private ItemConfig itemConfig;
+    private CustomItemConfig itemConfig;
     private SettingsConfig settingsConfig;
     private LootTableConfig lootTableConfig;
-    private ExpTableConfig expTableConfig;
+    private ItemTableConfig itemTableConfig;
     private PlayerConfig playerConfig;
     private ChunkDataConfig chunkDataConfig;
     private CustomSpawnerHandler customSpawnerHandler;
@@ -64,12 +67,12 @@ public class Main extends JavaPlugin {
         plugin = this;
 
         this.spawnerConfig = new SpawnerConfig();
-        this.itemConfig = new ItemConfig();
+        this.itemConfig = new CustomItemConfig();
         this.settingsConfig = new SettingsConfig();
         this.lootTableConfig = new LootTableConfig();
-        this.expTableConfig = new ExpTableConfig();
         this.playerConfig = new PlayerConfig();
         this.chunkDataConfig = new ChunkDataConfig();
+        this.itemTableConfig = new ItemTableConfig();
         this.customSpawnerHandler = new CustomSpawnerHandler();
         this.spawnerLocationDataConfig = new SpawnerLocationDataConfig();
         this.spawnerRunnable = new SpawnerRunnable();
@@ -105,6 +108,10 @@ public class Main extends JavaPlugin {
         // Runnables
         this.spawnerRunnable.start();
         this.fileRunnable.start();
+
+        // Status Effects
+        StatusEffect statusEffect = new StatusEffect();
+        statusEffect.setup();
     }
 
     public void registerSkills() {
@@ -128,13 +135,21 @@ public class Main extends JavaPlugin {
         Woodcutting woodcutting = new Woodcutting();
         this.getServer().getPluginManager().registerEvents(woodcutting, this);
         woodcutting.addToSkillsMap(woodcutting);
+
+        Cooking cooking = new Cooking();
+        this.getServer().getPluginManager().registerEvents(cooking, this);
+        cooking.addToSkillsMap(cooking);
+
+        Farming farming = new Farming();
+        this.getServer().getPluginManager().registerEvents(farming, this);
+        farming.addToSkillsMap(farming);
     }
 
     @Override
     public void onDisable() {
         System.out.println("DotuMMO has been disabled!");
 
-        this.playerConfig.saveAllPlayerSettingsToFile();
+        this.playerConfig.saveAllToFile();
         this.settingsConfig.saveAllToFile();
         this.chunkDataConfig.saveAllChunkDataToFileOnDisable();
         ;
@@ -148,5 +163,11 @@ public class Main extends JavaPlugin {
 
     public static void main(String[] args) {
 
+    }
+
+    private static class StatusEffects {
+
+        public StatusEffects() {
+        }
     }
 }

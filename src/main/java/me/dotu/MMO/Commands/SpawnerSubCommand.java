@@ -22,11 +22,11 @@ import me.dotu.MMO.Enums.PermissionType;
 import me.dotu.MMO.Enums.SpawnerKey;
 import me.dotu.MMO.Inventories.SpawnerInventory;
 import me.dotu.MMO.Managers.MessageManager;
-import me.dotu.MMO.Marker;
 import me.dotu.MMO.Spawners.CustomSpawner;
 import me.dotu.MMO.Spawners.CustomSpawnerHandler;
 import me.dotu.MMO.Spawners.SpawnerLocationData;
 import me.dotu.MMO.Utils.LocationUtils;
+import me.dotu.MMO.Utils.Marker;
 import net.md_5.bungee.api.ChatColor;
 
 public class SpawnerSubCommand implements SubCommand, Listener {
@@ -136,7 +136,7 @@ public class SpawnerSubCommand implements SubCommand, Listener {
             player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS,
                     "Left Click block to set spawn block, right click block to remove spawn block"));
 
-            Marker marker = new Marker(player, sld.getSpawnLocations(), MarkerColor.RED, 10);
+            Marker marker = new Marker(player, sld.getSpawnLocations(), MarkerColor.RED, 3);
             this.editing.put(player.getName(), LocationUtils.serializeLocation(sld.getSpawnerLocation()));
             this.viewingMarkers.put(player.getName(), marker);
         }

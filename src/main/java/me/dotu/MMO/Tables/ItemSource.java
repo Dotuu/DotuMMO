@@ -1,14 +1,16 @@
 package me.dotu.MMO.Tables;
 
-public class ExpSource<T> {
+public class ItemSource<T> {
     private int minExp;
     private int maxExp;
     private T source;
+    private int requiredLevel;
 
-    public ExpSource(int minExp, int maxExp, T type){
+    public ItemSource(int minExp, int maxExp, T type, int requiredLevel){
         this.minExp = minExp;
         this.maxExp = maxExp;
         this.source = type;
+        this.requiredLevel = requiredLevel;
     }
 
     public int getMinExp() {
@@ -33,6 +35,14 @@ public class ExpSource<T> {
 
     public void setTableSource(T type) {
         this.source = type;
+    }
+
+    public int getRequiredLevel() {
+        return this.requiredLevel;
+    }
+
+    public void setRequiredLevel(int requiredLevel) {
+        this.requiredLevel = requiredLevel;
     }
 
 }

@@ -26,8 +26,6 @@ public class SpawnerConfig extends JsonFileManager {
         List<DefaultConfig> defaults = Arrays.asList(DefaultConfig.SPAWNER_DATA);
 
         this.setupDefaults(defaults);
-
-        this.populateMap();
     }
 
     @Override

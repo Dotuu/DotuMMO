@@ -5,11 +5,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 
-import me.dotu.MMO.Configs.PlayerConfig;
-import me.dotu.MMO.ExpCalculator;
-import me.dotu.MMO.Managers.PlayerManager;
 import me.dotu.MMO.Managers.SkillsManager;
 import me.dotu.MMO.Skills.Skill;
+import me.dotu.MMO.Utils.ExpCalculator;
 
 public class ExpBar implements Listener{
     @EventHandler
@@ -18,7 +16,6 @@ public class ExpBar implements Listener{
     }
 
     public static void setExpBarToSkill(Player player, Skill masterSkill){
-        PlayerManager manager = PlayerConfig.playerSettings.get(player.getUniqueId());
         SkillsManager skillsManager = new SkillsManager();
         int currentXp = skillsManager.getSkillExp(player.getUniqueId(), masterSkill.getSkill());
         int currentLevel = ExpCalculator.getLevelFromExp(currentXp, masterSkill.getDifficulty());

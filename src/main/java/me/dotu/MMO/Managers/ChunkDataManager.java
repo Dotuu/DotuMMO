@@ -14,14 +14,14 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 
 import me.dotu.MMO.ChunkLoader.ChunkData;
 import me.dotu.MMO.Configs.ChunkDataConfig;
-import me.dotu.MMO.Configs.ExpTableConfig;
-import me.dotu.MMO.Tables.ExpTable;
+import me.dotu.MMO.Configs.ItemTableConfig;
+import me.dotu.MMO.Tables.ItemTable;
 
 public class ChunkDataManager implements Listener {
 
     private ChunkDataConfig chunkDataConfig;
 
-    private final String[] skillsToFetch = {"mining", "woodcutting"};
+    private final String[] skillsToFetch = {"MINING", "WOODCUTTING"};
 
     public ChunkDataManager() {
         this.chunkDataConfig = new ChunkDataConfig();
@@ -41,7 +41,7 @@ public class ChunkDataManager implements Listener {
 
     @EventHandler
     public void blockPlace(BlockPlaceEvent event) {
-        ArrayList<Material> blocks = this.getBlocksList(this.skillsToFetch);
+        ArrayList<Material> blocks = this.getMaterialList(this.skillsToFetch);
         Material placed = event.getBlock().getType();
 
         Block placedBlock = event.getBlock();
@@ -64,13 +64,13 @@ public class ChunkDataManager implements Listener {
 
     @EventHandler
     public void blockBreak(BlockBreakEvent event) {
-        ArrayList<Material> blocks = this.getBlocksList(this.skillsToFetch);
+        ArrayList<Material> materials = this.getMaterialList(this.skillsToFetch);
         Material broken = event.getBlock().getType();
 
         Block brokenBlock = event.getBlock();
         String chunkId = getChunkIdentifier(brokenBlock.getChunk());
 
-        if (!blocks.contains(broken)) {
+        if (!materials.contains(broken)) {
             return;
         }
 
@@ -86,7 +86,7 @@ public class ChunkDataManager implements Listener {
     }
 
     public boolean wasBlockBroken(Block block) {
-        ArrayList<Material> blocks = this.getBlocksList(this.skillsToFetch);
+        ArrayList<Material> blocks = this.getMaterialList(this.skillsToFetch);
         Material broken = block.getType();
 
         if (blocks.contains(broken)) {
@@ -105,13 +105,17 @@ public class ChunkDataManager implements Listener {
         return false;
     }
 
-    public ArrayList<Material> getBlocksList(String[] skills) {
+    public ArrayList<Material> getMaterialList(String[] skills) {
         ArrayList<Material> returnArray = new ArrayList<>();
 
+        if (skills == null){
+            return new ArrayList<>();
+        }
+
         for (String skill : skills){
-            ExpTable<?> expTables = ExpTableConfig.expTables.get(skill);
-            if (expTables.isMaterialTable()){
-                for (Material material : expTables.asMaterials()){
+            ItemTable<?> itemTables = ItemTableConfig.itemTables.get(skill);
+            if (itemTables.isMaterialTable()){
+                for (Material material : itemTables.asMaterials()){
                     returnArray.add(material);
                 }
             }

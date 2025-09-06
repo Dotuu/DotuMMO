@@ -8,15 +8,15 @@ import org.bukkit.event.block.BlockBreakEvent;
 import me.dotu.MMO.Enums.SkillDifficulty;
 import me.dotu.MMO.Enums.SkillType;
 import me.dotu.MMO.Managers.ChunkDataManager;
-import me.dotu.MMO.Tables.ExpSource;
+import me.dotu.MMO.Tables.ItemSource;
 
 public class Mining extends Skill implements Listener {
 
     private final boolean skillEnabled;
 
     public Mining() {
-        super("Mining", SkillDifficulty.SLOW, SkillType.MINING, 100, 0);
-        this.skillEnabled = this.isSkillEnabled("mining");
+        super("MINING", SkillDifficulty.SLOW, SkillType.MINING, 100, 0);
+        this.skillEnabled = this.isSkillEnabled("MINING");
     }
 
     public void registerSkill() {
@@ -33,13 +33,13 @@ public class Mining extends Skill implements Listener {
         Player player = event.getPlayer();
 
         if (cdm.wasBlockBroken(event.getBlock()) == false) {
-            ExpSource<?> source = this.getExpSourceBlock(event.getBlock(), player);
+            ItemSource<?> source = this.getSourceBlock(event.getBlock(), player);
 
             if (source == null){
                 return;
             }
 
-            this.processExpReward(player, this, source.getMinExp(), source.getMaxExp());
+            this.processExpReward(player, this, source.getMinExp(), source.getMaxExp(), 1);
         }
     }
 }

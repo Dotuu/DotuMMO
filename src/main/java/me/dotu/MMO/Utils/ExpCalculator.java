@@ -1,4 +1,4 @@
-package me.dotu.MMO;
+package me.dotu.MMO.Utils;
 
 import java.util.UUID;
 
@@ -14,19 +14,18 @@ public class ExpCalculator {
         return (int) (baseXp * Math.pow(level, difficulty));
     }
 
-    public static int calculateRewardedExp(SkillDifficulty difficultyEnum, int minExp, int maxExp) {
+    public static int calculateRewardedExp(SkillDifficulty difficultyEnum, int minExp, int maxExp, int multiplier) {
         int obtainedExp = RandomNum.getRandom(minExp, minExp);
         double difficulty = difficultyEnum.getDifficultyValue();
         double xpGained = obtainedExp / difficulty;
-        return (int) xpGained;
+        return (int) xpGained * multiplier;
     }
 
     public static int getLevelFromExp(int totalXp, SkillDifficulty difficultyEnum) {
-        int level = 1;
+        int level = 0;
         while (true) {
             int xpForNextLevel = getExpNeededForNextLevel(level + 1, difficultyEnum);
-            if (totalXp < xpForNextLevel) { // If player/level xp is less than xp needed for next level break out and
-                                            // return
+            if (totalXp < xpForNextLevel) {
                 break;
             }
             level++;

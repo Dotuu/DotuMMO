@@ -97,14 +97,12 @@ public enum DefaultConfig {
             pvp.addProperty("season_timer", System.currentTimeMillis());
 
             JsonObject skills = new JsonObject();
-            JsonObject skillsExp = new JsonObject();
             for (SkillType skillName : SkillType.values()) {
                 Skill skill = Skill.skillsMap.get(skillName);
                 if (skill != null) {
-                    skillsExp.addProperty(skill.getName(), skill.getStartingLevel());
+                    skills.addProperty(skill.getName().toUpperCase(), skill.getStartingLevel());
                 }
             }
-            skills.add("xp", skillsExp);
 
             playerData.add("skills", skills);
             playerData.add("guild", guild);
@@ -211,16 +209,18 @@ public enum DefaultConfig {
     FISHING{
         @Override
         public void populate(JsonObject defaultConfig){
-            final int MIN = 20, MAX = 30;
-            defaultConfig.addProperty("name", "fishing");
+            final int min = 20;
+            final int max = 30;
+            final int requiredLevel = 0;
             JsonArray sources = new JsonArray();
             String[] mats = {"COD","SALMON","TROPICAL_FISH","PUFFERFISH"};
 
             for (String material : mats) {
                 JsonObject obj = new JsonObject();
                 obj.addProperty("material", material);
-                obj.addProperty("min_exp", MIN);
-                obj.addProperty("max_exp", MAX);
+                obj.addProperty("min_exp", min);
+                obj.addProperty("max_exp", max);
+                obj.addProperty("required_level", requiredLevel);
                 sources.add(obj);
             }
             defaultConfig.add("sources", sources);
@@ -229,8 +229,9 @@ public enum DefaultConfig {
     MINING{
         @Override
         public void populate(JsonObject defaultConfig){
-            final int MIN = 20, MAX = 30;
-            defaultConfig.addProperty("name", "mining");
+            final int min = 20;
+            final int max = 30;
+            final int requiredLevel = 0;
             JsonArray sources = new JsonArray();
             String[] mats = {
                 "COAL_ORE","DEEPSLATE_COAL_ORE","COPPER_ORE","DEEPSLATE_COPPER_ORE",
@@ -243,8 +244,10 @@ public enum DefaultConfig {
             for (String material : mats){
                 JsonObject obj = new JsonObject();
                 obj.addProperty("material", material);
-                obj.addProperty("min_exp", MIN);
-                obj.addProperty("max_exp", MAX);
+                obj.addProperty("min_exp", min);
+                obj.addProperty("max_exp", max);
+                obj.addProperty("required_level", requiredLevel);
+                obj.addProperty("required_level", 0);
                 sources.add(obj);
             }
             defaultConfig.add("sources", sources);
@@ -253,8 +256,9 @@ public enum DefaultConfig {
     WOODCUTTING{
         @Override
         public void populate(JsonObject defaultConfig){
-            final int MIN = 20, MAX = 30;
-            defaultConfig.addProperty("name", "woodcutting");
+            final int min = 20;
+            final int max = 30;
+            final int requiredLevel = 0;
             JsonArray sources = new JsonArray();
             String[] mats = {"OAK_LOG","SPRUCE_LOG","BIRCH_LOG","JUNGLE_LOG","ACACIA_LOG", 
             "DARK_OAK_LOG","MANGROVE_LOG","CHERRY_LOG","PALE_OAK_LOG"};
@@ -262,8 +266,9 @@ public enum DefaultConfig {
             for (String material : mats){
                 JsonObject obj = new JsonObject();
                 obj.addProperty("material", material);
-                obj.addProperty("min_exp", MIN);
-                obj.addProperty("max_exp", MAX);
+                obj.addProperty("min_exp", min);
+                obj.addProperty("max_exp", max);
+                obj.addProperty("required_level", requiredLevel);
                 sources.add(obj);
             }
             defaultConfig.add("sources", sources);
@@ -272,8 +277,9 @@ public enum DefaultConfig {
     AXE{
         @Override
         public void populate(JsonObject defaultConfig){
-            final int MIN = 20, MAX = 30;
-            defaultConfig.addProperty("name", "axe");
+            final int min = 20;
+            final int max = 30;
+            final int requiredLevel = 0;
             JsonArray sources = new JsonArray();
             String[] entityTypes = {
                 "BLAZE","BOGGED","BREEZE","CREAKING","CREEPER","ELDER_GUARDIAN","ENDERMITE",
@@ -285,8 +291,9 @@ public enum DefaultConfig {
             for (String entityType : entityTypes){
                 JsonObject obj = new JsonObject();
                 obj.addProperty("entitytype", entityType);
-                obj.addProperty("min_exp", MIN);
-                obj.addProperty("max_exp", MAX);
+                obj.addProperty("min_exp", min);
+                obj.addProperty("max_exp", max);
+                obj.addProperty("required_level", requiredLevel);
                 sources.add(obj);
             }
             defaultConfig.add("sources", sources);
@@ -295,8 +302,9 @@ public enum DefaultConfig {
     SWORD{
         @Override
         public void populate(JsonObject defaultConfig){
-            final int MIN = 20, MAX = 30;
-            defaultConfig.addProperty("name", "sword");
+            final int min = 20;
+            final int max = 30;
+            final int requiredLevel = 0;
             JsonArray sources = new JsonArray();
             String[] entityTypes = {
                 "BLAZE","BOGGED","BREEZE","CREAKING","CREEPER","ELDER_GUARDIAN","ENDERMITE",
@@ -309,8 +317,9 @@ public enum DefaultConfig {
             for (String entityType : entityTypes){
                 JsonObject obj = new JsonObject();
                 obj.addProperty("entitytype", entityType);
-                obj.addProperty("min_exp", MIN);
-                obj.addProperty("max_exp", MAX);
+                obj.addProperty("min_exp", min);
+                obj.addProperty("max_exp", max);
+                obj.addProperty("required_level", requiredLevel);
                 sources.add(obj);
             }
             defaultConfig.add("sources", sources);
@@ -319,19 +328,46 @@ public enum DefaultConfig {
     FARMING{
         @Override
         public void populate(JsonObject defaultConfig){
-            JsonObject root = new JsonObject();
+            final int min = 20;
+            final int max = 30;
+            final int requiredLevel = 0;
+            JsonArray sources = new JsonArray();
+            String[] materials = {
+                "WHEAT", "CARROT", "POTATO", "NETHER_WART", "COCOA", "SWEETBERRY_BUSH", "BEETROOT"
+            };
 
-            root.addProperty("COD", 15);
-            defaultConfig.add("exp", root);
+            for (String material : materials){
+                JsonObject obj = new JsonObject();
+                obj.addProperty("material", material);
+                obj.addProperty("min_exp", min);
+                obj.addProperty("max_exp", max);
+                obj.addProperty("required_level", requiredLevel);
+                sources.add(obj);
+            }
+            defaultConfig.add("sources", sources);
         }
     },
     COOKING{
         @Override
         public void populate(JsonObject defaultConfig){
-            JsonObject root = new JsonObject();
+            final int min = 20;
+            final int max = 30;
+            final int requiredLevel = 0;
+            JsonArray sources = new JsonArray();
+            String[] foods = {
+                "CAKE", "PUMPKIN_PIE", "BREAD", "COOKIE", "SUSPICIOUS_STEW", "GOLDEN_CARROT",
+                "GOLDEN_APPLE", "HONEY_BOTTLE", "RABBIT_STEW", "BEETROOT_SOUP"
+            };
 
-            root.addProperty("COD", 15);
-            defaultConfig.add("exp", root);
+            for (String entityType : foods){
+                JsonObject obj = new JsonObject();
+                obj.addProperty("material", entityType);
+                obj.addProperty("min_exp", min);
+                obj.addProperty("max_exp", max);
+                obj.addProperty("required_level", requiredLevel);
+                sources.add(obj);
+            }
+            defaultConfig.add("sources", sources);
         }
     },
     ARCHERY{

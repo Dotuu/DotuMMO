@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 
-public class ExpTable<T> {
+public class ItemTable<T> {
     private String tableName;
-    private ArrayList<ExpSource<?>> expItems;
+    private ArrayList<ItemSource<?>> expItems;
     private T tableType;
 
-    public ExpTable(String tableName, ArrayList<ExpSource<?>> expItems, T tableType) {
+    public ItemTable(String tableName, ArrayList<ItemSource<?>> expItems, T tableType) {
         this.tableName = tableName;
         this.expItems = expItems;
         this.tableType = tableType;
@@ -24,11 +24,11 @@ public class ExpTable<T> {
         this.tableName = tableName;
     }
 
-    public ArrayList<ExpSource<?>> getExpItems() {
+    public ArrayList<ItemSource<?>> getExpItems() {
         return this.expItems;
     }
 
-    public void setExpItems(ArrayList<ExpSource<?>> expItems) {
+    public void setExpItems(ArrayList<ItemSource<?>> expItems) {
         this.expItems = expItems;
     }
 
@@ -50,12 +50,12 @@ public class ExpTable<T> {
 
     public ArrayList<Material> asMaterials(){
         if (!(this.tableType instanceof Material)){
-            return new ArrayList<Material>();
+            return new ArrayList<>();
         }
 
         ArrayList<Material> returnList = new ArrayList<>();
 
-        for (ExpSource<?> item : this.expItems){
+        for (ItemSource<?> item : this.expItems){
             Material material = (Material) item.getTableSource();
             returnList.add(material);
         }
@@ -65,12 +65,12 @@ public class ExpTable<T> {
 
     public ArrayList<EntityType> asEntityTypes() {
         if (!(this.tableType instanceof EntityType)){
-            return new ArrayList<EntityType>();
+            return new ArrayList<>();
         }
 
         ArrayList<EntityType> returnList = new ArrayList<>();
 
-        for (ExpSource<?> item : this.expItems){
+        for (ItemSource<?> item : this.expItems){
             EntityType entityType = (EntityType) item.getTableSource();
             returnList.add(entityType);
         }

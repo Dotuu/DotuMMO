@@ -41,6 +41,7 @@ public abstract class JsonFileManager {
         }
 
         if (this.file.exists()) {
+            this.populateMap();
             return;
         }
 
@@ -55,42 +56,38 @@ public abstract class JsonFileManager {
             gson.toJson(root, writer);
         } catch (Exception e) {
         }
+
+        this.populateMap();
     }
 
     protected void setupDefaults(HashMap<File, DefaultConfig> files) {
+        File dir = new File(Main.plugin.getDataFolder(), this.path);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
         for (Map.Entry<File, DefaultConfig> mapFile : files.entrySet()) {
-            this.file = mapFile.getKey();
+            File target = mapFile.getKey();
             DefaultConfig type = mapFile.getValue();
 
-            File dir = new File(Main.plugin.getDataFolder(), this.path);
-
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-
-            if (this.file.exists()) {
-                return;
-            }
+            if (target.exists()) continue;
 
             JsonObject root = new JsonObject();
-
             type.populate(root);
 
-            try (FileWriter writer = new FileWriter(this.file)) {
+            try (FileWriter writer = new FileWriter(target)) {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
                 gson.toJson(root, writer);
-            } catch (Exception e) {
-            }
+            } catch (Exception e) {}
         }
+
+        this.file = dir;
+        this.populateMap();
     }
 
-    protected void populateMap() {
+    protected abstract void populateMap();
 
-    }
-
-    protected void saveAllToFile() {
-
-    }
+    protected abstract void saveAllToFile();
 
     protected boolean getBooleanFromJson(JsonObject obj, String member) {
         return obj.get(member).getAsBoolean();

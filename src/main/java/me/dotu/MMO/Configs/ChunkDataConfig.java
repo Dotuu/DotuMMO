@@ -29,6 +29,11 @@ public class ChunkDataConfig extends JsonFileManager implements Listener {
     public static HashMap<String, ChunkData> loadedChunks = new HashMap<>();
 
     @Override
+    public void populateMap(){
+
+    }
+
+    @Override
     public void saveAllToFile() {
         HashMap<String, ChunkData> newLoadedChunks = new HashMap<>();
         for (Map.Entry<String, ChunkData> chunk : loadedChunks.entrySet()) {

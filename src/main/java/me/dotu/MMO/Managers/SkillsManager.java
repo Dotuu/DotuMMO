@@ -16,24 +16,9 @@ public class SkillsManager {
         try {
             PlayerManager manager = PlayerConfig.playerSettings.get(uuid);
             JsonObject data = PlayerManager.getOrCreateObject(manager.getSettings(), "Data");
-            JsonObject skills = PlayerManager.getOrCreateObject(data, "skills");
-            return skills.getAsJsonObject("xp");
+            return data.getAsJsonObject("skills");
         } catch (Exception e) {
             return null;
-        }
-    }
-
-    public int getSkillExp(UUID uuid, SkillType skillEnum) {
-        try {
-            PlayerManager manager = PlayerConfig.playerSettings.get(uuid);
-            JsonObject data = PlayerManager.getOrCreateObject(manager.getSettings(), "Data");
-            JsonObject skills = PlayerManager.getOrCreateObject(data, "skills");
-            JsonObject xp = PlayerManager.getOrCreateObject(skills, "xp");
-
-            String skillName = skillEnum.toString().replace("_", " ");
-            return xp.has(skillName) ? xp.get(skillName).getAsInt() : 0;
-        } catch (Exception e) {
-            return 0;
         }
     }
 
@@ -42,12 +27,25 @@ public class SkillsManager {
             PlayerManager manager = PlayerConfig.playerSettings.get(uuid);
             JsonObject data = PlayerManager.getOrCreateObject(manager.getSettings(), "Data");
             JsonObject skills = PlayerManager.getOrCreateObject(data, "skills");
-            JsonObject xp = PlayerManager.getOrCreateObject(skills, "xp");
 
-            int currentExp = xp.has(skillName) ? xp.get(skillName).getAsInt() : 0;
-            xp.addProperty(skillName, currentExp + xpGained);
+            int currentExp = skills.has(skillName) ? skills.get(skillName).getAsInt() : 0;
+            skills.addProperty(skillName, currentExp + xpGained);
         } catch (Exception e) {
 
         }
     }
+    
+    public int getSkillExp(UUID uuid, SkillType skillEnum) {
+        try {
+            PlayerManager manager = PlayerConfig.playerSettings.get(uuid);
+            JsonObject data = PlayerManager.getOrCreateObject(manager.getSettings(), "Data");
+            JsonObject skills = PlayerManager.getOrCreateObject(data, "skills");
+
+            String skillName = skillEnum.toString().replace("_", " ");
+            return skills.has(skillName) ? skills.get(skillName).getAsInt() : 0;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
 }
