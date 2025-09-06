@@ -59,6 +59,7 @@ public class SpawnerRunnable implements Runnable {
         if (customSpawner == null) {
             Main.plugin.getLogger().info("Spawner at: " + spawnerData.getSpawnerLoc().toString()
                     + ", is linked to a Custom Spawner that no longer exists!");
+            return;
         }
 
         Location spawnerLoc = spawnerData.getSpawnerLoc();

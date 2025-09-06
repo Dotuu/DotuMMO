@@ -15,6 +15,5 @@ public enum SkillType {
     ARMOR_CRAFTING,
     WEAPON_CRAFTING,
     BLOCK,
-    UNARMED,
-    TAMING
+    UNARMED
 }
