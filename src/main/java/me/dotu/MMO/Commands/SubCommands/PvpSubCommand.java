@@ -1,8 +1,9 @@
-package me.dotu.MMO.Commands;
+package me.dotu.MMO.Commands.SubCommands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.dotu.MMO.Commands.SubCommand;
 import me.dotu.MMO.Configs.SettingsConfig;
 import me.dotu.MMO.Enums.PermissionType;
 import me.dotu.MMO.Enums.Settings;
@@ -29,19 +30,32 @@ public class PvpSubCommand implements SubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        Player player = (Player) sender;
-
-        if (player.hasPermission(this.getPermission())
-                || player.hasPermission(PermissionType.ADMIN.getPermission())) {
+        if (!(sender instanceof Player)){
             switch (args[1].toLowerCase()) {
                 case "startseason":
                     if (this.handleStartSeasonCommand()) {
-                        player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS,
-                                "New season started, all stats have been reset"));
+                        sender.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "New season started, all stats have been reset"));
                         break;
                     }
-                    player.sendMessage(MessageManager.send(MessageManager.Type.ERROR,
-                            "Something went wrong, please check console for logs"));
+                    sender.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Something went wrong, please check console for logs"));
+                    break;
+                default:
+                    // send help list
+                    break;
+            }
+            return true;
+        }
+
+        Player player = (Player) sender;
+
+        if (player.hasPermission(this.getPermission()) || player.hasPermission(PermissionType.ADMIN.getPermission())) {
+            switch (args[1].toLowerCase()) {
+                case "startseason":
+                    if (this.handleStartSeasonCommand()) {
+                        player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "New season started, all stats have been reset"));
+                        break;
+                    }
+                    player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Something went wrong, please check console for logs"));
                     break;
                 default:
                     // send help list

@@ -14,7 +14,7 @@ import me.dotu.MMO.Enums.SkillDifficulty;
 import me.dotu.MMO.Enums.SkillType;
 import me.dotu.MMO.Managers.MessageManager;
 import me.dotu.MMO.StatusEffects.StatusEffect;
-import me.dotu.MMO.Tables.ItemSource;
+import me.dotu.MMO.Tables.SkillSource;
 import me.dotu.MMO.Utils.Multiplier;
 
 public class Cooking extends Skill implements Listener {
@@ -45,7 +45,7 @@ public class Cooking extends Skill implements Listener {
             return;
         }
 
-        ItemSource<?> source = this.getExpSourceMaterial(event.getCurrentItem().getType(), player);
+        SkillSource<?> source = this.getExpSourceMaterial(event.getCurrentItem().getType(), player);
 
         if (source == null){
             return;
@@ -79,7 +79,7 @@ public class Cooking extends Skill implements Listener {
 
         Player player = event.getPlayer();
 
-        ItemSource<?> source = this.getExpSourceMaterial(event.getItem().getType(), player);
+        SkillSource<?> source = this.getExpSourceMaterial(event.getItem().getType(), player);
         
         if (source == null){
             return;
@@ -115,7 +115,7 @@ public class Cooking extends Skill implements Listener {
             return;   
         }
 
-        ItemSource<?> source = this.getExpSourceMaterial(handItem.getType(), player);
+        SkillSource<?> source = this.getExpSourceMaterial(handItem.getType(), player);
 
         if (source == null){
             return;

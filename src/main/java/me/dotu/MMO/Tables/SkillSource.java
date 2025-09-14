@@ -1,12 +1,12 @@
 package me.dotu.MMO.Tables;
 
-public class ItemSource<T> {
+public class SkillSource<T> {
     private int minExp;
     private int maxExp;
     private T source;
     private int requiredLevel;
 
-    public ItemSource(int minExp, int maxExp, T type, int requiredLevel){
+    public SkillSource(int minExp, int maxExp, T type, int requiredLevel){
         this.minExp = minExp;
         this.maxExp = maxExp;
         this.source = type;

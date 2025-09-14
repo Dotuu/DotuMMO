@@ -8,7 +8,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import me.dotu.MMO.Enums.SkillDifficulty;
 import me.dotu.MMO.Enums.SkillType;
 import me.dotu.MMO.Managers.ChunkDataManager;
-import me.dotu.MMO.Tables.ItemSource;
+import me.dotu.MMO.Tables.SkillSource;
 
 public class Mining extends Skill implements Listener {
 
@@ -33,7 +33,7 @@ public class Mining extends Skill implements Listener {
         Player player = event.getPlayer();
 
         if (cdm.wasBlockBroken(event.getBlock()) == false) {
-            ItemSource<?> source = this.getSourceBlock(event.getBlock(), player);
+            SkillSource<?> source = this.getSourceBlock(event.getBlock(), player);
 
             if (source == null){
                 return;

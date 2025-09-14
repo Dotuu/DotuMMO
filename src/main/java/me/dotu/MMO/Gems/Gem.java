@@ -1,30 +1,37 @@
 package me.dotu.MMO.Gems;
 
-import me.dotu.MMO.Enums.GemCategory;
+import java.util.ArrayList;
+
 import me.dotu.MMO.Enums.GemType;
 import me.dotu.MMO.Enums.ItemTier;
 
 public class Gem {
-    private ItemTier[] tiers;
+    public static ArrayList<Gem> gems = new ArrayList<>();
+    private ItemTier tier;
     private int minLevelToUse;
     private GemType gem;
     private String description;
-    private GemCategory category;
 
-    public Gem(ItemTier tiers[], int minLevelToUse, GemType gem, String desciption, GemCategory category) {
-        this.tiers = tiers;
+    public Gem(ItemTier tier, int minLevelToUse, GemType gem, String desciption) {
+        this.tier = ItemTier.COMMON;
         this.minLevelToUse = minLevelToUse;
         this.gem = gem;
         this.description = desciption;
-        this.category = category;
     }
 
-    public ItemTier[] getTiers() {
-        return this.tiers;
+    public Gem(int minLevelToUse, GemType gem, String desciption) {
+        this.tier = ItemTier.COMMON;
+        this.minLevelToUse = minLevelToUse;
+        this.gem = gem;
+        this.description = desciption;
     }
 
-    public void setTiers(ItemTier[] tiers) {
-        this.tiers = tiers;
+    public ItemTier getTiers() {
+        return this.tier;
+    }
+
+    public void setTiers(ItemTier tier) {
+        this.tier = tier;
     }
 
     public int getMinLevelToUse() {
@@ -41,14 +48,6 @@ public class Gem {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public GemCategory getCategory() {
-        return this.category;
-    }
-
-    public void setCategory(GemCategory category) {
-        this.category = category;
     }
 
     public GemType getGem() {

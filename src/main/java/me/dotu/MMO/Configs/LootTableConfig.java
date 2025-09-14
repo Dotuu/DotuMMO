@@ -14,16 +14,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import me.dotu.MMO.Augments.Augment;
-import me.dotu.MMO.Enums.AugmentCategory;
 import me.dotu.MMO.Enums.AugmentType;
 import me.dotu.MMO.Enums.DefaultConfig;
-import me.dotu.MMO.Enums.GemCategory;
 import me.dotu.MMO.Enums.GemType;
 import me.dotu.MMO.Enums.ItemTier;
 import me.dotu.MMO.Gems.Gem;
 import me.dotu.MMO.Managers.JsonFileManager;
-import me.dotu.MMO.Tables.LootItem;
 import me.dotu.MMO.Tables.LootTable;
+import me.dotu.MMO.Tables.LootTableItem;
 
 public class LootTableConfig extends JsonFileManager {
     public static HashMap<String, LootTable> lootTables = new HashMap<>();
@@ -44,10 +42,13 @@ public class LootTableConfig extends JsonFileManager {
                 try (FileReader reader = new FileReader(tableFile)) {
                     JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
 
-                    ArrayList<LootItem> items = this.getLootItems(root.getAsJsonArray("items"));
+                    ArrayList<LootTableItem> items = this.getLootItems(root.getAsJsonArray("items"));
                     String name = root.get("name").getAsString();
 
-                    LootTable lootTable = new LootTable(name, items);
+                    LootTable lootTable = new LootTable(name);
+                    if (items != null){
+                        lootTable.setItems(items);
+                    }
                     lootTables.put(name, lootTable);
                 } catch (Exception e) {
 
@@ -61,29 +62,44 @@ public class LootTableConfig extends JsonFileManager {
         
     }
 
-    private ArrayList<LootItem> getLootItems(JsonArray items) {
-        ArrayList<LootItem> returnArray = new ArrayList<>();
+    private ArrayList<LootTableItem> getLootItems(JsonArray items) {
+        ArrayList<LootTableItem> returnArray = new ArrayList<>();
 
         for (int x = 0; x < items.size(); x++) {
             JsonObject itemObj = items.get(x).getAsJsonObject();
 
-            int weight = itemObj.get("weight").getAsInt();
             Material material = Material.valueOf(itemObj.get("material").getAsString());
             String displayName = itemObj.get("display_name").getAsString();
+            
+            String tierString = itemObj.get("tier").getAsString();
+            ItemTier tier = ItemTier.valueOf(tierString);
 
-            JsonArray tiersJson = itemObj.get("tiers").getAsJsonArray();
-            ItemTier[] tiers = this.getTiers(tiersJson);
+            
+            LootTableItem lootItem = new LootTableItem(material, displayName);
+
+            lootItem.setTier(tier);
+            
+            int weight = itemObj.get("weight").getAsInt();
+            lootItem.setWeight(weight);
 
             JsonArray loresJson = itemObj.get("lores").getAsJsonArray();
             List<String> lores = this.getLores(loresJson);
+            if (lores != null){
+                lootItem.setLores(lores);
+            }
 
             JsonArray augmentsJson = itemObj.get("augments").getAsJsonArray();
             List<Augment> augments = this.getAugments(augmentsJson);
+            if (augments != null){
+                lootItem.setAugments(augments);
+            }
 
             JsonArray gemsJson = itemObj.get("gems").getAsJsonArray();
             List<Gem> gems = this.getGems(gemsJson);
+            if (gems != null){
+                lootItem.setGems(gems);
+            }
 
-            LootItem lootItem = new LootItem(augments, gems, material, displayName, lores, weight, tiers);
             returnArray.add(lootItem);
         }
 
@@ -108,9 +124,6 @@ public class LootTableConfig extends JsonFileManager {
             JsonArray tiersJson = jsonObj.get("tiers").getAsJsonArray();
             ItemTier[] tiers = this.getTiers(tiersJson);
 
-            String categoryStr = jsonObj.get("category").getAsString();
-            AugmentCategory category = AugmentCategory.valueOf(categoryStr);
-
             int minLevelToUse = jsonObj.get("minLevelToUse").getAsInt();
 
             String augmentStr = jsonObj.get("augment").getAsString();
@@ -118,7 +131,7 @@ public class LootTableConfig extends JsonFileManager {
 
             String description = jsonObj.get("description").getAsString();
 
-            Augment newAugment = new Augment(tiers, minLevelToUse, augment, description, category);
+            Augment newAugment = new Augment(tiers, minLevelToUse, augment, description);
 
             augments.add(newAugment);
         }
@@ -133,9 +146,6 @@ public class LootTableConfig extends JsonFileManager {
             JsonArray tiersJson = jsonObj.get("tiers").getAsJsonArray();
             ItemTier[] tiers = this.getTiers(tiersJson);
 
-            String categoryStr = jsonObj.get("category").getAsString();
-            GemCategory category = GemCategory.valueOf(categoryStr);
-
             int minLevelToUse = jsonObj.get("minLevelToUse").getAsInt();
 
             String gemStr = jsonObj.get("gem").getAsString();
@@ -144,7 +154,7 @@ public class LootTableConfig extends JsonFileManager {
             String description;
             description = jsonObj.get("description").getAsString();
 
-            Gem newGem = new Gem(tiers, minLevelToUse, gem, description, category);
+            Gem newGem = new Gem(tiers, minLevelToUse, gem, description);
 
             gems.add(newGem);
         }

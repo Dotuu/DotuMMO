@@ -7,7 +7,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 import me.dotu.MMO.Enums.SkillDifficulty;
 import me.dotu.MMO.Enums.SkillType;
-import me.dotu.MMO.Tables.ItemSource;
+import me.dotu.MMO.Tables.SkillSource;
 
 public class Axe extends Skill implements Listener {
 
@@ -32,7 +32,7 @@ public class Axe extends Skill implements Listener {
         if (event.getEntity().getKiller() instanceof Player && !(event.getEntity() instanceof Player)) {
             Player player = (Player) event.getEntity().getKiller();
             if (holdingAxe(player)) {
-                ItemSource<?> source = this.getExpSourceEntity(event.getEntity(), player);
+                SkillSource<?> source = this.getExpSourceEntity(event.getEntity(), player);
 
                 if (source == null){
                     return;
@@ -46,7 +46,7 @@ public class Axe extends Skill implements Listener {
             Player killer = (Player) event.getEntity().getKiller();
             Player dead = (Player) event.getEntity();
 
-            ItemSource<?> source = this.getExpSourceEntity(dead, killer);
+            SkillSource<?> source = this.getExpSourceEntity(dead, killer);
 
             if (source == null){
                 return;

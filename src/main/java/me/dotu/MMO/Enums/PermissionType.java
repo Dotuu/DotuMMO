@@ -3,7 +3,9 @@ package me.dotu.MMO.Enums;
 public enum PermissionType {
     ADMIN("admin"),
     PVP("pvp"),
-    SPAWNER("spawner");
+    SPAWNER("spawner"),
+    ITEM("item"),
+    TABLE("table");
 
     private final String permission;
     private final String prefix = "dotummo.";

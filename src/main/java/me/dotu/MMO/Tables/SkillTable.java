@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 
-public class ItemTable<T> {
+public class SkillTable<T> {
     private String tableName;
-    private ArrayList<ItemSource<?>> expItems;
+    private ArrayList<SkillSource<?>> expItems;
     private T tableType;
 
-    public ItemTable(String tableName, ArrayList<ItemSource<?>> expItems, T tableType) {
+    public SkillTable(String tableName, ArrayList<SkillSource<?>> expItems, T tableType) {
         this.tableName = tableName;
         this.expItems = expItems;
         this.tableType = tableType;
@@ -24,11 +24,11 @@ public class ItemTable<T> {
         this.tableName = tableName;
     }
 
-    public ArrayList<ItemSource<?>> getExpItems() {
+    public ArrayList<SkillSource<?>> getExpItems() {
         return this.expItems;
     }
 
-    public void setExpItems(ArrayList<ItemSource<?>> expItems) {
+    public void setExpItems(ArrayList<SkillSource<?>> expItems) {
         this.expItems = expItems;
     }
 
@@ -55,7 +55,7 @@ public class ItemTable<T> {
 
         ArrayList<Material> returnList = new ArrayList<>();
 
-        for (ItemSource<?> item : this.expItems){
+        for (SkillSource<?> item : this.expItems){
             Material material = (Material) item.getTableSource();
             returnList.add(material);
         }
@@ -70,7 +70,7 @@ public class ItemTable<T> {
 
         ArrayList<EntityType> returnList = new ArrayList<>();
 
-        for (ItemSource<?> item : this.expItems){
+        for (SkillSource<?> item : this.expItems){
             EntityType entityType = (EntityType) item.getTableSource();
             returnList.add(entityType);
         }

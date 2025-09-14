@@ -10,9 +10,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import me.dotu.MMO.Configs.ItemTableConfig;
 import me.dotu.MMO.Configs.PlayerConfig;
 import me.dotu.MMO.Configs.SettingsConfig;
+import me.dotu.MMO.Configs.SkillTableConfig;
 import me.dotu.MMO.Enums.PlayerSettings;
 import me.dotu.MMO.Enums.Settings;
 import me.dotu.MMO.Enums.SkillDifficulty;
@@ -21,14 +21,14 @@ import me.dotu.MMO.Managers.MessageManager;
 import me.dotu.MMO.Managers.PlayerManager;
 import me.dotu.MMO.Managers.SettingsManager;
 import me.dotu.MMO.Managers.SkillsManager;
-import me.dotu.MMO.Tables.ItemSource;
-import me.dotu.MMO.Tables.ItemTable;
+import me.dotu.MMO.Tables.SkillSource;
+import me.dotu.MMO.Tables.SkillTable;
 import me.dotu.MMO.UI.ExpBar;
 import me.dotu.MMO.Utils.ExpCalculator;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 
-public class Skill {
+public abstract class Skill {
     private String name;
     private SkillType skill;
     private SkillDifficulty difficulty;
@@ -94,11 +94,15 @@ public class Skill {
         return enabledSkills.getSettingsBoolean(Settings.ENABLED_SKILLS, skillName, true);
     }
 
-    public boolean sourceExists(ItemSource<?> source){
+    protected boolean meetsRequirements(){
+        return true;
+    }
+
+    public boolean sourceExists(SkillSource<?> source){
         return source.getTableSource() != null;
     }
 
-    public boolean isRequiredLevel(ItemSource<?> source, Player player, String skillName){
+    public boolean isRequiredLevel(SkillSource<?> source, Player player, String skillName){
         PlayerManager playerSettings = PlayerConfig.playerSettings.get(player.getUniqueId());
         
         if (playerSettings == null){
@@ -113,17 +117,17 @@ public class Skill {
         return skillLevel >= requiredLevel;
     }
 
-    public ItemSource<?> getSourceBlock(Block block, Player player){
-        ItemTable<?> itemTable = this.getItemTable(this.name.toUpperCase());
+    public SkillSource<?> getSourceBlock(Block block, Player player){
+        SkillTable<?> itemTable = this.getItemTable(this.name.toUpperCase());
 
         if (itemTable ==  null){
             return null;
         }
 
         if (itemTable.isMaterialTable()){
-            ArrayList<ItemSource<?>> expItems = itemTable.getExpItems();
+            ArrayList<SkillSource<?>> expItems = itemTable.getExpItems();
 
-            for (ItemSource<?> item : expItems){
+            for (SkillSource<?> item : expItems){
                 Material sourceMaterial = (Material) item.getTableSource();
                 if (block.getType() == sourceMaterial){
                     return item;
@@ -133,17 +137,17 @@ public class Skill {
         return null;
     }
 
-    public ItemSource<?> getExpSourceMaterial(Material material, Player player){
-        ItemTable<?> itemTable = this.getItemTable(this.name.toUpperCase());
+    public SkillSource<?> getExpSourceMaterial(Material material, Player player){
+        SkillTable<?> itemTable = this.getItemTable(this.name.toUpperCase());
 
         if (itemTable ==  null){
             return null;
         }
 
         if (itemTable.isMaterialTable()){
-            ArrayList<ItemSource<?>> expItems = itemTable.getExpItems();
+            ArrayList<SkillSource<?>> expItems = itemTable.getExpItems();
 
-            for (ItemSource<?> item : expItems){
+            for (SkillSource<?> item : expItems){
                 Material sourceMaterial = (Material) item.getTableSource();
                 if (sourceMaterial == material){
                     return item;
@@ -153,17 +157,17 @@ public class Skill {
         return null;
     }
 
-    public ItemSource<?> getExpSourceEntity(Entity entity, Player player){
-        ItemTable<?> itemTable = this.getItemTable(this.name.toUpperCase());
+    public SkillSource<?> getExpSourceEntity(Entity entity, Player player){
+        SkillTable<?> itemTable = this.getItemTable(this.name.toUpperCase());
 
         if (itemTable ==  null){
             return null;
         }
         
         if (itemTable.isMaterialTable()){
-            ArrayList<ItemSource<?>> expItems = itemTable.getExpItems();
+            ArrayList<SkillSource<?>> expItems = itemTable.getExpItems();
 
-            for (ItemSource<?> e : expItems){
+            for (SkillSource<?> e : expItems){
                 EntityType entityType = (EntityType) e.getTableSource();
                 if (entity.getType() == entityType){
                     return e;
@@ -173,8 +177,8 @@ public class Skill {
         return null;
     }
 
-    public ItemTable<?> getItemTable(String key){
-        return ItemTableConfig.itemTables.get(key);
+    public SkillTable<?> getItemTable(String key){
+        return SkillTableConfig.itemTables.get(key);
     }
 
     public void processExpReward(Player player, Skill skill, int minExp, int maxExp, int multiplier) {

@@ -1,4 +1,4 @@
-package me.dotu.MMO.Commands;
+package me.dotu.MMO.Commands.SubCommands;
 
 import java.util.HashMap;
 
@@ -15,6 +15,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import me.dotu.MMO.Commands.SubCommand;
 import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
 import me.dotu.MMO.Enums.MarkerColor;
@@ -46,7 +47,7 @@ public class SpawnerSubCommand implements SubCommand, Listener {
 
     @Override
     public boolean isConsoleSafe() {
-        return true;
+        return false;
     }
 
     @Override

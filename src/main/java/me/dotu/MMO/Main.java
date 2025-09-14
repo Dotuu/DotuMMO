@@ -2,17 +2,16 @@ package me.dotu.MMO;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.dotu.MMO.Augments.BowPowerAugment;
 import me.dotu.MMO.Commands.DotuMmoCommand;
-import me.dotu.MMO.Commands.PvpSubCommand;
-import me.dotu.MMO.Commands.SpawnerSubCommand;
-import me.dotu.MMO.Commands.TestCommand;
+import me.dotu.MMO.Commands.SubCommands.ItemSubCommand;
+import me.dotu.MMO.Commands.SubCommands.PvpSubCommand;
+import me.dotu.MMO.Commands.SubCommands.SpawnerSubCommand;
+import me.dotu.MMO.Commands.SubCommands.TableSubCommand;
 import me.dotu.MMO.Configs.ChunkDataConfig;
-import me.dotu.MMO.Configs.CustomItemConfig;
-import me.dotu.MMO.Configs.ItemTableConfig;
 import me.dotu.MMO.Configs.LootTableConfig;
 import me.dotu.MMO.Configs.PlayerConfig;
 import me.dotu.MMO.Configs.SettingsConfig;
+import me.dotu.MMO.Configs.SkillTableConfig;
 import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
 import me.dotu.MMO.Inventories.SpawnerInventoryClicked;
@@ -36,23 +35,15 @@ public class Main extends JavaPlugin {
     public static Main plugin;
 
     /*
-     * move augment code to seperate file to manage augmenting an item
-     * do the same for gems
-     * SAVE CustomSpawner to json file on disable
-     * WHEN a spawner config reload command is added make sure to re-run the
-     * setupSpawnerData() function in SpawnerRunnable
-     * Change saveSpawnerSettingsToFile to only save the essential stuff such as
-     * spawner locations and spawn locations
      * Make function to kill every entity on the map that has dotummo tag for
      * spawners
      * I need active entity count to be seperate for every spawner on the map
      */
 
     private SpawnerConfig spawnerConfig;
-    private CustomItemConfig itemConfig;
     private SettingsConfig settingsConfig;
     private LootTableConfig lootTableConfig;
-    private ItemTableConfig itemTableConfig;
+    private SkillTableConfig itemTableConfig;
     private PlayerConfig playerConfig;
     private ChunkDataConfig chunkDataConfig;
     private CustomSpawnerHandler customSpawnerHandler;
@@ -67,12 +58,11 @@ public class Main extends JavaPlugin {
         plugin = this;
 
         this.spawnerConfig = new SpawnerConfig();
-        this.itemConfig = new CustomItemConfig();
         this.settingsConfig = new SettingsConfig();
         this.lootTableConfig = new LootTableConfig();
         this.playerConfig = new PlayerConfig();
         this.chunkDataConfig = new ChunkDataConfig();
-        this.itemTableConfig = new ItemTableConfig();
+        this.itemTableConfig = new SkillTableConfig();
         this.customSpawnerHandler = new CustomSpawnerHandler();
         this.spawnerLocationDataConfig = new SpawnerLocationDataConfig();
         this.spawnerRunnable = new SpawnerRunnable();
@@ -80,6 +70,8 @@ public class Main extends JavaPlugin {
 
         SpawnerSubCommand spawnerSubCommand = new SpawnerSubCommand();
         PvpSubCommand pvpSubCommand = new PvpSubCommand();
+        TableSubCommand tableSubCommand = new TableSubCommand();
+        ItemSubCommand itemSubCommand = new ItemSubCommand();
 
         // Event Listeners
         this.registerSkills();
@@ -95,15 +87,12 @@ public class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(spawnerSubCommand, this);
 
         // Event Listeners (Augments)
-        this.getServer().getPluginManager().registerEvents(new BowPowerAugment(), this);
 
         // Event Listeners (Inventory)
         this.getServer().getPluginManager().registerEvents(new SpawnerInventoryClicked(), this);
 
         // Command executors
-        this.getCommand("test").setExecutor(new TestCommand());
-        this.getCommand("chunktest").setExecutor(new TestCommand());
-        this.getCommand("dotummo").setExecutor(new DotuMmoCommand(spawnerSubCommand, pvpSubCommand));
+        this.getCommand("dotummo").setExecutor(new DotuMmoCommand(spawnerSubCommand, pvpSubCommand, tableSubCommand, itemSubCommand));
 
         // Runnables
         this.spawnerRunnable.start();

@@ -1,6 +1,5 @@
 package me.dotu.MMO.Augments;
 
-import me.dotu.MMO.Enums.AugmentCategory;
 import me.dotu.MMO.Enums.AugmentType;
 import me.dotu.MMO.Enums.ItemTier;
 import me.dotu.MMO.Managers.AugmentManager;
@@ -11,15 +10,12 @@ public class Augment extends AugmentManager {
     private int minLevelToUse;
     private AugmentType augment;
     private String description;
-    private AugmentCategory category;
 
-    public Augment(ItemTier[] tiers, int minLevelToUse, AugmentType augment, String desciption,
-            AugmentCategory category) {
+    public Augment(ItemTier[] tiers, int minLevelToUse, AugmentType augment, String desciption) {
         this.tiers = tiers;
         this.minLevelToUse = minLevelToUse;
         this.augment = augment;
         this.description = desciption;
-        this.category = category;
     }
 
     public Integer getMinLevel() {
@@ -45,15 +41,7 @@ public class Augment extends AugmentManager {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public AugmentCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(AugmentCategory category) {
-        this.category = category;
-    }
-
+    
     public AugmentType getAugment() {
         return this.augment;
     }

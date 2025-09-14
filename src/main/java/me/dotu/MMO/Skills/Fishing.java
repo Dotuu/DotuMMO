@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerFishEvent;
 
 import me.dotu.MMO.Enums.SkillDifficulty;
 import me.dotu.MMO.Enums.SkillType;
-import me.dotu.MMO.Tables.ItemSource;
+import me.dotu.MMO.Tables.SkillSource;
 
 public class Fishing extends Skill implements Listener {
 
@@ -30,7 +30,7 @@ public class Fishing extends Skill implements Listener {
         
         Player player = event.getPlayer();
 
-        ItemSource<?> source = this.getExpSourceEntity(event.getCaught(), player);
+        SkillSource<?> source = this.getExpSourceEntity(event.getCaught(), player);
 
         if (source == null){
             return;

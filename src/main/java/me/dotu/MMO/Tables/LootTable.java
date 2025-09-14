@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 public class LootTable {
     private String tableName;
-    private ArrayList<LootItem> items;
+    private ArrayList<LootTableItem> items;
 
-    public LootTable(String tableName, ArrayList<LootItem> items) {
+    public LootTable(String tableName) {
         this.tableName = tableName;
-        this.items = items;
+        this.items = new ArrayList<>();
     }
 
     public String getTableName() {
@@ -19,15 +19,15 @@ public class LootTable {
         this.tableName = tableName;
     }
 
-    public ArrayList<LootItem> getItems() {
+    public ArrayList<LootTableItem> getItems() {
         return this.items;
     }
 
-    public void setItems(ArrayList<LootItem> items) {
+    public void setItems(ArrayList<LootTableItem> items) {
         this.items = items;
     }
 
-    public void addItem(LootItem item) {
+    public void addItem(LootTableItem item) {
         this.items.add(item);
     }
 }

@@ -1,7 +1,7 @@
 package me.dotu.MMO.Enums;
 
 public enum GemType {
-    FIRE_IMMUNE("Fire Immune");
+    FIRE_IMMUNE("FIRE_IMMUNE");
 
     private final String name;
 

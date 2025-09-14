@@ -20,11 +20,11 @@ import com.google.gson.JsonParser;
 import me.dotu.MMO.Enums.DefaultConfig;
 import me.dotu.MMO.Main;
 import me.dotu.MMO.Managers.JsonFileManager;
-import me.dotu.MMO.Tables.ItemSource;
-import me.dotu.MMO.Tables.ItemTable;
+import me.dotu.MMO.Tables.SkillSource;
+import me.dotu.MMO.Tables.SkillTable;
 
-public class ItemTableConfig extends JsonFileManager {
-    public static HashMap<String, ItemTable<?>> itemTables = new HashMap<>();
+public class SkillTableConfig extends JsonFileManager {
+    public static HashMap<String, SkillTable<?>> itemTables = new HashMap<>();
     private final File[] files = {
             this.makeFile("fishing"),
             this.makeFile("mining"),
@@ -44,8 +44,8 @@ public class ItemTableConfig extends JsonFileManager {
             this.makeFile("taming"),
     };
 
-    public ItemTableConfig() {
-        super("data/itemdata", "");
+    public SkillTableConfig() {
+        super("data/skilldata", "");
 
         HashMap<File, DefaultConfig> filesMap = new HashMap<>();
 
@@ -89,7 +89,7 @@ public class ItemTableConfig extends JsonFileManager {
 
                 String name = tableFile.getName().replaceFirst("\\.json$", "");
                 JsonArray sources = root.getAsJsonArray("sources");
-                ArrayList<ItemSource<?>> items = new ArrayList<>();
+                ArrayList<SkillSource<?>> items = new ArrayList<>();
 
                 for (JsonElement element : sources) {
                     JsonObject obj = element.getAsJsonObject();
@@ -101,26 +101,26 @@ public class ItemTableConfig extends JsonFileManager {
                         isTableTypeMaterial = true;
                         Material material = Material.matchMaterial(obj.get("material").getAsString());
                         if (material != null){
-                            items.add(new ItemSource<>(min, max, material, requiredLevel));
+                            items.add(new SkillSource<>(min, max, material, requiredLevel));
                         }
                     } 
                     else if (obj.has("entitytype")) {
                         try {
                             isTableTypeMaterial = false;
                             EntityType entityType = EntityType.valueOf(obj.get("entitytype").getAsString().toUpperCase());
-                            items.add(new ItemSource<>(min, max, entityType, requiredLevel));
+                            items.add(new SkillSource<>(min, max, entityType, requiredLevel));
                         } catch (IllegalArgumentException e) {
 
                         }
                     }
 
                     if (isTableTypeMaterial){
-                        ItemTable<?> table = new ItemTable<>(name, items, Material.AIR);
+                        SkillTable<?> table = new SkillTable<>(name, items, Material.AIR);
                         itemTables.put(name.toUpperCase(), table);
                     }
 
                     else{
-                        ItemTable<?> table = new ItemTable<>(name, items, EntityType.ZOMBIE);
+                        SkillTable<?> table = new SkillTable<>(name, items, EntityType.ZOMBIE);
                         itemTables.put(name.toUpperCase(), table);
                     }
                 }
@@ -132,14 +132,14 @@ public class ItemTableConfig extends JsonFileManager {
 
     @Override
     public void saveAllToFile() {
-        for (Map.Entry<String, ItemTable<?>> entry : itemTables.entrySet()) {
+        for (Map.Entry<String, SkillTable<?>> entry : itemTables.entrySet()) {
             String tableName = entry.getKey();
-            ItemTable<?> expTable = entry.getValue();
+            SkillTable<?> expTable = entry.getValue();
 
             JsonObject root = new JsonObject();
 
             JsonArray sourcesArr = new JsonArray();
-            for (ItemSource<?> item : expTable.getExpItems()) {
+            for (SkillSource<?> item : expTable.getExpItems()) {
                 if (item == null){
                     continue;
                 }

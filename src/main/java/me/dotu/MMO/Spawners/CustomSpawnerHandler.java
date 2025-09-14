@@ -36,8 +36,8 @@ import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
 import me.dotu.MMO.Enums.SpawnerKey;
 import me.dotu.MMO.Main;
-import me.dotu.MMO.Tables.LootItem;
 import me.dotu.MMO.Tables.LootTable;
+import me.dotu.MMO.Tables.LootTableItem;
 import me.dotu.MMO.Utils.LocationUtils;
 import me.dotu.MMO.Utils.RandomNum;
 import net.md_5.bungee.api.ChatColor;
@@ -114,7 +114,7 @@ public class CustomSpawnerHandler implements Listener {
 
     private void equipItemsToMob(CustomSpawner customSpawner, LivingEntity living, int slot) {
         LootTable table = LootTableConfig.lootTables.get(customSpawner.getTable());
-        List<LootItem> tableItems = table.getItems();
+        List<LootTableItem> tableItems = table.getItems();
         ItemStack stack = rollTable(tableItems, this.getSuffixes(slot));
 
         switch (slot) {
@@ -136,24 +136,21 @@ public class CustomSpawnerHandler implements Listener {
         }
     }
 
-    private ItemStack rollTable(List<LootItem> table, String[] suffixes) {
-        List<LootItem> source = table;
+    private ItemStack rollTable(List<LootTableItem> table, String[] suffixes) {
+        List<LootTableItem> source = table;
         if (suffixes != null && suffixes.length > 0) {
-            source = table.stream()
-                    .filter(li -> Arrays.stream(suffixes)
-                            .anyMatch(suf -> li.getMaterial().name().endsWith(suf)))
-                    .toList();
+            source = table.stream().filter(li -> Arrays.stream(suffixes).anyMatch(suf -> li.getMaterial().name().endsWith(suf))).toList();
             if (source.isEmpty())
                 return new ItemStack(Material.AIR);
         }
 
-        int totalWeight = source.stream().mapToInt(LootItem::getWeight).sum();
+        int totalWeight = source.stream().mapToInt(LootTableItem::getWeight).sum();
         if (totalWeight <= 0)
             return new ItemStack(Material.AIR);
 
         int rand = 1 + (int) (Math.random() * totalWeight);
         int cumulative = 0;
-        for (LootItem item : source) {
+        for (LootTableItem item : source) {
             cumulative += item.getWeight();
             if (rand <= cumulative) {
                 return new ItemStack(item.getMaterial());
@@ -384,15 +381,13 @@ public class CustomSpawnerHandler implements Listener {
                 ChatColor.AQUA + "Loot Table: " + ChatColor.YELLOW + customSpawner.getTable(),
                 ChatColor.AQUA + "Min Level: " + ChatColor.YELLOW + String.valueOf(customSpawner.getMinLevel()),
                 ChatColor.AQUA + "Max Level: " + ChatColor.YELLOW + String.valueOf(customSpawner.getMaxLevel()),
-                ChatColor.AQUA + "Spawn Delay (seconds): " + ChatColor.YELLOW
-                        + String.valueOf(customSpawner.getSpawnDelay()),
+                ChatColor.AQUA + "Spawn Delay (seconds): " + ChatColor.YELLOW + String.valueOf(customSpawner.getSpawnDelay()),
                 ChatColor.AQUA + "Spawn Range: " + ChatColor.YELLOW + String.valueOf(customSpawner.getSpawnRange()),
                 ChatColor.AQUA + "Difficulty: " + ChatColor.YELLOW + Double.toString(customSpawner.getDifficulty()),
                 ChatColor.AQUA + "Armored: " + ChatColor.YELLOW + Boolean.toString(customSpawner.isArmored()),
                 ChatColor.AQUA + "Weaponed: " + ChatColor.YELLOW + Boolean.toString(customSpawner.isWeaponed()),
                 ChatColor.AQUA + "Name Visible: " + ChatColor.YELLOW + Boolean.toString(customSpawner.isNameVisible()),
-                ChatColor.AQUA + "Spawn Randomly: " + ChatColor.YELLOW
-                        + Boolean.toString(customSpawner.isSpawnRandomly()));
+                ChatColor.AQUA + "Spawn Randomly: " + ChatColor.YELLOW + Boolean.toString(customSpawner.isSpawnRandomly()));
 
         ItemStack item = new ItemStack(Material.SPAWNER);
         ItemMeta meta = item.getItemMeta();
@@ -409,28 +404,17 @@ public class CustomSpawnerHandler implements Listener {
 
     public void setSpawnerProps(CustomSpawner customSpawner, CreatureSpawner spawner) {
         spawner.getPersistentDataContainer().set(SpawnerKey.ROOT.getKey(), PersistentDataType.BOOLEAN, true);
-        spawner.getPersistentDataContainer().set(SpawnerKey.MIN_LEVEL.getKey(), PersistentDataType.INTEGER,
-                customSpawner.getMinLevel());
-        spawner.getPersistentDataContainer().set(SpawnerKey.MAX_LEVEL.getKey(), PersistentDataType.INTEGER,
-                customSpawner.getMaxLevel());
-        spawner.getPersistentDataContainer().set(SpawnerKey.DIFFICULTY.getKey(), PersistentDataType.DOUBLE,
-                customSpawner.getDifficulty());
-        spawner.getPersistentDataContainer().set(SpawnerKey.ARMORED.getKey(), PersistentDataType.BOOLEAN,
-                customSpawner.isArmored());
-        spawner.getPersistentDataContainer().set(SpawnerKey.WEAPONED.getKey(), PersistentDataType.BOOLEAN,
-                customSpawner.isWeaponed());
-        spawner.getPersistentDataContainer().set(SpawnerKey.NAME_VISIBLE.getKey(), PersistentDataType.BOOLEAN,
-                customSpawner.isNameVisible());
-        spawner.getPersistentDataContainer().set(SpawnerKey.SPAWN_RANDOMLY.getKey(), PersistentDataType.BOOLEAN,
-                customSpawner.isSpawnRandomly());
-        spawner.getPersistentDataContainer().set(SpawnerKey.NAME.getKey(), PersistentDataType.STRING,
-                customSpawner.getName());
-        spawner.getPersistentDataContainer().set(SpawnerKey.TABLE.getKey(), PersistentDataType.STRING,
-                customSpawner.getTable());
-        spawner.getPersistentDataContainer().set(SpawnerKey.SPAWN_DELAY.getKey(), PersistentDataType.INTEGER,
-                customSpawner.getSpawnDelay());
-        spawner.getPersistentDataContainer().set(SpawnerKey.SPAWN_RANGE.getKey(), PersistentDataType.INTEGER,
-                customSpawner.getSpawnRange());
+        spawner.getPersistentDataContainer().set(SpawnerKey.MIN_LEVEL.getKey(), PersistentDataType.INTEGER, customSpawner.getMinLevel());
+        spawner.getPersistentDataContainer().set(SpawnerKey.MAX_LEVEL.getKey(), PersistentDataType.INTEGER, customSpawner.getMaxLevel());
+        spawner.getPersistentDataContainer().set(SpawnerKey.DIFFICULTY.getKey(), PersistentDataType.DOUBLE, customSpawner.getDifficulty());
+        spawner.getPersistentDataContainer().set(SpawnerKey.ARMORED.getKey(), PersistentDataType.BOOLEAN, customSpawner.isArmored());
+        spawner.getPersistentDataContainer().set(SpawnerKey.WEAPONED.getKey(), PersistentDataType.BOOLEAN, customSpawner.isWeaponed());
+        spawner.getPersistentDataContainer().set(SpawnerKey.NAME_VISIBLE.getKey(), PersistentDataType.BOOLEAN, customSpawner.isNameVisible());
+        spawner.getPersistentDataContainer().set(SpawnerKey.SPAWN_RANDOMLY.getKey(), PersistentDataType.BOOLEAN, customSpawner.isSpawnRandomly());
+        spawner.getPersistentDataContainer().set(SpawnerKey.NAME.getKey(), PersistentDataType.STRING, customSpawner.getName());
+        spawner.getPersistentDataContainer().set(SpawnerKey.TABLE.getKey(), PersistentDataType.STRING, customSpawner.getTable());
+        spawner.getPersistentDataContainer().set(SpawnerKey.SPAWN_DELAY.getKey(), PersistentDataType.INTEGER, customSpawner.getSpawnDelay());
+        spawner.getPersistentDataContainer().set(SpawnerKey.SPAWN_RANGE.getKey(), PersistentDataType.INTEGER, customSpawner.getSpawnRange());
         spawner.update();
     }
 

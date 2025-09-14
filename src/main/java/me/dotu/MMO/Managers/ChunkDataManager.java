@@ -14,8 +14,8 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 
 import me.dotu.MMO.ChunkLoader.ChunkData;
 import me.dotu.MMO.Configs.ChunkDataConfig;
-import me.dotu.MMO.Configs.ItemTableConfig;
-import me.dotu.MMO.Tables.ItemTable;
+import me.dotu.MMO.Configs.SkillTableConfig;
+import me.dotu.MMO.Tables.SkillTable;
 
 public class ChunkDataManager implements Listener {
 
@@ -113,7 +113,7 @@ public class ChunkDataManager implements Listener {
         }
 
         for (String skill : skills){
-            ItemTable<?> itemTables = ItemTableConfig.itemTables.get(skill);
+            SkillTable<?> itemTables = SkillTableConfig.itemTables.get(skill);
             if (itemTables.isMaterialTable()){
                 for (Material material : itemTables.asMaterials()){
                     returnArray.add(material);

@@ -11,7 +11,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import me.dotu.MMO.Enums.SkillDifficulty;
 import me.dotu.MMO.Enums.SkillType;
 import me.dotu.MMO.Managers.MessageManager;
-import me.dotu.MMO.Tables.ItemSource;
+import me.dotu.MMO.Tables.SkillSource;
 
 public class Farming extends Skill implements Listener{
     
@@ -35,7 +35,7 @@ public class Farming extends Skill implements Listener{
             return;
         }
         
-        ItemSource<?> source = this.getExpSourceMaterial(block.getType(), player);
+        SkillSource<?> source = this.getExpSourceMaterial(block.getType(), player);
         
         if (source == null){
             return;
