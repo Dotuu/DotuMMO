@@ -6,36 +6,36 @@ import me.dotu.MMO.Managers.AugmentManager;
 
 public class Augment extends AugmentManager {
 
-    private ItemTier[] tiers;
+    private ItemTier tier;
     private int minLevelToUse;
     private AugmentType augment;
     private String description;
 
-    public Augment(ItemTier[] tiers, int minLevelToUse, AugmentType augment, String desciption) {
-        this.tiers = tiers;
+    public Augment(ItemTier tier, int minLevelToUse, AugmentType augment, String desciption) {
+        this.tier = tier;
         this.minLevelToUse = minLevelToUse;
         this.augment = augment;
         this.description = desciption;
     }
 
-    public Integer getMinLevel() {
+    public Integer getMinLevelToUse() {
         return this.minLevelToUse;
     }
 
-    public void setMinLevel(Integer minLevel) {
-        this.minLevelToUse = minLevel;
+    public void setMinLevelToUse(Integer minLevelToUse) {
+        this.minLevelToUse = minLevelToUse;
     }
 
-    public ItemTier[] getTiers() {
-        return this.tiers;
+    public ItemTier getTier() {
+        return this.tier;
     }
 
-    public void setTiers(ItemTier[] tiers) {
-        this.tiers = tiers;
+    public void setTier(ItemTier tier) {
+        this.tier = tier;
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public void setDescription(String description) {

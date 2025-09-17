@@ -43,7 +43,7 @@ public class Main extends JavaPlugin {
     private SpawnerConfig spawnerConfig;
     private SettingsConfig settingsConfig;
     private LootTableConfig lootTableConfig;
-    private SkillTableConfig itemTableConfig;
+    private SkillTableConfig skillTableConfig;
     private PlayerConfig playerConfig;
     private ChunkDataConfig chunkDataConfig;
     private CustomSpawnerHandler customSpawnerHandler;
@@ -62,7 +62,7 @@ public class Main extends JavaPlugin {
         this.lootTableConfig = new LootTableConfig();
         this.playerConfig = new PlayerConfig();
         this.chunkDataConfig = new ChunkDataConfig();
-        this.itemTableConfig = new SkillTableConfig();
+        this.skillTableConfig = new SkillTableConfig();
         this.customSpawnerHandler = new CustomSpawnerHandler();
         this.spawnerLocationDataConfig = new SpawnerLocationDataConfig();
         this.spawnerRunnable = new SpawnerRunnable();
@@ -85,6 +85,9 @@ public class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new CustomSpawnerHandler(), this);
         this.getServer().getPluginManager().registerEvents(new ChunkDataManager(), this);
         this.getServer().getPluginManager().registerEvents(spawnerSubCommand, this);
+
+        // Configs
+        lootTableConfig.populateMap();
 
         // Event Listeners (Augments)
 
@@ -141,11 +144,12 @@ public class Main extends JavaPlugin {
         this.playerConfig.saveAllToFile();
         this.settingsConfig.saveAllToFile();
         this.chunkDataConfig.saveAllChunkDataToFileOnDisable();
-        ;
+        this.lootTableConfig.saveAllToFile();
         this.spawnerConfig.saveAllToFile();
-        this.customSpawnerHandler.killTaggedEntities();
         this.spawnerLocationDataConfig.saveAllToFile();
-
+        
+        this.customSpawnerHandler.killTaggedEntities();
+        
         this.spawnerRunnable.stop();
         this.fileRunnable.stop();
     }

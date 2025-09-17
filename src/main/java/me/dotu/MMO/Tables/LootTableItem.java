@@ -10,6 +10,7 @@ import me.dotu.MMO.Enums.ItemTier;
 import me.dotu.MMO.Gems.Gem;
 
 public class LootTableItem {
+    private Long id;
     private List<Augment> augments;
     private List<Gem> gems;
     private Material material;
@@ -19,12 +20,14 @@ public class LootTableItem {
     private ItemTier tier;
 
     public LootTableItem(Material material, String displayName) {
+        this.id = System.currentTimeMillis();
         this.material = material;
         this.displayName = displayName;
         this.tier = ItemTier.COMMON;
     }
 
     public LootTableItem(Material material, String displayName, List<Augment> augments, List<Gem> gems, List<String> lores, int weight, ItemTier tier) {
+        this.id = System.currentTimeMillis();
         this.material = material;
         this.displayName = displayName;
         this.augments = augments != null ? augments : new ArrayList<>();
@@ -34,6 +37,14 @@ public class LootTableItem {
         this.tier = tier != null ? tier : ItemTier.COMMON;
     }
     
+    public Long getId(){
+        return this.id;
+    }
+
+    public void setId(Long id){
+        this.id = id;
+    }
+
     public List<Augment> getAugments() {
         return this.augments;
     }

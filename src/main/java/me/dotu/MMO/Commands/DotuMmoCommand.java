@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import me.dotu.MMO.Commands.SubCommands.ItemSubCommand;
 import me.dotu.MMO.Commands.SubCommands.PvpSubCommand;
@@ -29,7 +30,7 @@ public class DotuMmoCommand implements CommandExecutor {
         if (command.getName().equalsIgnoreCase("dotummo")){
             if (args.length == 0){
                 // send command list
-                 return true;
+                return true;
             }
 
             SubCommand subCommand = this.subCommands.get(args[0].toLowerCase());
@@ -39,7 +40,7 @@ public class DotuMmoCommand implements CommandExecutor {
                 return true;
             }
 
-            if (subCommand.isConsoleSafe() == false){
+            if (!(sender instanceof Player) && subCommand.isConsoleSafe() == false){
                 sender.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "The console cannot execute this command!"));
                 return true;
             }

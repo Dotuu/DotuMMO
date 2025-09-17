@@ -26,11 +26,11 @@ public class Gem {
         this.description = desciption;
     }
 
-    public ItemTier getTiers() {
+    public ItemTier getTier() {
         return this.tier;
     }
 
-    public void setTiers(ItemTier tier) {
+    public void setTier(ItemTier tier) {
         this.tier = tier;
     }
 

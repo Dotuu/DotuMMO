@@ -60,10 +60,16 @@ public class TableSubCommand implements SubCommand{
     
     private void handleTableCreateCommand(Player player, String[] args){// dotummo table create name
         if (args.length < 3){
-            // send syntax message
+            player.sendMessage(MessageManager.send(MessageManager.Type. ERROR, "ERROR"));
+            return;
         }
 
-        String lootTableName = args[2];
+        String lootTableName = args[2].toLowerCase();
+
+        if (LootTableConfig.lootTables.containsKey(lootTableName)){
+            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "A table with this name already exists"));
+            return;
+        }
 
         if (!lootTableName.matches("^[\\w]+$")){
             player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Table name can only contain letters, numbers, and underscores"));

@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 import me.dotu.MMO.Commands.SubCommand;
-import me.dotu.MMO.Configs.ItemConfig;
+import me.dotu.MMO.Configs.LootTableConfig;
 import me.dotu.MMO.Enums.NamedKey;
 import me.dotu.MMO.Enums.PermissionType;
 import me.dotu.MMO.Managers.MessageManager;
@@ -118,6 +118,6 @@ public class ItemSubCommand implements SubCommand{
 
         LootTableItem item = new LootTableItem(handMaterial, itemName);
         handItem.getItemMeta().getPersistentDataContainer().set(NamedKey.CUSTOM_ITEM.getKey(), PersistentDataType.BOOLEAN, true);
-        ItemConfig.lootTablesItems.add(item);
+        LootTableConfig.lootTableItems.put(System.currentTimeMillis(), item);
     }
 }
