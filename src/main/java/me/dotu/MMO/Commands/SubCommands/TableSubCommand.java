@@ -14,6 +14,7 @@ import me.dotu.MMO.Commands.SubCommand;
 import me.dotu.MMO.Configs.LootTableConfig;
 import me.dotu.MMO.Enums.GemType;
 import me.dotu.MMO.Enums.ItemTier;
+import me.dotu.MMO.Enums.Messages;
 import me.dotu.MMO.Enums.NamedKey;
 import me.dotu.MMO.Enums.PermissionType;
 import me.dotu.MMO.Gems.Gem;
@@ -60,25 +61,25 @@ public class TableSubCommand implements SubCommand{
     
     private void handleTableCreateCommand(Player player, String[] args){// dotummo table create name
         if (args.length < 3){
-            player.sendMessage(MessageManager.send(MessageManager.Type. ERROR, "ERROR"));
+            MessageManager.send(player, Messages.ERR_GENERIC_ARGS, true);
             return;
         }
 
         String lootTableName = args[2].toLowerCase();
 
         if (LootTableConfig.lootTables.containsKey(lootTableName)){
-            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "A table with this name already exists"));
+            MessageManager.send(player, Messages.ERR_TABLE_EXISTS, true);
             return;
         }
 
         if (!lootTableName.matches("^[\\w]+$")){
-            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Table name can only contain letters, numbers, and underscores"));
+            MessageManager.send(player, Messages.ERR_TABLE_NAME, true);
             return;
         }
 
         LootTable lootTable = new LootTable(lootTableName);
         LootTableConfig.lootTables.put(lootTableName, lootTable);
-        player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Created table " + lootTableName));
+        MessageManager.send(player, Messages.TABLE_CREATED, true, lootTableName);
     }
 
     private void handleTableAddCommand(Player player, String[] args){// dotummo table add name 10 inv

@@ -14,7 +14,8 @@ import me.dotu.MMO.Configs.SettingsConfig;
 import me.dotu.MMO.Configs.SkillTableConfig;
 import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
-import me.dotu.MMO.Inventories.SpawnerInventoryClicked;
+import me.dotu.MMO.Inventories.CustomInventoryClicked;
+import me.dotu.MMO.Inventories.CustomSpawner.SpawnerInventoryClicked;
 import me.dotu.MMO.Managers.ChunkDataManager;
 import me.dotu.MMO.Managers.PvpManager;
 import me.dotu.MMO.Runnables.FileRunnable;
@@ -93,6 +94,7 @@ public class Main extends JavaPlugin {
 
         // Event Listeners (Inventory)
         this.getServer().getPluginManager().registerEvents(new SpawnerInventoryClicked(), this);
+        this.getServer().getPluginManager().registerEvents(new CustomInventoryClicked(), this);
 
         // Command executors
         this.getCommand("dotummo").setExecutor(new DotuMmoCommand(spawnerSubCommand, pvpSubCommand, tableSubCommand, itemSubCommand));

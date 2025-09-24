@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import me.dotu.MMO.Configs.PlayerConfig;
 import me.dotu.MMO.Configs.SettingsConfig;
 import me.dotu.MMO.Configs.SkillTableConfig;
+import me.dotu.MMO.Enums.Messages;
 import me.dotu.MMO.Enums.PlayerSettings;
 import me.dotu.MMO.Enums.Settings;
 import me.dotu.MMO.Enums.SkillDifficulty;
@@ -25,8 +26,6 @@ import me.dotu.MMO.Tables.SkillSource;
 import me.dotu.MMO.Tables.SkillTable;
 import me.dotu.MMO.UI.ExpBar;
 import me.dotu.MMO.Utils.ExpCalculator;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public abstract class Skill {
     private String name;
@@ -188,8 +187,7 @@ public abstract class Skill {
         SkillsManager skillsManager = new SkillsManager();
         skillsManager.setSkills(uuid, skill.getSkill().toString().toUpperCase(), xpGained);
 
-        String msg = MessageManager.send(MessageManager.Type.FUN, "Earned " + xpGained + " xp from " + skill.getName());
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg));
+        MessageManager.sendActionBar(player, Messages.SKILL_SUCCESS, true, xpGained, skill.getName());
         ExpBar.setExpBarToSkill(player, skillsMap.get(skill.getSkill()));
     }
 }

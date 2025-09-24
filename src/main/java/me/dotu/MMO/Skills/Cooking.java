@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
+import me.dotu.MMO.Enums.Messages;
 import me.dotu.MMO.Enums.SkillDifficulty;
 import me.dotu.MMO.Enums.SkillType;
 import me.dotu.MMO.Managers.MessageManager;
@@ -53,7 +54,7 @@ public class Cooking extends Skill implements Listener {
 
         if (!(this.isRequiredLevel(source, player, this.getName().toUpperCase()))){
             event.setCancelled(true);
-            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "You need to be " + this.getName() + " level " + source.getRequiredLevel() + " to cook this"));
+            MessageManager.send(player, Messages.ERR_GENERIC_SKILL_LEVEL, true, this.getName(), source.getRequiredLevel());
         }
 
         int perCraft = event.getRecipe().getResult().getAmount();

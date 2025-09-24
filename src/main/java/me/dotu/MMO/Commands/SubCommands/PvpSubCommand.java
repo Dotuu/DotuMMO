@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 
 import me.dotu.MMO.Commands.SubCommand;
 import me.dotu.MMO.Configs.SettingsConfig;
+import me.dotu.MMO.Enums.Messages;
 import me.dotu.MMO.Enums.PermissionType;
 import me.dotu.MMO.Enums.Settings;
 import me.dotu.MMO.Managers.MessageManager;
@@ -34,10 +35,10 @@ public class PvpSubCommand implements SubCommand {
             switch (args[1].toLowerCase()) {
                 case "startseason":
                     if (this.handleStartSeasonCommand()) {
-                        sender.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "New season started, all stats have been reset"));
+                        MessageManager.send(sender, Messages.SEASON_RESET, true);
                         break;
                     }
-                    sender.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Something went wrong, please check console for logs"));
+                    MessageManager.send(sender, Messages.ERR_GENERIC, true);
                     break;
                 default:
                     // send help list
@@ -52,10 +53,10 @@ public class PvpSubCommand implements SubCommand {
             switch (args[1].toLowerCase()) {
                 case "startseason":
                     if (this.handleStartSeasonCommand()) {
-                        player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "New season started, all stats have been reset"));
+                        MessageManager.send(sender, Messages.SEASON_RESET, true);
                         break;
                     }
-                    player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Something went wrong, please check console for logs"));
+                    MessageManager.send(sender, Messages.ERR_GENERIC, true);
                     break;
                 default:
                     // send help list

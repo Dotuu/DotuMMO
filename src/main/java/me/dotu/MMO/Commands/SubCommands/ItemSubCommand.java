@@ -10,6 +10,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import me.dotu.MMO.Commands.SubCommand;
 import me.dotu.MMO.Configs.LootTableConfig;
+import me.dotu.MMO.Enums.Messages;
 import me.dotu.MMO.Enums.NamedKey;
 import me.dotu.MMO.Enums.PermissionType;
 import me.dotu.MMO.Managers.MessageManager;
@@ -84,12 +85,12 @@ public class ItemSubCommand implements SubCommand{
     private void handleCreateItemCommand(Player player, String[] args){
 
         if (args.length < 3){
-            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Hand item requires name"));
+            MessageManager.send(player, Messages.ERR_HAND_ITEM_NAME, true);
             return;
         }
 
         if (player.getInventory().getItemInMainHand().getType() == Material.AIR){
-            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Command requires an item in hand"));
+            MessageManager.send(player, Messages.ERR_HAND_ITEM_NONE, true);
             return;
         }
 
@@ -110,7 +111,7 @@ public class ItemSubCommand implements SubCommand{
         }
 
         if (isValidItem == false){
-            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Hand item is not a valid drop table item"));
+            MessageManager.send(player, Messages.ERR_HAND_ITEM_TABLE, true);
             return;
         }
 

@@ -19,16 +19,16 @@ import me.dotu.MMO.Commands.SubCommand;
 import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
 import me.dotu.MMO.Enums.MarkerColor;
+import me.dotu.MMO.Enums.Messages;
 import me.dotu.MMO.Enums.PermissionType;
 import me.dotu.MMO.Enums.SpawnerKey;
-import me.dotu.MMO.Inventories.SpawnerInventory;
+import me.dotu.MMO.Inventories.CustomSpawner.SpawnerInventory;
 import me.dotu.MMO.Managers.MessageManager;
 import me.dotu.MMO.Spawners.CustomSpawner;
 import me.dotu.MMO.Spawners.CustomSpawnerHandler;
 import me.dotu.MMO.Spawners.SpawnerLocationData;
 import me.dotu.MMO.Utils.LocationUtils;
 import me.dotu.MMO.Utils.Marker;
-import net.md_5.bungee.api.ChatColor;
 
 public class SpawnerSubCommand implements SubCommand, Listener {
 
@@ -85,11 +85,9 @@ public class SpawnerSubCommand implements SubCommand, Listener {
 
                 player.getInventory().addItem(item).isEmpty();
 
-                player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Spawner "
-                        + ChatColor.stripColor(item.getItemMeta().getDisplayName()) + " added to inventory"));
+                MessageManager.send(player, Messages.SPAWNER_ADDED, true, spawnerName);
             } else {
-                player.sendMessage(
-                        MessageManager.send(MessageManager.Type.ERROR, "Swawner not found, name is case sensitive"));
+                MessageManager.send(player, Messages.ERR_SPAWNER_EXISTS, true);
             }
         }
     }
@@ -100,42 +98,37 @@ public class SpawnerSubCommand implements SubCommand, Listener {
             marker.removeAllMarkers();
             this.editing.remove(player.getName());
             this.viewingMarkers.remove(player.getName());
-            player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Leaving editing mode"));
+            MessageManager.send(player, Messages.EDIT_MODE_LEAVE, true);
             return;
         }
 
         Block block = player.getTargetBlockExact(10);
         if (block == null) {
-            player.sendMessage(
-                    MessageManager.send(MessageManager.Type.ERROR, "Spawner block not found within 10 blocks"));
+            MessageManager.send(player, Messages.ERR_SPAWNER_BLOCK_NOT_FOUND, true);
             return;
         }
 
         if (block.getType() != Material.SPAWNER) {
-            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Target block is not a spawner block"));
+            MessageManager.send(player, Messages.ERR_SPAWNER_VALID_BLOCK, true);
             return;
         }
 
         CreatureSpawner spawner = (CreatureSpawner) block.getState();
         if (!spawner.getPersistentDataContainer().has(SpawnerKey.NAME.getKey())) {
-            player.sendMessage(
-                    MessageManager.send(MessageManager.Type.ERROR, "Target block is not a DotuMMO custom spawner"));
+            MessageManager.send(player, Messages.ERR_SPAWNER_CUSTOM_SPAWNER, true);
         }
 
         else {
             String spawnerLocString = LocationUtils.serializeLocation(block.getLocation());
             if (!SpawnerLocationDataConfig.spawnerLocationData.containsKey(spawnerLocString)) {
-                player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Spawner not found"));
+                MessageManager.send(player, Messages.ERR_SPAWNER_GENERIC, true);
                 return;
             }
 
-            SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData
-                    .get(LocationUtils.serializeLocation(block.getLocation()));
+            SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData.get(LocationUtils.serializeLocation(block.getLocation()));
 
-            player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Now in edit mode"));
-            player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Use /dotummo spawner edit to exit"));
-            player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS,
-                    "Left Click block to set spawn block, right click block to remove spawn block"));
+            MessageManager.send(player, Messages.EDIT_MODE_ENTER, true);
+            MessageManager.send(player, Messages.EDIT_MODE_INFO, true);
 
             Marker marker = new Marker(player, sld.getSpawnLocations(), MarkerColor.RED, 3);
             this.editing.put(player.getName(), LocationUtils.serializeLocation(sld.getSpawnerLocation()));
@@ -158,7 +151,7 @@ public class SpawnerSubCommand implements SubCommand, Listener {
                 if (!sld.getSpawnLocations().contains(clickedLoc)) {
                     sld.addSpawnLocations(clickedLoc);
                     marker.addMarker(clickedLoc);
-                    player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Added spawn location"));
+                    MessageManager.send(player, Messages.EDIT_MODE_LOC_ADD, true);
                 }
             }
 
@@ -167,7 +160,7 @@ public class SpawnerSubCommand implements SubCommand, Listener {
                 if (sld.getSpawnLocations().contains(clickedLoc)) {
                     sld.removeSpawnLocations(clickedLoc);
                     marker.removeMarker(clickedLoc);
-                    player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Removed spawn location"));
+                    MessageManager.send(player, Messages.EDIT_MODE_LOC_REMOVE, true);
                 }
             }
         }

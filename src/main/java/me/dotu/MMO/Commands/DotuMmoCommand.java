@@ -11,6 +11,7 @@ import me.dotu.MMO.Commands.SubCommands.ItemSubCommand;
 import me.dotu.MMO.Commands.SubCommands.PvpSubCommand;
 import me.dotu.MMO.Commands.SubCommands.SpawnerSubCommand;
 import me.dotu.MMO.Commands.SubCommands.TableSubCommand;
+import me.dotu.MMO.Enums.Messages;
 import me.dotu.MMO.Managers.MessageManager;
 
 public class DotuMmoCommand implements CommandExecutor {
@@ -41,7 +42,7 @@ public class DotuMmoCommand implements CommandExecutor {
             }
 
             if (!(sender instanceof Player) && subCommand.isConsoleSafe() == false){
-                sender.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "The console cannot execute this command!"));
+                MessageManager.send(sender, Messages.ERR_CONSOLE_UNSAFE, false);
                 return true;
             }
 

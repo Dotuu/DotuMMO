@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import me.dotu.MMO.Enums.Messages;
 import me.dotu.MMO.Enums.SkillDifficulty;
 import me.dotu.MMO.Enums.SkillType;
 import me.dotu.MMO.Managers.MessageManager;
@@ -43,7 +44,8 @@ public class Farming extends Skill implements Listener{
         
         if (!this.isRequiredLevel(source, player, this.getName().toUpperCase())){
             event.setCancelled(true);
-            player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "You need to be " + this.getName() + " level " + source.getRequiredLevel() + " to farm this"));
+            MessageManager.send(player, Messages.ERR_GENERIC_SKILL_LEVEL, true, this.getName(), source.getRequiredLevel());
+
             return;
         }
         

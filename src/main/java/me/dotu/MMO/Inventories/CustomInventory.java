@@ -7,42 +7,127 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public abstract class CustomInventory {
+import net.md_5.bungee.api.ChatColor;
+
+public abstract class CustomInventory implements Listener{
     private InventoryHolder holder;
     private int size;
+    public int usableSize;
     private String name;
-    private ArrayList<InventoryItem> contents;
+    public ArrayList<InventoryItem> contents;
+    public final ItemStack pageItem = new ItemStack(Material.PAPER, 1);
+    public int startingArrayIndex;
+    private boolean dynamicContents;
+    private boolean ordered;
     protected final Inventory inventory;
     protected int[] borderLarge = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53};
 
-    public CustomInventory(InventoryHolder holder, int size, String name, ArrayList<InventoryItem> contents){
+    public CustomInventory(InventoryHolder holder, int size, String name, boolean dynamicContents, boolean ordered){
         this.holder = holder;
-        this.size = size;
+        this.dynamicContents = dynamicContents;
+        this.size = dynamicContents ? Math.max(size, 18) : size;
+        this.usableSize = this.size - 9;
         this.name = name;
-        this.inventory = Bukkit.createInventory(holder, size, name);
-    }
+        this.ordered = ordered;
+        this.inventory = Bukkit.createInventory(holder, this.size, name);
+        this.startingArrayIndex = 0;
 
-    public CustomInventory(InventoryHolder holder, int size, String name){
-        this.holder = holder;
-        this.size = size;
-        this.name = name;
-        this.contents = new ArrayList<>();
-        this.inventory = Bukkit.createInventory(holder, size, name);
+        if (holder instanceof CustomInventoryHolder){
+            ((CustomInventoryHolder) holder).setInventory(this.inventory);
+            ((CustomInventoryHolder) holder).setCustomInventory(this);
+        }
     }
 
     public abstract void createInventoryItems();
 
-    protected void setupInventoryContents(){
-        for (InventoryItem item : this.contents){
-            for (int slot : item.getSlots()){
-                this.inventory.setItem(slot, item.getItem());
+    protected void setupInventory(){
+        if (this.contents == null){
+            return;
+        }
+
+        if (this.contents.size() > this.usableSize){
+            this.setupMultiPageInventory();
+        }
+        else{
+            this.setupSinglePageInventory();
+        }
+    }
+
+    private void setupSinglePageInventory(){
+        if (this.ordered){
+            for (InventoryItem item : this.contents){
+                for (int slot : item.getSlots()){
+                    this.inventory.setItem(slot, item.getItem());
+                }
             }
         }
+        else{
+            int slot = 0;
+            for (InventoryItem item : this.contents){
+                this.inventory.setItem(slot, item.getItem());
+                slot++;
+            }
+        }
+    }
+    
+    public void setupNewPage(boolean isNextClick){
+        if (isNextClick){
+            this.startingArrayIndex += this.usableSize;
+        }
+        else{
+            this.startingArrayIndex -= this.usableSize;
+        }
+        
+        this.inventory.clear();
+        this.setupPageItems();
+
+        int slot = 0;
+        int maxItems = Math.min(this.usableSize, this.contents.size() - this.startingArrayIndex);
+        
+        for (int i = 0; i < maxItems; i++){
+            int contentIndex = this.startingArrayIndex + i;
+            if (contentIndex >= this.contents.size()) break;
+            
+            InventoryItem item = this.contents.get(contentIndex);
+            if (item != null){
+                this.inventory.setItem(slot, item.getItem());
+                slot++;
+            }
+        }
+    }
+
+    private void setupMultiPageInventory(){
+        this.setupPageItems();
+
+        int slot = 0;
+        for (InventoryItem item : this.contents){
+            if (slot <= this.usableSize-1){
+                this.inventory.setItem(slot, item.getItem());
+                slot++;
+            }
+        }
+    }
+
+    private void setupPageItems(){
+        ItemStack nextPageItem = this.pageItem.clone();
+        ItemMeta nextMeta = nextPageItem.getItemMeta();
+        nextMeta.setDisplayName(ChatColor.YELLOW + "Next Page");
+        nextPageItem.setItemMeta(nextMeta);
+        
+        ItemStack prevPageItem = this.pageItem.clone();
+        ItemMeta prevMeta = prevPageItem.getItemMeta();
+        prevMeta.setDisplayName(ChatColor.YELLOW + "Previous Page");
+        prevPageItem.setItemMeta(prevMeta);
+
+        int lastRow = this.size - 9;
+        this.inventory.setItem(lastRow + 3, prevPageItem);
+        this.inventory.setItem(lastRow + 5, nextPageItem);
     }
 
     protected ItemStack getDecoratedItemStack(Material material, String displayName){
@@ -137,5 +222,21 @@ public abstract class CustomInventory {
 
     public void addContents(InventoryItem item) {
         this.contents.add(item);
+    }
+
+    public boolean isDynamic() {
+        return this.dynamicContents;
+    }
+
+    public void setDynamic(boolean dynamic) {
+        this.dynamicContents = dynamic;
+    }
+
+    public boolean isOrdered() {
+        return ordered;
+    }
+
+    public void setOrdered(boolean ordered) {
+        this.ordered = ordered;
     }
 }

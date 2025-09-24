@@ -1,4 +1,4 @@
-package me.dotu.MMO.Inventories;
+package me.dotu.MMO.Inventories.CustomSpawner;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -7,6 +7,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.dotu.MMO.Configs.SpawnerConfig;
+import me.dotu.MMO.Enums.Messages;
+import me.dotu.MMO.Inventories.CustomInventory;
+import me.dotu.MMO.Inventories.CustomInventoryHolder;
 import me.dotu.MMO.Managers.MessageManager;
 import me.dotu.MMO.Spawners.CustomSpawner;
 import me.dotu.MMO.Spawners.CustomSpawnerHandler;
@@ -14,8 +17,8 @@ import net.md_5.bungee.api.ChatColor;
 
 public class SpawnerInventoryClicked implements Listener{
     @EventHandler
-    private void inventoryClick(InventoryClickEvent event){
-        if (event.getInventory().getHolder() instanceof SpawnerHolder){
+    private void clickedActionItem(InventoryClickEvent event){
+        if (event.getInventory().getHolder() instanceof CustomInventoryHolder){
             Player player = (Player) event.getWhoClicked();
             event.setCancelled(true);
             
@@ -35,10 +38,10 @@ public class SpawnerInventoryClicked implements Listener{
                 ItemStack spawnerStack = CustomSpawnerHandler.decorateSpawnerStack(customSpawner);
 
                 if (player.getInventory().addItem(spawnerStack).isEmpty()){
-                    player.sendMessage(MessageManager.send(MessageManager.Type.SUCCESS, "Spawner " + ChatColor.stripColor(item.getItemMeta().getDisplayName()) + " added to inventory."));
+                    MessageManager.send(player, Messages.SPAWNER_ADDED, true, spawnerName);
                 }
                 else{
-                    player.sendMessage(MessageManager.send(MessageManager.Type.ERROR, "Swawner not added to inventory, please ensure there is room!"));
+                    MessageManager.send(player, Messages.ERR_SPAWNER_ADDED, true, spawnerName);
                 }
             }
         }
