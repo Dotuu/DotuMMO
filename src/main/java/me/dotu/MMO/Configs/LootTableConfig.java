@@ -18,6 +18,7 @@ import com.google.gson.JsonParser;
 
 import me.dotu.MMO.Augments.Augment;
 import me.dotu.MMO.Enums.AugmentType;
+import me.dotu.MMO.Enums.DefaultConfig;
 import me.dotu.MMO.Enums.GemType;
 import me.dotu.MMO.Enums.ItemTier;
 import me.dotu.MMO.Gems.Gem;
@@ -32,7 +33,13 @@ public class LootTableConfig extends JsonFileManager {
 
     public LootTableConfig() {
         super("tables", "");
-        this.file = new File(Main.plugin.getDataFolder(), "tables");
+
+        File dir = new File(Main.plugin.getDataFolder(), this.path);
+        this.file = dir;
+
+        HashMap<File, DefaultConfig> defaults = new HashMap<>();
+        defaults.put(new File(this.file, "global" + this.extension), DefaultConfig.GLOBAL_LOOT_TABLE);
+        this.setupDefaults(defaults);
     }
 
     @Override
@@ -66,13 +73,18 @@ public class LootTableConfig extends JsonFileManager {
 
     @Override
     public void saveAllToFile(){
-        if (!this.file.exists()) {
+        if (!file.exists()){
             this.file.mkdirs();
         }
-        
+
         for (Map.Entry<String, LootTable> entry : lootTables.entrySet()){
             String tableName = entry.getKey();
             LootTable table = entry.getValue();
+
+            if (tableName.equalsIgnoreCase("global")){
+                this.saveGlobalTableToFile();
+                continue;
+            }
 
             File tableFile = new File(this.file, tableName + this.extension);
 
@@ -83,21 +95,55 @@ public class LootTableConfig extends JsonFileManager {
                 JsonArray itemsArray = new JsonArray();
 
                 for (LootTableItem item : table.getItems()){
-                    JsonObject rootItemObj = new JsonObject();
+                    itemsArray.add(item.getId());
+                }
 
-                    rootItemObj.addProperty("id", item.getId());
-                    rootItemObj.addProperty("material", item.getMaterial().name());
-                    rootItemObj.addProperty("display_name", item.getDisplayName());
-                    rootItemObj.addProperty("tier", item.getTier().name());
-                    rootItemObj.addProperty("weight", item.getWeight());
+                root.add("items", itemsArray);
 
-                    JsonArray loresArray = new JsonArray();
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                gson.toJson(root, writer);
+            }catch(Exception ex){
+
+            }
+        }
+    }
+
+    public void saveGlobalTableToFile(){
+        LootTable globalTable = lootTables.get("global");
+
+        if (globalTable == null){
+            return;
+        }
+
+        String tableName = globalTable.getTableName();
+
+        File tableFile = new File(this.file, tableName + this.extension);
+
+        try(FileWriter writer = new FileWriter(tableFile)){
+            JsonObject root = new JsonObject();
+            root.addProperty("name", tableName);
+
+            JsonArray itemsArray = new JsonArray();
+
+            for (LootTableItem item : globalTable.getItems()){
+                JsonObject rootItemObj = new JsonObject();
+
+                rootItemObj.addProperty("id", item.getId());
+                rootItemObj.addProperty("material", item.getMaterial().name());
+                rootItemObj.addProperty("display_name", item.getDisplayName());
+                rootItemObj.addProperty("tier", item.getTier().name());
+                rootItemObj.addProperty("weight", item.getWeight());
+
+                JsonArray loresArray = new JsonArray();
+                if (item.getLores() != null){
                     for (String lore : item.getLores()){
                         loresArray.add(lore);
                     }
-                    rootItemObj.add("lores", loresArray); // ADD THIS LINE
+                }
+                rootItemObj.add("lores", loresArray);
 
-                    JsonArray gemsArray = new JsonArray();
+                JsonArray gemsArray = new JsonArray();
+                if (item.getGems() != null){
                     for (Gem gem : item.getGems()){
                         JsonObject gemObject = new JsonObject();
                         gemObject.addProperty("tier", gem.getTier().name());
@@ -106,30 +152,31 @@ public class LootTableConfig extends JsonFileManager {
                         gemObject.addProperty("description", gem.getDescription());
                         gemsArray.add(gemObject);
                     }
-                    rootItemObj.add("gems", gemsArray);
+                }
+                rootItemObj.add("gems", gemsArray);
 
-                    JsonArray augmentsArray = new JsonArray();
+                JsonArray augmentsArray = new JsonArray();
+                if (item.getAugments() != null){
                     for (Augment augment : item.getAugments()){
                         JsonObject augmentObject = new JsonObject();
                         augmentObject.addProperty("tier", augment.getTier().name());
                         augmentObject.addProperty("min_level_to_use",  augment.getMinLevelToUse());
-                        augmentObject.addProperty("augment", augment.getAugment().name()); // FIX: was "gem"
+                        augmentObject.addProperty("augment", augment.getAugment().name());
                         augmentObject.addProperty("description", augment.getDescription());
                         augmentsArray.add(augmentObject);
                     }
-                    rootItemObj.add("augments", augmentsArray);
-
-                    itemsArray.add(rootItemObj);
                 }
+                rootItemObj.add("augments", augmentsArray);
 
-                root.add("items", itemsArray);
-
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                gson.toJson(root, writer);
-
-            }catch(Exception e){
-                e.printStackTrace();
+                itemsArray.add(rootItemObj);
             }
+
+            root.add("items", itemsArray);
+
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(root, writer);
+
+        }catch(Exception e){
         }
     }
 
@@ -142,8 +189,10 @@ public class LootTableConfig extends JsonFileManager {
             Material material = Material.valueOf(itemObj.get("material").getAsString());
             String displayName = itemObj.get("display_name").getAsString();
             
-            LootTableItem lootItem = new LootTableItem(material, displayName);
+            LootTableItem lootItem = new LootTableItem(material);
 
+            lootItem.setDisplayName(displayName);
+            
             String tierString = itemObj.get("tier").getAsString();
             ItemTier tier = ItemTier.valueOf(tierString);
             lootItem.setTier(tier);
@@ -179,15 +228,13 @@ public class LootTableConfig extends JsonFileManager {
     }
 
     private void populateLootTableItems(){
-        for (Map.Entry<String, LootTable> map : lootTables.entrySet()){
-            LootTable table = map.getValue();
-            ArrayList<LootTableItem> tableItems = table.getItems();
-            for (LootTableItem tableItem : tableItems){
-                if (lootTableItems.containsKey(tableItem.getId())){
-                    continue;
-                }
-                lootTableItems.put(tableItem.getId(), tableItem);
+        LootTable globalTable = lootTables.get("global");
+
+        for (LootTableItem tableItem : globalTable.getItems()){
+            if (lootTableItems.containsKey(tableItem.getId())){
+                continue;
             }
+            lootTableItems.put(tableItem.getId(), tableItem);
         }
     }
 

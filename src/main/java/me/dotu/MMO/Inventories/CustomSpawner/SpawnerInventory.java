@@ -18,7 +18,7 @@ public class SpawnerInventory extends CustomInventory{
     private int startingIndex;
 
     public SpawnerInventory(Player player, int startingIndex) {
-        super(new CustomInventoryHolder(), 9, "Custom Spawner's", true, false);
+        super(new CustomInventoryHolder(), 27, "Custom Spawner's", true, false);
         this.startingIndex = startingIndex;
     }
 

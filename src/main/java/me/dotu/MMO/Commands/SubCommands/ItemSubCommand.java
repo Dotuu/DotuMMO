@@ -6,14 +6,16 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import me.dotu.MMO.Commands.SubCommand;
 import me.dotu.MMO.Configs.LootTableConfig;
+import me.dotu.MMO.Enums.ItemKey;
 import me.dotu.MMO.Enums.Messages;
-import me.dotu.MMO.Enums.NamedKey;
 import me.dotu.MMO.Enums.PermissionType;
 import me.dotu.MMO.Managers.MessageManager;
+import me.dotu.MMO.Tables.LootTable;
 import me.dotu.MMO.Tables.LootTableItem;
 
 public class ItemSubCommand implements SubCommand{
@@ -22,6 +24,8 @@ public class ItemSubCommand implements SubCommand{
      *  /dotummo item create Fire Helmet
 
         /dotummo item add/remove augments fire ice 
+
+        /dotummo item add <tablename>
 
         /dotummo item add/remove gems fire ice
 
@@ -70,6 +74,7 @@ public class ItemSubCommand implements SubCommand{
 
         switch(args[1]){
             case "add":
+            this.handleAddItemCommand(player, args);
                 break;
             case "remove":
                 break;
@@ -117,8 +122,26 @@ public class ItemSubCommand implements SubCommand{
 
         String itemName = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
 
-        LootTableItem item = new LootTableItem(handMaterial, itemName);
-        handItem.getItemMeta().getPersistentDataContainer().set(NamedKey.CUSTOM_ITEM.getKey(), PersistentDataType.BOOLEAN, true);
+        LootTableItem item = new LootTableItem(handMaterial);
+        item.setDisplayName(itemName);
+        ItemMeta meta = handItem.getItemMeta();
+        meta.getPersistentDataContainer().set(ItemKey.CUSTOM_ITEM_ID.getKey(), PersistentDataType.LONG, item.getId());
+        handItem.setItemMeta(meta);
         LootTableConfig.lootTableItems.put(System.currentTimeMillis(), item);
+
+        LootTable globalTable = LootTableConfig.lootTables.get("global");
+
+        if (globalTable == null){
+            MessageManager.send(player, Messages.ERR_GLOBAL_TABLE_EXISTS, true);
+            return;
+        }
+
+        globalTable.addItem(item);
+
+        MessageManager.send(player, Messages.HAND_ITEM_CREATED, true, itemName);
+    }
+
+    private void handleAddItemCommand(Player player, String[] args){
+        
     }
 }

@@ -4,15 +4,16 @@ import org.bukkit.NamespacedKey;
 
 import me.dotu.MMO.Main;
 
-public enum NamedKey {
-    CUSTOM_ITEM,
+public enum ItemKey {
+    CUSTOM_ITEM_ID,
     GEMS,
-    AUGMENTS;
+    AUGMENTS,
+    LORES;
     
     private final NamespacedKey nsk;
     private static final String prefix = "DotuMMO_";
 
-    NamedKey(){
+    ItemKey(){
         this.nsk = new NamespacedKey(Main.plugin, prefix + this.name());
     }
 

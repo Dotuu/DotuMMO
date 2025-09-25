@@ -29,13 +29,21 @@ public enum Messages implements MessageColors{
 
     // LOOT TABLE MESSAGES
     TABLE_CREATED(colorBase + "Created table " + colorItem + "%s"),
-    ERR_TABLE_EXISTS(colorErr + "A table with this name already exists"),
+    ERR_TABLE_ALREADY_EXISTS(colorErr + "A table with this name already exists"),
+    ERR_TABLE_EXISTS(colorErr + "A table with the name " + colorItem + "%s" + colorErr + " does not exist"),
     ERR_TABLE_NAME(colorErr + "Table name can only contain letters, numbers, and underscores"),
+    ERR_GLOBAL_TABLE_EXISTS(colorErr + "Operation failed, global table does not exists."),
+    ERR_TABLE_WEIGHT(colorErr + "The weight argument must be a number, you entered " + colorItem + "%s"),
 
     // ITEM TABLE MESSAGES
+    HAND_ITEM_CREATED(colorBase + "Successfully created loot item " + colorItem + "%s"),
+    ITEM_CREATED_INV(colorBase + "All valid inventory items added to " + colorItem + "%s"),
+    ITEM_CREATED(colorBase + "Hand item added to " + colorItem + "%s"),
     ERR_HAND_ITEM_NAME(colorErr + "Hand item requires name"),
     ERR_HAND_ITEM_NONE(colorErr + "Command requires an item in hand"),
     ERR_HAND_ITEM_TABLE(colorErr + "Hand item is not a valid drop table item"),
+    ERR_ITEM_IN_TABLE(colorErr + "This item is not in the global table, does the global table exist?"),
+    ERR_ITEM_DOTUMMO(colorErr + "Hand item is not a valid DotuMMO item"),
 
     // PVP SEASON TIMER MESSAGES
     SEASON_RESET(colorBase + "New season started, all stats have been reset"),
@@ -59,7 +67,7 @@ public enum Messages implements MessageColors{
     }
 
     public String getMessage(){
-        return this.message;
+        return this.message.matches(".*[?!]$") ? this.message : this.message + ".";
     }
 
     public String format(Object... args){

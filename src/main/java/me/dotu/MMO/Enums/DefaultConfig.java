@@ -108,6 +108,14 @@ public enum DefaultConfig {
         }
     },
 
+    GLOBAL_LOOT_TABLE {
+        @Override
+        public void populate(JsonObject defaultConfig) {
+            defaultConfig.addProperty("name", "global");
+            defaultConfig.add("items", new JsonArray());
+        }
+    },
+
     FISHING{
         @Override
         public void populate(JsonObject defaultConfig){

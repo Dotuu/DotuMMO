@@ -70,7 +70,9 @@ public abstract class JsonFileManager {
             File target = mapFile.getKey();
             DefaultConfig type = mapFile.getValue();
 
-            if (target.exists()) continue;
+            if (target.exists()){
+                continue;
+            }
 
             JsonObject root = new JsonObject();
             type.populate(root);
@@ -78,7 +80,9 @@ public abstract class JsonFileManager {
             try (FileWriter writer = new FileWriter(target)) {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
                 gson.toJson(root, writer);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                
+            }
         }
 
         this.file = dir;

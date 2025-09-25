@@ -19,10 +19,9 @@ public class LootTableItem {
     private int weight;
     private ItemTier tier;
 
-    public LootTableItem(Material material, String displayName) {
+    public LootTableItem(Material material) {
         this.id = System.currentTimeMillis();
         this.material = material;
-        this.displayName = displayName;
         this.tier = ItemTier.COMMON;
     }
 
@@ -36,7 +35,7 @@ public class LootTableItem {
         this.weight = weight < 0 ? 20 : weight;
         this.tier = tier != null ? tier : ItemTier.COMMON;
     }
-    
+
     public Long getId(){
         return this.id;
     }
