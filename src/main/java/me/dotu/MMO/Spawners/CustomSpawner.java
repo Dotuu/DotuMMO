@@ -1,5 +1,9 @@
 package me.dotu.MMO.Spawners;
 
+import java.util.ArrayList;
+
+import org.bukkit.inventory.ItemStack;
+
 public class CustomSpawner {
 
     private int minLevel;
@@ -10,12 +14,12 @@ public class CustomSpawner {
     private boolean nameVisible;
     private boolean spawnRandomly;
     private String name;
-    private String table;
+    private String dropTable;
     private int spawnDelay;
     private int spawnRange;
     private int maxSpawnCount;
 
-    public CustomSpawner(int minLevel, int maxLevel, double difficulty, boolean armored, boolean weaponed, boolean nameVisible, boolean spawnRandomly, String name, String table, int spawnDelay, int spawnRange, int maxSpawnCount){
+    public CustomSpawner(int minLevel, int maxLevel, double difficulty, boolean armored, boolean weaponed, boolean nameVisible, boolean spawnRandomly, String name, String dropTable, int spawnDelay, int spawnRange, int maxSpawnCount){
         this.minLevel = minLevel;
         this.maxLevel = maxLevel;
         this.difficulty = difficulty;
@@ -24,7 +28,7 @@ public class CustomSpawner {
         this.nameVisible = nameVisible;
         this.spawnRandomly = spawnRandomly;
         this.name = name;
-        this.table = table;
+        this.dropTable = dropTable;
         this.spawnDelay = spawnDelay;
         this.spawnRange = spawnRange;
         this.maxSpawnCount = maxSpawnCount;
@@ -94,12 +98,12 @@ public class CustomSpawner {
         this.spawnRandomly = spawnRandomly;
     }
 
-    public String getTable() {
-        return this.table;
+    public String getDropTable() {
+        return this.dropTable;
     }
 
-    public void setTable(String table) {
-        this.table = table;
+    public void setDropTable(String table) {
+        this.dropTable = table;
     }
 
     public int getSpawnDelay() {

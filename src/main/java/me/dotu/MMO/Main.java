@@ -41,7 +41,7 @@ public class Main extends JavaPlugin {
      * I need active entity count to be seperate for every spawner on the map
      */
 
-    private SpawnerConfig spawnerConfig;
+    public static SpawnerConfig spawnerConfig;
     private SettingsConfig settingsConfig;
     private LootTableConfig lootTableConfig;
     private SkillTableConfig skillTableConfig;
@@ -58,7 +58,7 @@ public class Main extends JavaPlugin {
 
         plugin = this;
 
-        this.spawnerConfig = new SpawnerConfig();
+        spawnerConfig = new SpawnerConfig();
         this.settingsConfig = new SettingsConfig();
         this.lootTableConfig = new LootTableConfig();
         this.playerConfig = new PlayerConfig();
@@ -147,7 +147,7 @@ public class Main extends JavaPlugin {
         this.settingsConfig.saveAllToFile();
         this.chunkDataConfig.saveAllChunkDataToFileOnDisable();
         this.lootTableConfig.saveAllToFile();
-        this.spawnerConfig.saveAllToFile();
+        spawnerConfig.saveAllToFile();
         this.spawnerLocationDataConfig.saveAllToFile();
         
         this.customSpawnerHandler.killTaggedEntities();

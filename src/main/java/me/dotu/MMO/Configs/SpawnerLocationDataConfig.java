@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,9 +27,9 @@ public class SpawnerLocationDataConfig extends JsonFileManager {
     public static HashMap<String, SpawnerLocationData> spawnerLocationData = new HashMap<>();
 
     public SpawnerLocationDataConfig() {
-        super("data", "spawnerdata");
+        super("spawners", "data");
 
-        List<DefaultConfig> defaults = Arrays.asList(DefaultConfig.SPAWNER_LOCATION_DATA);
+        List<DefaultConfig> defaults = Arrays.asList();
 
         this.setupDefaults(defaults);
 
@@ -45,11 +47,19 @@ public class SpawnerLocationDataConfig extends JsonFileManager {
 
             spawnerObj.addProperty("spawner_location", LocationUtils.serializeLocation(sld.getSpawnerLocation()));
 
-            JsonArray spawnLocationsArray = new JsonArray();
+            JsonArray spawnLocationsJson = new JsonArray();
             for (Location loc : sld.getSpawnLocations()) {
-                spawnLocationsArray.add(LocationUtils.serializeLocation(loc));
+                spawnLocationsJson.add(LocationUtils.serializeLocation(loc));
             }
-            spawnerObj.add("spawn_locations", spawnLocationsArray);
+            spawnerObj.add("spawn_locations", spawnLocationsJson);
+
+            ArrayList<ItemStack> equipableArmor = sld.getEquipableArmor();
+            JsonArray equipableArmorJson = this.serializeItemStackArrayToJson(equipableArmor);
+            spawnerObj.add("equipable_armor", equipableArmorJson);
+
+            ArrayList<ItemStack> equipableWeapon = sld.getEquipableArmor();
+            JsonArray equipableWeaponJson = this.serializeItemStackArrayToJson(equipableWeapon);
+            spawnerObj.add("equipable_weapon", equipableWeaponJson);
 
             root.add(LocationUtils.serializeLocation(sld.getSpawnerLocation()), spawnerObj);
         }
@@ -58,7 +68,6 @@ public class SpawnerLocationDataConfig extends JsonFileManager {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(root, writer);
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -72,10 +81,9 @@ public class SpawnerLocationDataConfig extends JsonFileManager {
             for (String name : root.keySet()) {
                 JsonObject spawnerObj = root.getAsJsonObject(name);
 
-                String linkedSpawner = this.getStringFromJson(spawnerObj, "linked_spawner");
+                String linkedSpawner = spawnerObj.get("linked_spawner").getAsString();
 
-                Location spawnerLoc = LocationUtils
-                        .deSerializeLocation(this.getStringFromJson(spawnerObj, "spawner_location"));
+                Location spawnerLoc = LocationUtils.deSerializeLocation(spawnerObj.get("spawner_location").getAsString());
 
                 JsonArray spawnLocationsJson = spawnerObj.get("spawn_locations").getAsJsonArray();
                 ArrayList<Location> spawnLocations = new ArrayList<>();
@@ -86,11 +94,46 @@ public class SpawnerLocationDataConfig extends JsonFileManager {
                     spawnLocations.add(listLoc);
                 }
 
-                SpawnerLocationData sld = new SpawnerLocationData(linkedSpawner, spawnerLoc, spawnLocations);
+                JsonArray equipableArmorJson = spawnerObj.get("equipable_armor").getAsJsonArray();
+                ArrayList<ItemStack> equipableArmor = this.deserializeToItemstackArray(equipableArmorJson);
+
+                JsonArray equipableWeaponJson = spawnerObj.get("equipable_weapon").getAsJsonArray();
+                ArrayList<ItemStack> equipableWeapon = this.deserializeToItemstackArray(equipableWeaponJson);
+
+                SpawnerLocationData sld = new SpawnerLocationData(linkedSpawner, spawnerLoc, spawnLocations, equipableArmor, equipableWeapon);
 
                 spawnerLocationData.put(LocationUtils.serializeLocation(spawnerLoc), sld);
             }
         } catch (Exception e) {
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private ArrayList<ItemStack> deserializeToItemstackArray(JsonArray jsonArray){
+        ArrayList<ItemStack> returnArray = new ArrayList<>();
+        Gson gson = new Gson();
+        for (int x = 0; x < jsonArray.size(); x++){
+            JsonObject itemJson = jsonArray.get(x).getAsJsonObject();
+
+            Map<String, Object> itemMap = gson.fromJson(itemJson, Map.class);
+            ItemStack item = ItemStack.deserialize(itemMap);
+            returnArray.add(item);
+        }
+        return returnArray;
+    }
+
+    private JsonArray serializeItemStackArrayToJson(ArrayList<ItemStack> itemStacks) {
+        JsonArray jsonArray = new JsonArray();
+        Gson gson = new Gson();
+        
+        for (ItemStack item : itemStacks) {
+            if (item != null) {
+                Map<String, Object> itemMap = item.serialize();
+                JsonObject itemJson = (JsonObject) gson.toJsonTree(itemMap);
+                jsonArray.add(itemJson);
+            }
+        }
+        
+        return jsonArray;
     }
 }

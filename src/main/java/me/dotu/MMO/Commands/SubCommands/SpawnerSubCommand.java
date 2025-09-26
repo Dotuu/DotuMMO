@@ -15,6 +15,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import me.dotu.MMO.Main;
 import me.dotu.MMO.Commands.SubCommand;
 import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
@@ -142,8 +143,7 @@ public class SpawnerSubCommand implements SubCommand, Listener {
         if (this.editing.containsKey(player.getName())) {
             String spawnerKey = this.editing.get(player.getName());
             SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData.get(spawnerKey);
-            Marker marker = viewingMarkers.computeIfAbsent(player.getName(),
-                    k -> new Marker(player, sld.getSpawnLocations(), MarkerColor.RED, 10));
+            Marker marker = viewingMarkers.computeIfAbsent(player.getName(), k -> new Marker(player, sld.getSpawnLocations(), MarkerColor.RED, 10));
 
             if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                 event.setCancelled(true);

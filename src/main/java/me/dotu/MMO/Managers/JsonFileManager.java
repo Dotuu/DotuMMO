@@ -92,20 +92,4 @@ public abstract class JsonFileManager {
     protected abstract void populateMap();
 
     protected abstract void saveAllToFile();
-
-    protected boolean getBooleanFromJson(JsonObject obj, String member) {
-        return obj.get(member).getAsBoolean();
-    }
-
-    protected String getStringFromJson(JsonObject obj, String member) {
-        return obj.get(member).getAsString();
-    }
-
-    protected double getDoubleFromJson(JsonObject obj, String member) {
-        return obj.get(member).getAsDouble();
-    }
-
-    protected int getIntFromJson(JsonObject obj, String member) {
-        return obj.get(member).getAsInt();
-    }
 }

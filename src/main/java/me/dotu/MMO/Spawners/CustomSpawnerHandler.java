@@ -36,8 +36,6 @@ import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
 import me.dotu.MMO.Enums.SpawnerKey;
 import me.dotu.MMO.Main;
-import me.dotu.MMO.Tables.LootTable;
-import me.dotu.MMO.Tables.LootTableItem;
 import me.dotu.MMO.Utils.LocationUtils;
 import me.dotu.MMO.Utils.RandomNum;
 import net.md_5.bungee.api.ChatColor;
@@ -49,11 +47,18 @@ public class CustomSpawnerHandler implements Listener {
 
     private final NamespacedKey entityTag = new NamespacedKey(Main.plugin, "DotuMMO_CustomEntity");
     private final NamespacedKey entityTagSpawnerLink = new NamespacedKey(Main.plugin, "DotuMMO_EntitySpawnerLoc");
+    private final String[] suffixes = {
+        "_HELMET",
+        "_CHESTPLATE",
+        "_LEGGINGS",
+        "_BOOTS"
+    };
 
     public void spawnCustomEntity(Location spawnerLoc, String spawnerLinkLoc) {
         if (spawnerLoc == null || spawnerLoc.getWorld() == null) {
             return;
         }
+
         if (spawnerLoc.getBlock().getType() != Material.SPAWNER) {
             return;
         }
@@ -78,8 +83,7 @@ public class CustomSpawnerHandler implements Listener {
             return;
         }
 
-        SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData
-                .get(LocationUtils.serializeLocation(spawnerLoc));
+        SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData.get(LocationUtils.serializeLocation(spawnerLoc));
         Location mobSpawnLocation = this.getRandomLocation(sld.getSpawnLocations());
         if (mobSpawnLocation == null || mobSpawnLocation.getWorld() != spawnerLoc.getWorld()) {
             return;
@@ -98,11 +102,11 @@ public class CustomSpawnerHandler implements Listener {
         if (this.hasEquipmentSlots(living) && equip) {
             if (customSpawner.isArmored()) {
                 for (int x = 0; x < 4; x++) {
-                    this.equipItemsToMob(customSpawner, living, x);
+                    this.equipItemsToMob(sld, living, x);
                 }
             }
             if (customSpawner.isWeaponed()) {
-                this.equipItemsToMob(customSpawner, living, 4);
+                this.equipItemsToMob(sld, living, 4);
             }
         }
 
@@ -112,10 +116,16 @@ public class CustomSpawnerHandler implements Listener {
         this.tagEntity(living, spawnerLinkLoc);
     }
 
-    private void equipItemsToMob(CustomSpawner customSpawner, LivingEntity living, int slot) {
-        LootTable table = LootTableConfig.lootTables.get(customSpawner.getTable());
-        List<LootTableItem> tableItems = table.getItems();
-        ItemStack stack = rollTable(tableItems, this.getSuffixes(slot));
+    private void equipItemsToMob(SpawnerLocationData sld, LivingEntity living, int slot) {
+        ArrayList<ItemStack> equipable = new ArrayList<>();
+        if (slot <= 3){
+            equipable = this.getMatchingItems(sld.getEquipableArmor(), this.suffixes[slot]);
+        }
+        else{
+            equipable = sld.getEquipableWeapon();
+        }
+
+        ItemStack stack = rollTable(equipable);
 
         switch (slot) {
             case 0:
@@ -136,44 +146,27 @@ public class CustomSpawnerHandler implements Listener {
         }
     }
 
-    private ItemStack rollTable(List<LootTableItem> table, String[] suffixes) {
-        List<LootTableItem> source = table;
-        if (suffixes != null && suffixes.length > 0) {
-            source = table.stream().filter(li -> Arrays.stream(suffixes).anyMatch(suf -> li.getMaterial().name().endsWith(suf))).toList();
-            if (source.isEmpty())
-                return new ItemStack(Material.AIR);
+    private ArrayList<ItemStack> getMatchingItems(ArrayList<ItemStack> items, String suffix){
+        if (items.isEmpty()){
+            return new ArrayList<>();
         }
-
-        int totalWeight = source.stream().mapToInt(LootTableItem::getWeight).sum();
-        if (totalWeight <= 0)
-            return new ItemStack(Material.AIR);
-
-        int rand = 1 + (int) (Math.random() * totalWeight);
-        int cumulative = 0;
-        for (LootTableItem item : source) {
-            cumulative += item.getWeight();
-            if (rand <= cumulative) {
-                return new ItemStack(item.getMaterial());
+        
+        ArrayList<ItemStack> returnArray = new ArrayList<>();
+        for (ItemStack item : items){
+            if (item.getType().name().endsWith(suffix)){
+                returnArray.add(item);
             }
         }
-        return new ItemStack(Material.AIR);
+        return returnArray;
     }
 
-    private String[] getSuffixes(int slot) {
-        switch (slot) {
-            case 0:
-                return new String[] { "_HELMET" };
-            case 1:
-                return new String[] { "_CHESTPLATE" };
-            case 2:
-                return new String[] { "_LEGGINGS" };
-            case 3:
-                return new String[] { "_BOOTS" };
-            case 4:
-                return new String[] { "_SWORD", "BOW", "MACE", "CROSSBOW" };
-            default:
-                return new String[0];
+    private ItemStack rollTable(ArrayList<ItemStack> table) {
+        if (table.isEmpty()){
+            return new ItemStack(Material.AIR);
         }
+
+        int whatToEquip = RandomNum.getRandom(0, table.size());
+        return table.get(whatToEquip);
     }
 
     private Location getRandomLocation(ArrayList<Location> spawnLocations) {
@@ -186,7 +179,7 @@ public class CustomSpawnerHandler implements Listener {
 
     private boolean canEquipGear(CustomSpawner customSpawner) {
         if (this.rollChanceToGear(customSpawner.getDifficulty())) {
-            if (this.lootTableExists(customSpawner.getTable())) {
+            if (this.lootTableExists(customSpawner.getDropTable())) {
                 return true;
             }
         }
@@ -252,10 +245,8 @@ public class CustomSpawnerHandler implements Listener {
             return;
         }
         LivingEntity living = (LivingEntity) event.getEntity();
-        if (living.getPersistentDataContainer().has(this.entityTag)
-                && living.getPersistentDataContainer().has(this.entityTagSpawnerLink)) {
-            String[] nskArray = living.getPersistentDataContainer()
-                    .get(this.entityTagSpawnerLink, PersistentDataType.STRING).split("\\|");
+        if (living.getPersistentDataContainer().has(this.entityTag) && living.getPersistentDataContainer().has(this.entityTagSpawnerLink)) {
+            String[] nskArray = living.getPersistentDataContainer().get(this.entityTagSpawnerLink, PersistentDataType.STRING).split("\\|");
             CustomSpawner customSpawner = this.getSpawnerFromNsk(nskArray[0]);
             String spawnerLoc = nskArray[1];
 
@@ -300,15 +291,13 @@ public class CustomSpawnerHandler implements Listener {
             ItemStack handItem = event.getItemInHand();
             ItemMeta handMeta = handItem.getItemMeta();
             if (handMeta.getPersistentDataContainer().has(SpawnerKey.ROOT.getKey(), PersistentDataType.BOOLEAN)) {
-                String name = handMeta.getPersistentDataContainer().get(SpawnerKey.NAME.getKey(),
-                        PersistentDataType.STRING);
+                String name = handMeta.getPersistentDataContainer().get(SpawnerKey.NAME.getKey(), PersistentDataType.STRING);
                 CreatureSpawner spawner = (CreatureSpawner) block.getState();
                 CustomSpawner customSpawner = SpawnerConfig.spawners.get(name);
                 this.setSpawnerProps(customSpawner, spawner);
                 spawner.setSpawnRange(customSpawner.getSpawnRange());
-                SpawnerLocationData sld = new SpawnerLocationData(customSpawner.getName(), block.getLocation(), null);
-                SpawnerLocationDataConfig.spawnerLocationData.put(LocationUtils.serializeLocation(block.getLocation()),
-                        sld);
+                SpawnerLocationData sld = new SpawnerLocationData(customSpawner.getName(), block.getLocation(), null, new ArrayList<ItemStack>(), new ArrayList<>());
+                SpawnerLocationDataConfig.spawnerLocationData.put(LocationUtils.serializeLocation(block.getLocation()),sld);
             }
         }
     }
@@ -378,7 +367,7 @@ public class CustomSpawnerHandler implements Listener {
         String spawnerName = customSpawner.getName();
 
         List<String> lores = Arrays.asList(
-                ChatColor.AQUA + "Loot Table: " + ChatColor.YELLOW + customSpawner.getTable(),
+                ChatColor.AQUA + "Loot Table: " + ChatColor.YELLOW + customSpawner.getDropTable(),
                 ChatColor.AQUA + "Min Level: " + ChatColor.YELLOW + String.valueOf(customSpawner.getMinLevel()),
                 ChatColor.AQUA + "Max Level: " + ChatColor.YELLOW + String.valueOf(customSpawner.getMaxLevel()),
                 ChatColor.AQUA + "Spawn Delay (seconds): " + ChatColor.YELLOW + String.valueOf(customSpawner.getSpawnDelay()),
@@ -412,7 +401,7 @@ public class CustomSpawnerHandler implements Listener {
         spawner.getPersistentDataContainer().set(SpawnerKey.NAME_VISIBLE.getKey(), PersistentDataType.BOOLEAN, customSpawner.isNameVisible());
         spawner.getPersistentDataContainer().set(SpawnerKey.SPAWN_RANDOMLY.getKey(), PersistentDataType.BOOLEAN, customSpawner.isSpawnRandomly());
         spawner.getPersistentDataContainer().set(SpawnerKey.NAME.getKey(), PersistentDataType.STRING, customSpawner.getName());
-        spawner.getPersistentDataContainer().set(SpawnerKey.TABLE.getKey(), PersistentDataType.STRING, customSpawner.getTable());
+        spawner.getPersistentDataContainer().set(SpawnerKey.TABLE.getKey(), PersistentDataType.STRING, customSpawner.getDropTable());
         spawner.getPersistentDataContainer().set(SpawnerKey.SPAWN_DELAY.getKey(), PersistentDataType.INTEGER, customSpawner.getSpawnDelay());
         spawner.getPersistentDataContainer().set(SpawnerKey.SPAWN_RANGE.getKey(), PersistentDataType.INTEGER, customSpawner.getSpawnRange());
         spawner.update();

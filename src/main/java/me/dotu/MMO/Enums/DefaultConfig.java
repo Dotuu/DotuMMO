@@ -89,22 +89,7 @@ public enum DefaultConfig {
             spawner.addProperty("spawn_randomly", false);
             spawner.addProperty("table", "default");
 
-            JsonArray spawnLocations = new JsonArray();
-            JsonArray spawnerLocations = new JsonArray();
-
-            spawner.add("spawn_locations", spawnLocations);
-            spawner.add("spawner_locations", spawnerLocations);
-
             defaultConfig.add("test_spawner", spawner);
-        }
-    },
-
-    SPAWNER_LOCATION_DATA {
-        @Override
-        public void populate(JsonObject defaultConfig) {
-            JsonObject spawner = new JsonObject();
-
-            defaultConfig.add("", spawner);
         }
     },
 

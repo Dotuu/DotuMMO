@@ -34,8 +34,7 @@ public class SpawnerRunnable implements Runnable {
                 continue;
             }
             int spawnDelay = customSpawner.getSpawnDelay();
-            SpawnerEntityData spawnerData = new SpawnerEntityData(customSpawner, (long) spawnDelay, 0,
-                    sld.getSpawnerLocation());
+            SpawnerEntityData spawnerData = new SpawnerEntityData(customSpawner, (long) spawnDelay, 0, sld.getSpawnerLocation());
             SpawnerConfig.spawnerDataList.put(LocationUtils.serializeLocation(sld.getSpawnerLocation()), spawnerData);
         }
     }
@@ -51,21 +50,20 @@ public class SpawnerRunnable implements Runnable {
     @Override
     public void run() {
         this.tick++;
+        this.refreshSpawnerData();
         SpawnerConfig.spawnerDataList.values().forEach(this::tickSpawner);
     }
 
     private void tickSpawner(SpawnerEntityData spawnerData) {
         CustomSpawner customSpawner = spawnerData.getCustomSpawner();
         if (customSpawner == null) {
-            Main.plugin.getLogger().info("Spawner at: " + spawnerData.getSpawnerLoc().toString()
-                    + ", is linked to a Custom Spawner that no longer exists!");
+            Main.plugin.getLogger().info("Spawner at: " + spawnerData.getSpawnerLoc().toString() + ", is linked to a Custom Spawner that no longer exists!");
             return;
         }
 
         Location spawnerLoc = spawnerData.getSpawnerLoc();
         Block spawnerBlock = spawnerLoc.getBlock();
-        SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData
-                .get(LocationUtils.serializeLocation(spawnerLoc));
+        SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData.get(LocationUtils.serializeLocation(spawnerLoc));
 
         if (sld == null) {
             return;
@@ -89,10 +87,26 @@ public class SpawnerRunnable implements Runnable {
             return;
         }
 
-        this.customSpawnerHandler.spawnCustomEntity(spawnerLoc,
-                customSpawner.getName() + "|" + LocationUtils.serializeLocation(spawnerLoc));
+        this.customSpawnerHandler.spawnCustomEntity(spawnerLoc, customSpawner.getName() + "|" + LocationUtils.serializeLocation(spawnerLoc));
         spawnerData.setActiveEntitiesAmount(spawnerData.getActiveEntitiesAmount() + 1);
         spawnerData.setNextSpawn(this.tick + customSpawner.getSpawnDelay());
+    }
+
+    private void refreshSpawnerData() {
+        for (SpawnerLocationData sld : SpawnerLocationDataConfig.spawnerLocationData.values()) {
+            String locationKey = LocationUtils.serializeLocation(sld.getSpawnerLocation());
+
+            if (!SpawnerConfig.spawnerDataList.containsKey(locationKey)) {
+                CustomSpawner customSpawner = SpawnerConfig.spawners.get(sld.getLinkedCustomSpawner());
+                if (customSpawner != null) {
+                    int spawnDelay = customSpawner.getSpawnDelay();
+                    SpawnerEntityData spawnerData = new SpawnerEntityData(customSpawner, (long) spawnDelay, 0, sld.getSpawnerLocation());
+                    SpawnerConfig.spawnerDataList.put(locationKey, spawnerData);
+                }
+            }
+        }
+
+        SpawnerConfig.spawnerDataList.entrySet().removeIf(entry -> !SpawnerLocationDataConfig.spawnerLocationData.containsKey(entry.getKey()));
     }
 
     private boolean isNotReadyToSpawn(SpawnerEntityData spawnerData) {

@@ -22,7 +22,7 @@ public enum Messages implements MessageColors{
 
     // EDIT MODE MESSAGES
     EDIT_MODE_LEAVE(colorBase + "Leaving editing mode"),
-    EDIT_MODE_ENTER(colorBase + "Now in edit mode. use " + colorCmd + "/dotummo spawner edit " + colorBase + "to exit."),
+    EDIT_MODE_ENTER(colorBase + "Now in edit mode. use " + colorCmd + "/dotummo spawner edit " + colorBase + "to exit"),
     EDIT_MODE_INFO(colorBase + "Left click block to set a spawn block, right click to remove"),
     EDIT_MODE_LOC_ADD(colorBase + "Addded spawn location"),
     EDIT_MODE_LOC_REMOVE(colorBase + "Removed spawn location"),

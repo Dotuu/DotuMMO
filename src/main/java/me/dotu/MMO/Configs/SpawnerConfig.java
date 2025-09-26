@@ -21,7 +21,7 @@ public class SpawnerConfig extends JsonFileManager {
     public static HashMap<String, SpawnerEntityData> spawnerDataList = new HashMap<>();
 
     public SpawnerConfig() {
-        super("configs", "spawners");
+        super("spawners", "spawners");
 
         List<DefaultConfig> defaults = Arrays.asList(DefaultConfig.SPAWNER_DATA);
 
@@ -44,7 +44,7 @@ public class SpawnerConfig extends JsonFileManager {
             spawnerObj.addProperty("weaponed", spawner.isWeaponed());
             spawnerObj.addProperty("name_visible", spawner.isNameVisible());
             spawnerObj.addProperty("spawn_randomly", spawner.isSpawnRandomly());
-            spawnerObj.addProperty("table", spawner.getTable());
+            spawnerObj.addProperty("table", spawner.getDropTable());
 
             root.add(spawner.getName(), spawnerObj);
         }
@@ -53,7 +53,6 @@ public class SpawnerConfig extends JsonFileManager {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(root, writer);
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -67,34 +66,36 @@ public class SpawnerConfig extends JsonFileManager {
             for (String name : root.keySet()) {
                 JsonObject spawnerObj = root.getAsJsonObject(name);
 
-                int minLevel = this.getIntFromJson(spawnerObj, "min_level");
-                int maxLevel = this.getIntFromJson(spawnerObj, "max_level");
-                int spawnDelay = this.getIntFromJson(spawnerObj, "spawn_delay");
-                int spawnRange = this.getIntFromJson(spawnerObj, "spawn_range");
-                int spawnCount = this.getIntFromJson(spawnerObj, "spawn_count");
+                int minLevel = spawnerObj.get("min_level").getAsInt();
+                int maxLevel = spawnerObj.get("max_level").getAsInt();
+                int spawnDelay = spawnerObj.get("spawn_delay").getAsInt();
+                int spawnRange = spawnerObj.get("spawn_range").getAsInt();
+                int spawnCount = spawnerObj.get("spawn_count").getAsInt();
 
-                double difficulty = this.getDoubleFromJson(spawnerObj, "difficulty");
+                double difficulty = spawnerObj.get("difficulty").getAsDouble();
 
-                boolean armored = this.getBooleanFromJson(spawnerObj, "armored");
-                boolean weaponed = this.getBooleanFromJson(spawnerObj, "weaponed");
-                boolean nameVisible = this.getBooleanFromJson(spawnerObj, "name_visible");
-                boolean spawnRandomly = this.getBooleanFromJson(spawnerObj, "spawn_randomly");
+                boolean armored = spawnerObj.get("armored").getAsBoolean();
+                boolean weaponed = spawnerObj.get("weaponed").getAsBoolean();
+                boolean nameVisible = spawnerObj.get("name_visible").getAsBoolean();
+                boolean spawnRandomly = spawnerObj.get("spawn_randomly").getAsBoolean();
 
-                String table = this.getStringFromJson(spawnerObj, "table");
+                String table = spawnerObj.get("table").getAsString();
 
-                CustomSpawner customSpawner = new CustomSpawner(
-                        minLevel,
-                        maxLevel,
-                        difficulty,
-                        armored,
-                        weaponed,
-                        nameVisible,
-                        spawnRandomly,
-                        name,
-                        table,
-                        spawnDelay,
-                        spawnRange,
-                        spawnCount);
+                CustomSpawner customSpawner;
+                customSpawner = new CustomSpawner(
+                    minLevel,
+                    maxLevel,
+                    difficulty,
+                    armored,
+                    weaponed,
+                    nameVisible,
+                    spawnRandomly,
+                    name,
+                    table,
+                    spawnDelay,
+                    spawnRange,
+                    spawnCount
+                );
 
                 spawners.put(name, customSpawner);
             }

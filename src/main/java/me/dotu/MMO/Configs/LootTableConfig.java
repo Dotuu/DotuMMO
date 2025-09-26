@@ -55,13 +55,27 @@ public class LootTableConfig extends JsonFileManager {
                 try (FileReader reader = new FileReader(tableFile)) {
                     JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
 
-                    ArrayList<LootTableItem> items = this.getLootItems(root.getAsJsonArray("items"));
                     String name = root.get("name").getAsString();
-
                     LootTable lootTable = new LootTable(name);
-                    if (items != null){
-                        lootTable.setItems(items);
+
+                    if (name.equalsIgnoreCase("global")){
+                        ArrayList<LootTableItem> items = this.getLootItems(root.getAsJsonArray("items"));
+
+                        if (items != null){
+                            lootTable.setItems(items);
+                        }
                     }
+                    else{
+                        JsonArray itemIdsJson = root.get("items").getAsJsonArray();
+                        ArrayList<Long> itemIds = new ArrayList<>();
+
+                        for (int x = 0; x < itemIdsJson.size(); x++){   
+                            itemIds.add(itemIdsJson.get(x).getAsLong());
+                        }
+
+                        lootTable.setItemIds(itemIds);
+                    }
+                    
                     lootTables.put(name, lootTable);
                 } catch (Exception e) {
                     e.printStackTrace();
