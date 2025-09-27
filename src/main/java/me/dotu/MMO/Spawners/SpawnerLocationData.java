@@ -7,13 +7,13 @@ import org.bukkit.inventory.ItemStack;
 
 public class SpawnerLocationData {
     
-    private String linkedCustomSpawner;
+    private Long linkedCustomSpawner;
     private Location spawnerLocation;
     private ArrayList<Location> spawnLocations;
     private ArrayList<ItemStack> equipableArmor;
     private ArrayList<ItemStack> equipableWeapon;
 
-    public SpawnerLocationData(String linkedCustomSpawner, Location spawnerLocation, ArrayList<Location> spawnLocations, ArrayList<ItemStack> equipableArmor, ArrayList<ItemStack> equipableWeapon){
+    public SpawnerLocationData(Long linkedCustomSpawner, Location spawnerLocation, ArrayList<Location> spawnLocations, ArrayList<ItemStack> equipableArmor, ArrayList<ItemStack> equipableWeapon){
         this.linkedCustomSpawner = linkedCustomSpawner;
         this.spawnerLocation = spawnerLocation;
         this.spawnLocations = (spawnLocations == null) ? new ArrayList<>() : new ArrayList<>(spawnLocations);
@@ -21,11 +21,11 @@ public class SpawnerLocationData {
         this.equipableWeapon = equipableWeapon;
     }
 
-    public String getLinkedCustomSpawner() {
+    public Long getLinkedCustomSpawner() {
         return this.linkedCustomSpawner;
     }
 
-    public void setLinkedCustomSpawner(String linkedCustomSpawner) {
+    public void setLinkedCustomSpawner(Long linkedCustomSpawner) {
         this.linkedCustomSpawner = linkedCustomSpawner;
     }
 

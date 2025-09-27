@@ -17,7 +17,7 @@ import me.dotu.MMO.Spawners.CustomSpawner;
 import me.dotu.MMO.Spawners.SpawnerEntityData;
 
 public class SpawnerConfig extends JsonFileManager {
-    public static HashMap<String, CustomSpawner> spawners = new HashMap<>();
+    public static HashMap<Long, CustomSpawner> spawners = new HashMap<>();
     public static HashMap<String, SpawnerEntityData> spawnerDataList = new HashMap<>();
 
     public SpawnerConfig() {
@@ -45,6 +45,7 @@ public class SpawnerConfig extends JsonFileManager {
             spawnerObj.addProperty("name_visible", spawner.isNameVisible());
             spawnerObj.addProperty("spawn_randomly", spawner.isSpawnRandomly());
             spawnerObj.addProperty("table", spawner.getDropTable());
+            spawnerObj.addProperty("spawner_id", spawner.getId());
 
             root.add(spawner.getName(), spawnerObj);
         }
@@ -79,6 +80,8 @@ public class SpawnerConfig extends JsonFileManager {
                 boolean nameVisible = spawnerObj.get("name_visible").getAsBoolean();
                 boolean spawnRandomly = spawnerObj.get("spawn_randomly").getAsBoolean();
 
+                Long id = spawnerObj.get("spawner_id").getAsLong();
+
                 String table = spawnerObj.get("table").getAsString();
 
                 CustomSpawner customSpawner;
@@ -94,10 +97,11 @@ public class SpawnerConfig extends JsonFileManager {
                     table,
                     spawnDelay,
                     spawnRange,
-                    spawnCount
+                    spawnCount,
+                    id
                 );
 
-                spawners.put(name, customSpawner);
+                spawners.put(customSpawner.getId(), customSpawner);
             }
         } catch (Exception e) {
         }

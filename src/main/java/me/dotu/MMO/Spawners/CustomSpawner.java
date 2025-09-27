@@ -1,9 +1,5 @@
 package me.dotu.MMO.Spawners;
 
-import java.util.ArrayList;
-
-import org.bukkit.inventory.ItemStack;
-
 public class CustomSpawner {
 
     private int minLevel;
@@ -18,8 +14,9 @@ public class CustomSpawner {
     private int spawnDelay;
     private int spawnRange;
     private int maxSpawnCount;
+    private Long id;
 
-    public CustomSpawner(int minLevel, int maxLevel, double difficulty, boolean armored, boolean weaponed, boolean nameVisible, boolean spawnRandomly, String name, String dropTable, int spawnDelay, int spawnRange, int maxSpawnCount){
+    public CustomSpawner(int minLevel, int maxLevel, double difficulty, boolean armored, boolean weaponed, boolean nameVisible, boolean spawnRandomly, String name, String dropTable, int spawnDelay, int spawnRange, int maxSpawnCount, Long id){
         this.minLevel = minLevel;
         this.maxLevel = maxLevel;
         this.difficulty = difficulty;
@@ -32,6 +29,7 @@ public class CustomSpawner {
         this.spawnDelay = spawnDelay;
         this.spawnRange = spawnRange;
         this.maxSpawnCount = maxSpawnCount;
+        this.id = id;
     }
 
     public int getMinLevel() {
@@ -128,5 +126,13 @@ public class CustomSpawner {
 
     public void setMaxSpawnCount(int maxSpawnCount) {
         this.maxSpawnCount = maxSpawnCount;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

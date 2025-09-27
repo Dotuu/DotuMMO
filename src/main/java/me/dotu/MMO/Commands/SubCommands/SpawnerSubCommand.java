@@ -14,11 +14,13 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
-import me.dotu.MMO.Main;
 import me.dotu.MMO.Commands.SubCommand;
 import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Configs.SpawnerLocationDataConfig;
+import me.dotu.MMO.Enums.ItemKey;
 import me.dotu.MMO.Enums.MarkerColor;
 import me.dotu.MMO.Enums.Messages;
 import me.dotu.MMO.Enums.PermissionType;
@@ -68,6 +70,12 @@ public class SpawnerSubCommand implements SubCommand, Listener {
                 case "edit":
                     this.handleEditSpawnerCommand(player, args);
                     break;
+                case "setarmor":
+                    this.handleSetArmorCommand(player, args);
+                    break;
+                case "setweapon":
+                    this.handleSetWeaponCommand(player, args);
+                    break;    
             }
         }
         return true;
@@ -78,20 +86,24 @@ public class SpawnerSubCommand implements SubCommand, Listener {
             SpawnerInventory spawnerInv = new SpawnerInventory(player, 0);
             spawnerInv.createInventoryItems();
             spawnerInv.openInventory(player);
-        } else {
+        } 
+        else {
             String spawnerName = args[2];
-            if (SpawnerConfig.spawners.containsKey(spawnerName)) {
-                CustomSpawner customSpawner = SpawnerConfig.spawners.get(spawnerName);
+            CustomSpawner customSpawner = CustomSpawnerHandler.getSpawnerFromName(spawnerName);
+            if (customSpawner != null) {
                 ItemStack item = CustomSpawnerHandler.decorateSpawnerStack(customSpawner);
 
                 player.getInventory().addItem(item).isEmpty();
 
                 MessageManager.send(player, Messages.SPAWNER_ADDED, true, spawnerName);
-            } else {
+            } 
+            else {
                 MessageManager.send(player, Messages.ERR_SPAWNER_EXISTS, true);
             }
         }
     }
+
+    
 
     private void handleEditSpawnerCommand(Player player, String[] args) {
         if (this.editing.containsKey(player.getName())) {
@@ -115,26 +127,80 @@ public class SpawnerSubCommand implements SubCommand, Listener {
         }
 
         CreatureSpawner spawner = (CreatureSpawner) block.getState();
-        if (!spawner.getPersistentDataContainer().has(SpawnerKey.NAME.getKey())) {
+        if (!spawner.getPersistentDataContainer().has(SpawnerKey.SPAWNER_ID.getKey())) {
             MessageManager.send(player, Messages.ERR_SPAWNER_CUSTOM_SPAWNER, true);
         }
 
-        else {
-            String spawnerLocString = LocationUtils.serializeLocation(block.getLocation());
-            if (!SpawnerLocationDataConfig.spawnerLocationData.containsKey(spawnerLocString)) {
-                MessageManager.send(player, Messages.ERR_SPAWNER_GENERIC, true);
-                return;
-            }
-
-            SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData.get(LocationUtils.serializeLocation(block.getLocation()));
-
-            MessageManager.send(player, Messages.EDIT_MODE_ENTER, true);
-            MessageManager.send(player, Messages.EDIT_MODE_INFO, true);
-
-            Marker marker = new Marker(player, sld.getSpawnLocations(), MarkerColor.RED, 3);
-            this.editing.put(player.getName(), LocationUtils.serializeLocation(sld.getSpawnerLocation()));
-            this.viewingMarkers.put(player.getName(), marker);
+        if (!SpawnerConfig.spawners.containsKey(spawner.getPersistentDataContainer().get(SpawnerKey.SPAWNER_ID.getKey(), PersistentDataType.LONG))){
+            MessageManager.send(player, Messages.ERR_SPAWNER_GENERIC, true);
+            return;
         }
+
+        String spawnerLocString = LocationUtils.serializeLocation(block.getLocation());
+        if (!SpawnerLocationDataConfig.spawnerLocationData.containsKey(spawnerLocString)) {
+            MessageManager.send(player, Messages.ERR_SPAWNER_GENERIC, true);
+            return;
+        }
+
+        SpawnerLocationData sld = SpawnerLocationDataConfig.spawnerLocationData.get(LocationUtils.serializeLocation(block.getLocation()));
+
+        MessageManager.send(player, Messages.EDIT_MODE_ENTER, true);
+        MessageManager.send(player, Messages.EDIT_MODE_INFO, true);
+
+        Marker marker = new Marker(player, sld.getSpawnLocations(), MarkerColor.RED, 3);
+        this.editing.put(player.getName(), LocationUtils.serializeLocation(sld.getSpawnerLocation()));
+        this.viewingMarkers.put(player.getName(), marker);
+    }
+
+    // dotummo spawner setarmor|setweapon <inv>|<inventory>
+    public void handleSetArmorCommand(Player player, String[] args){
+        Block block = player.getTargetBlockExact(10);
+        if (isValidSpawner(player, block)){
+            if (args[2].equalsIgnoreCase("inv") || args[2].equalsIgnoreCase("inventory")){
+                for (ItemStack stack : player.getInventory()){
+                    if (stack.hasItemMeta() == false){
+                        continue;
+                    }
+
+                    ItemMeta meta = stack.getItemMeta();
+
+                    if (meta.getPersistentDataContainer().has(ItemKey.CUSTOM_ITEM_ID.getKey())){
+                        
+                    }
+                }
+            }
+            else{
+
+            }
+        }
+    }
+
+    public void handleSetWeaponCommand(Player player, String[] args){
+        Block block = player.getTargetBlockExact(10);
+        if (isValidSpawner(player, block)){
+            if (args[2].equalsIgnoreCase("inv") || args[2].equalsIgnoreCase("inventory")){
+
+            }
+            else{
+
+            }
+        }
+    }
+
+    public boolean isValidSpawner(Player player, Block block){
+        if (block.getType() == Material.SPAWNER){
+            MessageManager.send(player, Messages.ERR_SPAWNER_BLOCK_NOT_FOUND, true);
+            return false;
+        }
+
+        CreatureSpawner spawner = (CreatureSpawner) block;
+
+        if (!spawner.getPersistentDataContainer().has(SpawnerKey.ROOT.getKey())){
+            MessageManager.send(player, Messages.ERR_SPAWNER_CUSTOM_SPAWNER, true);
+            return false;
+        }
+
+        return true;
     }
 
     @EventHandler

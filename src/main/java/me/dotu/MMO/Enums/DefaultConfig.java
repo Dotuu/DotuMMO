@@ -88,6 +88,7 @@ public enum DefaultConfig {
             spawner.addProperty("name_visible", true);
             spawner.addProperty("spawn_randomly", false);
             spawner.addProperty("table", "default");
+            spawner.addProperty("spawner_id", System.currentTimeMillis());
 
             defaultConfig.add("test_spawner", spawner);
         }

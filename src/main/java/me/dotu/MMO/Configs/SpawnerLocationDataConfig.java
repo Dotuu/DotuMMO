@@ -81,7 +81,7 @@ public class SpawnerLocationDataConfig extends JsonFileManager {
             for (String name : root.keySet()) {
                 JsonObject spawnerObj = root.getAsJsonObject(name);
 
-                String linkedSpawner = spawnerObj.get("linked_spawner").getAsString();
+                Long linkedSpawner = spawnerObj.get("linked_spawner").getAsLong();
 
                 Location spawnerLoc = LocationUtils.deSerializeLocation(spawnerObj.get("spawner_location").getAsString());
 

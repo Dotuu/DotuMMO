@@ -27,7 +27,7 @@ public class SpawnerInventory extends CustomInventory{
 
         ArrayList<InventoryItem> inventoryItems = new ArrayList<>();
 
-        for (Map.Entry<String, CustomSpawner> spawners : SpawnerConfig.spawners.entrySet()) {
+        for (Map.Entry<Long, CustomSpawner> spawners : SpawnerConfig.spawners.entrySet()) {
             CustomSpawner spawner = spawners.getValue();
 
             ItemStack stack = CustomSpawnerHandler.decorateSpawnerStack(spawner);

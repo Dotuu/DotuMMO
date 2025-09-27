@@ -5,8 +5,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
-import me.dotu.MMO.Configs.SpawnerConfig;
 import me.dotu.MMO.Enums.Messages;
 import me.dotu.MMO.Inventories.CustomInventory;
 import me.dotu.MMO.Inventories.CustomInventoryHolder;
@@ -17,7 +17,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class SpawnerInventoryClicked implements Listener{
     @EventHandler
-    private void clickedActionItem(InventoryClickEvent event){
+    public void clickedActionItem(InventoryClickEvent event){
         if (event.getInventory().getHolder() instanceof CustomInventoryHolder){
             Player player = (Player) event.getWhoClicked();
             event.setCancelled(true);
@@ -26,15 +26,29 @@ public class SpawnerInventoryClicked implements Listener{
                 return;
             }
 
+            if (event.getClickedInventory() == null){
+                return;
+            }
+
             if (CustomInventory.isItem(event.getClickedInventory(), event.getSlot())){
                 ItemStack item = event.getClickedInventory().getItem(event.getSlot());
-                String spawnerName = ChatColor.stripColor(item.getItemMeta().getDisplayName());
-
-                if (!SpawnerConfig.spawners.containsKey(spawnerName)){
+                if (item.hasItemMeta() == false){
                     return;
                 }
 
-                CustomSpawner customSpawner = SpawnerConfig.spawners.get(spawnerName);
+                ItemMeta meta = item.getItemMeta();
+
+                if (meta.hasDisplayName() == false){
+                    return;
+                }
+
+                String spawnerName = ChatColor.stripColor(meta.getDisplayName());
+                CustomSpawner customSpawner = CustomSpawnerHandler.getSpawnerFromName(spawnerName);
+                if (customSpawner == null){
+                    MessageManager.send(player, Messages.ERR_SPAWNER_GENERIC, true);
+                    return;
+                }
+
                 ItemStack spawnerStack = CustomSpawnerHandler.decorateSpawnerStack(customSpawner);
 
                 if (player.getInventory().addItem(spawnerStack).isEmpty()){

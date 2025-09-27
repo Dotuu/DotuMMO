@@ -6,17 +6,7 @@ import me.dotu.MMO.Main;
 
 public enum SpawnerKey {
     ROOT("DotuMMO_Spawner"),
-    ARMORED("armored"),
-    WEAPONED("weaponed"),
-    MIN_LEVEL("minLevel"),
-    MAX_LEVEL("maxLevel"),
-    DIFFICULTY("difficulty"),
-    NAME_VISIBLE("nameVisible"),
-    SPAWN_RANDOMLY("spawnRandomly"),
-    NAME("name"),
-    TABLE("table"),
-    SPAWN_DELAY("spawnDelay"),
-    SPAWN_RANGE("spawnRange");
+    SPAWNER_ID("spawner_id");
 
     private final String key;
 

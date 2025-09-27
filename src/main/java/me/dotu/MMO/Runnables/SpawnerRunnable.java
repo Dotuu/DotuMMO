@@ -1,5 +1,7 @@
 package me.dotu.MMO.Runnables;
 
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,7 +59,7 @@ public class SpawnerRunnable implements Runnable {
     private void tickSpawner(SpawnerEntityData spawnerData) {
         CustomSpawner customSpawner = spawnerData.getCustomSpawner();
         if (customSpawner == null) {
-            Main.plugin.getLogger().info("Spawner at: " + spawnerData.getSpawnerLoc().toString() + ", is linked to a Custom Spawner that no longer exists!");
+            Main.plugin.getLogger().log(Level.INFO, "Spawner at: {0}, is linked to a Custom Spawner that no longer exists!", spawnerData.getSpawnerLoc().toString());
             return;
         }
 
@@ -87,7 +89,7 @@ public class SpawnerRunnable implements Runnable {
             return;
         }
 
-        this.customSpawnerHandler.spawnCustomEntity(spawnerLoc, customSpawner.getName() + "|" + LocationUtils.serializeLocation(spawnerLoc));
+        this.customSpawnerHandler.spawnCustomEntity(spawnerLoc, customSpawner.getId() + "|" + LocationUtils.serializeLocation(spawnerLoc));
         spawnerData.setActiveEntitiesAmount(spawnerData.getActiveEntitiesAmount() + 1);
         spawnerData.setNextSpawn(this.tick + customSpawner.getSpawnDelay());
     }
